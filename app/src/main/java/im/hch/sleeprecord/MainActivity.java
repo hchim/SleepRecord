@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import im.hch.mapikey.messagesigner.MessageSigner;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -26,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        MessageSigner mMessageSigner = MessageSigner.getInstance();
+        System.out.println(mMessageSigner.signMessage("test"));
     }
 
     @Override
