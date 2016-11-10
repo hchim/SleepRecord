@@ -1,0 +1,2 @@
+include ':app', ':messagesigner'
+project(':messagesigner').projectDir = new File('modules/messagesigner')
