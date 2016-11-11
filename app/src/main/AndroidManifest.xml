@@ -26,6 +26,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="im.hch.sleeprecord.activities.MainActivity" />
         </activity>
+        <activity
+            android:name=".activities.AddRecordActivity"
+            android:label="@string/title_activity_add_record"
+            android:parentActivityName=".activities.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="im.hch.sleeprecord.activities.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

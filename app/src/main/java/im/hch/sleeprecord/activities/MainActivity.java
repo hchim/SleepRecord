@@ -37,8 +37,9 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                openAddRecordActivity();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
             }
         });
 
@@ -108,5 +109,9 @@ public class MainActivity extends AppCompatActivity
 
     private void openSettingsActivity() {
         startActivity(new Intent(this, SettingsActivity.class));
+    }
+
+    private void openAddRecordActivity() {
+        startActivity(new Intent(this, AddRecordActivity.class));
     }
 }
