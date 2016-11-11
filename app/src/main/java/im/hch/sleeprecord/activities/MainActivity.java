@@ -1,5 +1,6 @@
-package im.hch.sleeprecord;
+package im.hch.sleeprecord.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,6 +12,7 @@ import android.view.MenuItem;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import im.hch.sleeprecord.R;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.fab)
     FloatingActionButton floatingActionButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +55,14 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            openSettingsActivity();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openSettingsActivity() {
+        startActivity(new Intent(this, SettingsActivity.class));
     }
 }
