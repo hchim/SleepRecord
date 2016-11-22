@@ -1,4 +1,4 @@
-package im.hch.sleeprecord.activities;
+package im.hch.sleeprecord.activities.settings;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
