@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -59,13 +60,22 @@ public class AddRecordActivity extends AppCompatActivity {
         fallAsleepTimeEditText.setOnClickListener(new TimePickOnClickListener());
         wakeupDateEditText.setOnClickListener(new DatePickOnClickListener());
         wakeupTimeEditText.setOnClickListener(new TimePickOnClickListener());
-
         saveRecordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveSleepRecord();
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
+        return true;
     }
 
     private void resetDatetime() {
@@ -114,6 +124,8 @@ public class AddRecordActivity extends AppCompatActivity {
 
         //TODO invoke service api
         addRecordProgressBar.setVisibility(View.GONE);
+        // return to the parent view
+        finish();
     }
 
     private Calendar getDatetime(EditText dateEdit, EditText timeEdit) {
