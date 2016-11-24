@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/sleep_record_list_item_height">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="@dimen/sleep_record_list_data_width"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:text="Aug"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sleep_record_list_month_height"
+            android:id="@+id/monthTextView"
+            android:background="@color/colorAccent"
+            android:fontFamily="sans-serif"
+            android:textSize="12sp"
+            android:textColor="@color/colorWhite"
+            android:textAlignment="center" />
+
+        <TextView
+            android:text="15"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sleep_record_list_date_height"
+            android:id="@+id/dateTextView"
+            android:textStyle="normal|bold"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <im.hch.sleeprecord.activities.records.SleepRecordView
+        android:id="@+id/sleepRecordView"
+        android:layout_width="@dimen/sleep_record_view_layout_width"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/sleep_record_view_margin_left"
+        android:layout_weight="1"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        app:hourType="24"
+        app:defaultSleepTimeColor="@color/defaultSleepQualityColor"
+        app:bestSleepTimeColor="@color/bestSleepQualityColor"
+        app:worstSleepTimeColor="@color/worstSleepQualityColor"
+        app:scaleLineColor="@color/scaleLineColor"
+        app:timeLabelColor="@color/timeLabelColor"
+        app:timeLabelFontSize="8sp"
+        app:scaleHeightPercentage="0.4"
+        app:timeScaleHeight="5dp" />
+
+</LinearLayout>

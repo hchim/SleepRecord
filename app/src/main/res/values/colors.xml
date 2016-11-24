@@ -3,4 +3,11 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorWhite">#FFFFFF</color>
+
+    <color name="timeLabelColor">#33b5e5</color>
+    <color name="scaleLineColor">#000000</color>
+    <color name="worstSleepQualityColor">#FF0000</color>
+    <color name="bestSleepQualityColor">#00FF00</color>
+    <color name="defaultSleepQualityColor">#cccccc</color>
 </resources>

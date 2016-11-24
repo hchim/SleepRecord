@@ -1,0 +1,16 @@
+<resources>
+    <declare-styleable name="SleepRecordView">
+        <!-- The position of scale line = view_height * (1 - scaleHeightPercentage) -->
+        <attr name="scaleHeightPercentage" format="float" />
+        <!-- The color of the scale line-->
+        <attr name="scaleLineColor" format="color" />
+        <!-- The height of the time scale.-->
+        <attr name="timeScaleHeight" format="dimension" />
+        <attr name="timeLabelColor" format="color" />
+        <attr name="timeLabelFontSize" format="dimension" />
+        <attr name="hourType" format="integer" />
+        <attr name="defaultSleepTimeColor" format="color"/>
+        <attr name="bestSleepTimeColor" format="color"/>
+        <attr name="worstSleepTimeColor" format="color"/>
+    </declare-styleable>
+</resources>

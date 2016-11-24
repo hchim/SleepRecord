@@ -2,8 +2,6 @@ package im.hch.sleeprecord.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,6 +14,7 @@ import android.view.MenuItem;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
+import im.hch.sleeprecord.activities.records.SleepRecordsActivity;
 import im.hch.sleeprecord.activities.settings.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity
