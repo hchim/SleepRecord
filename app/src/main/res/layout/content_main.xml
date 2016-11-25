@@ -13,4 +13,33 @@
     tools:context="im.hch.sleeprecord.activities.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
+    <LinearLayout
+        android:id="@+id/sleep_records_widget"
+        android:orientation="vertical"
+        style="@style/MainActivityWidget"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:text="@string/widget_title_sleep_records"
+            style="@style/WidgetTitle"/>
+
+        <ListView
+            android:id="@+id/list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:dividerHeight="@dimen/sleep_record_list_divider_height" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/widget2"
+        android:orientation="vertical"
+        style="@style/MainActivityWidget"
+        android:layout_below="@id/sleep_records_widget">
+
+        <TextView
+            android:text="TextView"
+            style="@style/WidgetTitle"/>
+    </LinearLayout>
 </RelativeLayout>
