@@ -10,4 +10,6 @@
     <color name="worstSleepQualityColor">#FF0000</color>
     <color name="bestSleepQualityColor">#00FF00</color>
     <color name="defaultSleepQualityColor">#cccccc</color>
+
+    <color name="black_overlay">#66000000</color>
 </resources>

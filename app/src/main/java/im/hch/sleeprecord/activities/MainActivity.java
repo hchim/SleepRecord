@@ -25,11 +25,13 @@ import im.hch.sleeprecord.activities.records.SleepRecordsActivity;
 import im.hch.sleeprecord.activities.records.SleepRecordsAdapter;
 import im.hch.sleeprecord.activities.settings.SettingsActivity;
 import im.hch.sleeprecord.models.SleepRecord;
+import im.hch.sleeprecord.utils.SessionManager;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private SleepRecordsAdapter sleepRecordsAdapter;
+    private SessionManager sessionManager;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.drawer_layout) DrawerLayout drawer;
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        sessionManager = new SessionManager(this);
         setSupportActionBar(toolbar);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -149,6 +152,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_settings:
                 openSettingsActivity();
+                break;
+            case R.id.nav_logout:
+                sessionManager.logoutUser();
                 break;
         }
 
