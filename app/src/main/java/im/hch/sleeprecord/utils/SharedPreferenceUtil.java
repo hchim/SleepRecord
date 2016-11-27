@@ -2,19 +2,18 @@ package im.hch.sleeprecord.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import java.util.Set;
 
 public class SharedPreferenceUtil {
-
-    private static final String SHARED_PREFERENCE_NAME = "SleepRecord.pref";
 
     private Context mContext;
     private SharedPreferences mSharedPreference;
 
     public SharedPreferenceUtil(Context context) {
         this.mContext = context;
-        this.mSharedPreference = context.getSharedPreferences(SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
+        this.mSharedPreference = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void setValue(String key, Object value) {
@@ -39,24 +38,28 @@ public class SharedPreferenceUtil {
         editor.commit();
     }
 
-    public Object getValue(String key, Object defValue) {
-        if (defValue instanceof String) {
-            return mSharedPreference.getString(key, (String) defValue);
-        } else if (defValue instanceof Boolean) {
-            return mSharedPreference.getBoolean(key, (Boolean) defValue);
-        } else if (defValue instanceof Integer) {
-            return mSharedPreference.getInt(key, (Integer) defValue);
-        } else if (defValue instanceof Float) {
-            return mSharedPreference.getFloat(key, (Float) defValue);
-        } else if (defValue instanceof Double) {
-            return mSharedPreference.getFloat(key, ((Double) defValue).floatValue());
-        } else if (defValue instanceof Long) {
-            return mSharedPreference.getLong(key, (Long) defValue);
-        } else if (defValue instanceof Set) {
-            return mSharedPreference.getStringSet(key, (Set<String>) defValue);
-        }
+    public String getString(String key, String defaultValue) {
+        return mSharedPreference.getString(key, defaultValue);
+    }
 
-        return null;
+    public Float getFloat(String key, float defaultValue) {
+        return mSharedPreference.getFloat(key, defaultValue);
+    }
+
+    public Boolean getBoolean(String key, boolean defaultValue) {
+        return mSharedPreference.getBoolean(key, defaultValue);
+    }
+
+    public Set<String> getStringSet(String key, Set<String> defaultValue) {
+        return mSharedPreference.getStringSet(key, defaultValue);
+    }
+
+    public Integer getInt(String key, int defaultValue) {
+        return mSharedPreference.getInt(key, defaultValue);
+    }
+
+    public Long getLong(String key, long defaultValue) {
+        return mSharedPreference.getLong(key, defaultValue);
     }
 
     public void removeValue(String key) {

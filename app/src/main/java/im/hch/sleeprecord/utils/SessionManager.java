@@ -55,14 +55,14 @@ public class SessionManager {
     }
 
     public boolean isLoggedIn() {
-        return (Boolean) mSharedPreferenceUtil.getValue(IS_LOGIN, false);
+        return mSharedPreferenceUtil.getBoolean(IS_LOGIN, false);
     }
 
     public String getUsername() {
-        return (String) mSharedPreferenceUtil.getValue(USERNAME, null);
+        return mSharedPreferenceUtil.getString(USERNAME, null);
     }
 
     public String getAccessToken() {
-        return (String) mSharedPreferenceUtil.getValue(ACCESS_TOKEN, null);
+        return mSharedPreferenceUtil.getString(ACCESS_TOKEN, null);
     }
 }

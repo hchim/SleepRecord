@@ -15,7 +15,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:keepScreenOn="true"
-        android:scaleType="fitCenter"/>
+        android:scaleType="centerCrop"/>
 
     <TextView
         android:id="@+id/fullscreen_textview"
