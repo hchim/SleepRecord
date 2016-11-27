@@ -34,15 +34,10 @@
         <item name="android:layout_marginBottom">@dimen/widget_title_margin_bottom</item>
     </style>
 
-    <style name="FullscreenTheme" parent="AppTheme">
-        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@null</item>
-        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
-        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
-    </style>
-
-    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/black_overlay</item>
+    <style name="SplashAppName">
+        <item name="android:textColor">@color/splash_text_color</item>
+        <item name="android:background">@color/splash_text_background_color</item>
+        <item name="android:textSize">50sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>

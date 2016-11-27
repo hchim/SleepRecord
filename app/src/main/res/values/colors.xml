@@ -11,5 +11,8 @@
     <color name="bestSleepQualityColor">#00FF00</color>
     <color name="defaultSleepQualityColor">#cccccc</color>
 
+    <color name="splash_text_color">#33b5e5</color>
+    <color name="splash_text_background_color">#0099cc</color>
+
     <color name="black_overlay">#66000000</color>
 </resources>
