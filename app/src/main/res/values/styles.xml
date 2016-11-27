@@ -34,10 +34,4 @@
         <item name="android:layout_marginBottom">@dimen/widget_title_margin_bottom</item>
     </style>
 
-    <style name="SplashAppName">
-        <item name="android:textColor">@color/splash_text_color</item>
-        <item name="android:background">@color/splash_text_background_color</item>
-        <item name="android:textSize">50sp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
 </resources>

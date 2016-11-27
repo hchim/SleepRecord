@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -20,11 +19,13 @@ import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.services.AppConfigUpdateService;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 
+/**
+ * SplashActivity. Currently not used.
+ */
 public class SplashActivity extends AppCompatActivity {
     private static final int DELAY_MILLIS = 3000;
 
     @BindView(R.id.fullscreen_imageview) ImageView mImageView;
-    @BindView(R.id.fullscreen_textview) TextView mTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,15 +42,15 @@ public class SplashActivity extends AppCompatActivity {
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-
         SharedPreferenceUtil sharedPreferenceUtil = new SharedPreferenceUtil(this);
         String splashImage = sharedPreferenceUtil.getString(AppConfigUpdateService.SPLASH_IMAGE_Location, null);
+
         if (splashImage != null) {
-            //hide text view
-            mTextView.setVisibility(View.GONE);
             //show image view
             Uri uri = Uri.fromFile(new File(getFilesDir(), splashImage));
             Picasso.with(this).load(uri).into(mImageView);
+        } else {
+            mImageView.setImageResource(R.mipmap.default_splash);
         }
 
         //update splash image
