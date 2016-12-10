@@ -17,16 +17,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.main.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.settings.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.main.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="im.hch.sleeprecord.activities.MainActivity" />
+                android:value="im.hch.sleeprecord.activities.main.MainActivity" />
         </activity>
         <activity
             android:name=".activities.AddRecordActivity"
@@ -35,11 +35,11 @@
         <activity
             android:name=".activities.records.SleepRecordsActivity"
             android:label="@string/title_activity_sleep_records"
-            android:parentActivityName=".activities.MainActivity"
+            android:parentActivityName=".activities.main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="im.hch.sleeprecord.activities.MainActivity" />
+                android:value="im.hch.sleeprecord.activities.main.MainActivity" />
         </activity>
         <activity
             android:name=".activities.LoginActivity"
@@ -50,7 +50,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".activities.RegisterActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_register">
+        </activity>
         <service
             android:name=".services.AppConfigUpdateService"
             android:exported="false"></service>

@@ -28,4 +28,8 @@
     <dimen name="sleep_record_view_margin_left">5dp</dimen>
     <dimen name="sleep_record_view_layout_width">0dp</dimen>
 
+    <!-- Login Activity-->
+    <dimen name="sign_in_button_margin_top">16dp</dimen>
+    <dimen name="register_button_margin_top">16dp</dimen>
+    <dimen name="form_item_padding_top">18px</dimen>
 </resources>

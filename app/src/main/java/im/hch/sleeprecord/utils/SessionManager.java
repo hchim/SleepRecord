@@ -65,4 +65,8 @@ public class SessionManager {
     public String getAccessToken() {
         return mSharedPreferenceUtil.getString(ACCESS_TOKEN, null);
     }
+
+    public String getLoginId() {
+        return mSharedPreferenceUtil.getString(LOGIN_ID, null);
+    }
 }

@@ -23,4 +23,17 @@ public class UserProfileServiceClient extends BaseServiceClient {
 
         return null;
     }
+
+    public UserProfile register(String email, String password, String nickName) {
+        //TODO implement
+        UserProfile userProfile = new UserProfile();
+        userProfile.setUsername(nickName);
+        userProfile.setAccessToken("defaultaccesstoken");
+
+        return userProfile;
+    }
+
+    public void updateUserProfile(UserProfile userProfile) {
+        //TODO save user nick name
+    }
 }

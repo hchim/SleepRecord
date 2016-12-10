@@ -1,4 +1,4 @@
-package im.hch.sleeprecord.activities;
+package im.hch.sleeprecord.activities.main;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +21,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
+import im.hch.sleeprecord.activities.AddRecordActivity;
 import im.hch.sleeprecord.activities.records.SleepRecordsActivity;
 import im.hch.sleeprecord.activities.records.SleepRecordsAdapter;
 import im.hch.sleeprecord.activities.settings.SettingsActivity;
