@@ -3,9 +3,12 @@ package im.hch.sleeprecord.utils;
 import android.app.Activity;
 import android.content.Intent;
 
+import im.hch.sleeprecord.activities.AddRecordActivity;
 import im.hch.sleeprecord.activities.LoginActivity;
 import im.hch.sleeprecord.activities.main.MainActivity;
 import im.hch.sleeprecord.activities.RegisterActivity;
+import im.hch.sleeprecord.activities.records.SleepRecordsActivity;
+import im.hch.sleeprecord.activities.settings.SettingsActivity;
 
 public class ActivityUtils {
 
@@ -21,6 +24,18 @@ public class ActivityUtils {
         navigateTo(currentActivity, LoginActivity.class, true);
     }
 
+    public static void navigateToSettingsActivity(Activity currentActivity) {
+        navigateTo(currentActivity, SettingsActivity.class, false);
+    }
+
+    public static void navigateToAddRecordActivity(Activity currentActivity) {
+        navigateTo(currentActivity, AddRecordActivity.class, false);
+    }
+
+    public static void navigateToSleepRecordsActivity(Activity currentActivity) {
+        navigateTo(currentActivity, SleepRecordsActivity.class, false);
+    }
+
     /**
      * Navigate the the new activity from the current activity.
      * @param current
@@ -31,11 +46,13 @@ public class ActivityUtils {
         Intent intent = new Intent(current, newActivityClass);
 
         if (clearTop) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         }
 
         current.startActivity(intent);
-        current.finish();
+
+        if (clearTop) {
+            current.finish();
+        }
     }
 }

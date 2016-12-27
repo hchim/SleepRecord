@@ -1,72 +1,68 @@
 package im.hch.sleeprecord.utils;
 
 import android.content.Context;
-import android.content.Intent;
-
-import im.hch.sleeprecord.activities.LoginActivity;
+import im.hch.sleeprecord.models.UserProfile;
 
 public class SessionManager {
 
-    private static final String IS_LOGIN = "IsLoggedIn";
-    private static final String LOGIN_ID = "LoginID";
-    private static final String USERNAME = "UserName";
+    private static final String USER_ID = "UserId";
+    private static final String EMAIL = "Email";
+    private static final String USER_NAME = "UserName";
+    private static final String HEADER_ICON_URL = "HeaderIconURL";
+    private static final String HEADER_ICON = "HeaderIcon";
     private static final String ACCESS_TOKEN = "AccessToken";
     private static final String SESSION_CREATE_TIME = "SessionCreateTime";
 
-    private Context mContext;
     private SharedPreferenceUtil mSharedPreferenceUtil;
 
     public SessionManager(Context context) {
-        this.mContext = context;
         this.mSharedPreferenceUtil = new SharedPreferenceUtil(context);
     }
 
-    public void createSession(String loginId, String username, String accessToken) {
-        mSharedPreferenceUtil.setValue(IS_LOGIN, true);
-        mSharedPreferenceUtil.setValue(LOGIN_ID, loginId);
-        mSharedPreferenceUtil.setValue(USERNAME, username);
-        mSharedPreferenceUtil.setValue(ACCESS_TOKEN, accessToken);
+    public void createSession(UserProfile userProfile) {
+        mSharedPreferenceUtil.setValue(USER_ID, userProfile.getId());
+        mSharedPreferenceUtil.setValue(EMAIL, userProfile.getEmail());
+        mSharedPreferenceUtil.setValue(USER_NAME, userProfile.getUsername());
+        mSharedPreferenceUtil.setValue(ACCESS_TOKEN, userProfile.getAccessToken());
+        mSharedPreferenceUtil.setValue(HEADER_ICON_URL, userProfile.getHeaderIconUrl());
         mSharedPreferenceUtil.setValue(SESSION_CREATE_TIME, System.currentTimeMillis());
     }
 
-    public void logoutUser() {
-        mSharedPreferenceUtil.removeValue(IS_LOGIN);
-        mSharedPreferenceUtil.removeValue(USERNAME);
+    public void clearSession() {
+        mSharedPreferenceUtil.removeValue(USER_ID);
+        mSharedPreferenceUtil.removeValue(EMAIL);
+        mSharedPreferenceUtil.removeValue(USER_NAME);
         mSharedPreferenceUtil.removeValue(ACCESS_TOKEN);
+        mSharedPreferenceUtil.removeValue(HEADER_ICON_URL);
+        mSharedPreferenceUtil.removeValue(HEADER_ICON);
         mSharedPreferenceUtil.removeValue(SESSION_CREATE_TIME);
-
-        startLoginActivity();
-    }
-
-    private void startLoginActivity() {
-        Intent intent = new Intent(mContext, LoginActivity.class);
-        // Closing all the Activities
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        // Add new Flag to start new Activity
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        // Staring Login Activity
-        mContext.startActivity(intent);
-    }
-
-    public void checkLogin() {
-        if (!isLoggedIn()) {
-            startLoginActivity();
-        }
     }
 
     public boolean isLoggedIn() {
-        return mSharedPreferenceUtil.getBoolean(IS_LOGIN, false);
+        return mSharedPreferenceUtil.getString(USER_ID, null) != null;
     }
 
     public String getUsername() {
-        return mSharedPreferenceUtil.getString(USERNAME, null);
+        return mSharedPreferenceUtil.getString(USER_NAME, null);
+    }
+
+    public String getHeaderIcon() {
+        return mSharedPreferenceUtil.getString(HEADER_ICON, null);
+    }
+
+    public String getHeaderIconUrl() {
+        return mSharedPreferenceUtil.getString(HEADER_ICON_URL, null);
     }
 
     public String getAccessToken() {
         return mSharedPreferenceUtil.getString(ACCESS_TOKEN, null);
     }
 
-    public String getLoginId() {
-        return mSharedPreferenceUtil.getString(LOGIN_ID, null);
+    public String getUserId() {
+        return mSharedPreferenceUtil.getString(USER_ID, null);
+    }
+
+    public String getEmail() {
+        return mSharedPreferenceUtil.getString(EMAIL, null);
     }
 }

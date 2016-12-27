@@ -9,5 +9,7 @@ public class UserProfile {
     private String id;
     private String email;
     private String username;
+    private String headerIconUrl;
+    private String headerIconPath;
     private String accessToken;
 }

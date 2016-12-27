@@ -119,6 +119,10 @@
         <item>Nov</item>
         <item>Dec</item>
     </string-array>
+    <string name="age_years">Years</string>
+    <string name="age_months">Months</string>
+    <string name="age_days">Days</string>
+
     <string name="title_activity_login">Sign in</string>
     <string name="title_activity_register">Register</string>
 
@@ -148,6 +152,5 @@
     <string name="button_boy">Boy</string>
     <string name="button_girl">Girl</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="babyinfo_fragment_title">Edit Baby Information</string>
 </resources>

@@ -13,7 +13,7 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/headerImageView"
         android:layout_width="@dimen/nav_header_image_width"
         android:layout_height="@dimen/nav_header_image_height"
         app:srcCompat="@android:drawable/sym_def_app_icon"

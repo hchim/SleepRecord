@@ -1,10 +1,13 @@
 package im.hch.sleeprecord.utils;
 
 import android.app.DatePickerDialog;
+import android.app.FragmentManager;
 import android.view.View;
-import android.widget.DatePicker;
 
 import java.util.Calendar;
+
+import im.hch.sleeprecord.activities.main.BabyInfoDialogFragment;
+import im.hch.sleeprecord.models.BabyInfo;
 
 public class DialogUtils {
 
@@ -21,5 +24,10 @@ public class DialogUtils {
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(v.getContext(), listener, year, month, day);
         datePickerDialog.show();
+    }
+
+    public static void showEditBabyInfoDialog(FragmentManager fragmentManager, BabyInfo babyInfo) {
+        BabyInfoDialogFragment babyInfoFragment = BabyInfoDialogFragment.newInstance(babyInfo);
+        babyInfoFragment.show(fragmentManager, "dialog");
     }
 }

@@ -16,6 +16,9 @@ public class UserProfileServiceClient extends BaseServiceClient {
         if (email.equals("foo@example.com") && password.equals("P@ssw0rd")) {
             UserProfile userProfile = new UserProfile();
             userProfile.setUsername("Foo");
+            userProfile.setId("userid");
+            userProfile.setHeaderIconUrl("headericonurl");
+            userProfile.setEmail(email);
             userProfile.setAccessToken("defaultaccesstoken");
 
             return userProfile;
@@ -28,6 +31,9 @@ public class UserProfileServiceClient extends BaseServiceClient {
         //TODO implement
         UserProfile userProfile = new UserProfile();
         userProfile.setUsername(nickName);
+        userProfile.setId("userid");
+        userProfile.setHeaderIconUrl("headericonurl");
+        userProfile.setEmail(email);
         userProfile.setAccessToken("defaultaccesstoken");
 
         return userProfile;

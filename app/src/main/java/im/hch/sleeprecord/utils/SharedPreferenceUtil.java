@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import java.util.Set;
 
 import im.hch.sleeprecord.models.BabyInfo;
+import im.hch.sleeprecord.models.UserProfile;
 
 public class SharedPreferenceUtil {
 
@@ -81,7 +82,7 @@ public class SharedPreferenceUtil {
 
         setValue(BABY_NAME, babyInfo.getBabyName());
         setValue(BABY_BIRTHDAY, DateUtils.dateToStr(babyInfo.getBabyBirthday()));
-        setValue(BABY_GENDER, babyInfo.getBabyGender());
+        setValue(BABY_GENDER, babyInfo.getBabyGender().getValue());
     }
 
     public BabyInfo retrieveBabyInfo() {
@@ -100,6 +101,6 @@ public class SharedPreferenceUtil {
         }
         babyInfo.setBabyGender(BabyInfo.Gender.create(gender));
 
-        return null;
+        return babyInfo;
     }
 }

@@ -222,7 +222,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             progressBarHelper.hide();
 
             if (success) {
-                mSessionManager.createSession(userProfile.getUsername(), mEmail, userProfile.getAccessToken());
+                userProfile.setEmail(mEmail);
+                mSessionManager.createSession(userProfile);
                 ActivityUtils.navigateToMainActivity(RegisterActivity.this);
             } else {
                 //TODO show error based on the return result

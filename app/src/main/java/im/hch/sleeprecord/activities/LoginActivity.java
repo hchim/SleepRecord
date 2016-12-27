@@ -224,7 +224,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             progressBarHelper.hide();
 
             if (success) {
-                mSessionManager.createSession(userProfile.getUsername(), mEmail, userProfile.getAccessToken());
+                mSessionManager.createSession(userProfile);
                 ActivityUtils.navigateToMainActivity(LoginActivity.this);
             } else {
                 mPasswordView.setError(incorrectPasswordError);
