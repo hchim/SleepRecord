@@ -1,5 +1,7 @@
 package im.hch.sleeprecord.serviceclients;
 
+import java.util.Date;
+
 import im.hch.sleeprecord.models.BabyInfo;
 
 /**
@@ -9,5 +11,9 @@ import im.hch.sleeprecord.models.BabyInfo;
 public class SleepServiceClient extends BaseServiceClient {
     public void saveBabyInfo(BabyInfo babyInfo, String userId) {
         //TODO
+    }
+
+    public void addSleepRecord(Date from, Date to, String userid) {
+        //
     }
 }

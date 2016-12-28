@@ -1,6 +1,5 @@
 package im.hch.sleeprecord.activities.records;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,10 +16,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
-import im.hch.sleeprecord.activities.AddRecordActivity;
+import im.hch.sleeprecord.activities.main.AddRecordDialogFragment;
 import im.hch.sleeprecord.models.SleepRecord;
+import im.hch.sleeprecord.utils.DialogUtils;
 
-public class SleepRecordsActivity extends AppCompatActivity {
+public class SleepRecordsActivity extends AppCompatActivity implements AddRecordDialogFragment.AddRecordDialogListener {
 
     private SleepRecordsAdapter sleepRecordsAdapter;
 
@@ -101,7 +101,7 @@ public class SleepRecordsActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_new_sleep_record) {
-            openAddRecordActivity();
+            DialogUtils.showAddRecordDialog(getFragmentManager());
             return true;
         }
 
@@ -113,7 +113,8 @@ public class SleepRecordsActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    private void openAddRecordActivity() {
-        startActivity(new Intent(this, AddRecordActivity.class));
+    @Override
+    public void onSleepRecordSaved(Date from, Date to) {
+        //TODO reload add records
     }
 }

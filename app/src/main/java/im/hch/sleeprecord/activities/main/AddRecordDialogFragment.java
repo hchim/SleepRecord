@@ -1,18 +1,20 @@
-package im.hch.sleeprecord.activities;
+package im.hch.sleeprecord.activities.main;
 
 import android.app.DatePickerDialog;
+import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TimePicker;
 
 import java.text.DateFormat;
@@ -24,13 +26,14 @@ import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
+import im.hch.sleeprecord.serviceclients.SleepServiceClient;
+import im.hch.sleeprecord.utils.DialogUtils;
+import im.hch.sleeprecord.utils.SessionManager;
 
-public class AddRecordActivity extends AppCompatActivity {
-    public static final String TAG = AddRecordActivity.class.getSimpleName();
+public class AddRecordDialogFragment extends DialogFragment {
+    public static final String TAG = AddRecordDialogFragment.class.getSimpleName();
     private static final long MAX_SLEEP_TIME = 24 * 60 * 60;
 
-    @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.add_record_ProgressBar) ProgressBar addRecordProgressBar;
     @BindView(R.id.fall_asleep_date_editText) EditText fallAsleepDateEditText;
     @BindView(R.id.fall_asleep_time_editText) EditText fallAsleepTimeEditText;
     @BindView(R.id.wakeup_date_editText) EditText wakeupDateEditText;
@@ -41,19 +44,45 @@ public class AddRecordActivity extends AppCompatActivity {
     @BindString(R.string.failed_to_parse_wakeup_time) String failureParseWakeupTime;
     @BindString(R.string.wakeup_time_before_fallasleep_time) String wakeupTimeBeforeFallAsleepTime;
     @BindString(R.string.time_between_too_long) String timeBetweenTooLong;
+    @BindString(R.string.title_activity_add_record) String title;
+    @BindString(R.string.progress_message_save) String progressMessageSave;
 
-    private static DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
+    private static DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT);
     private static DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
+    private ProgressDialog progressDialog;
+    private SaveSleepRecordTask saveSleepRecordTask;
+    private SleepServiceClient sleepServiceClient;
+    private SessionManager sessionManager;
+    private AddRecordDialogListener mListener;
+
+    public static AddRecordDialogFragment newInstance() {
+        AddRecordDialogFragment fragment = new AddRecordDialogFragment();
+        return fragment;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_record);
-        ButterKnife.bind(this);
+    }
 
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.content_add_record, container, false);
+        ButterKnife.bind(this, view);
 
+        Context context = getActivity();
+        sleepServiceClient = new SleepServiceClient();
+        sessionManager = new SessionManager(context);
+
+        if (context instanceof AddRecordDialogListener) {
+            mListener = (AddRecordDialogListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement AddRecordDialogListener");
+        }
+
+        getDialog().setTitle(title);
         resetDatetime();
 
         fallAsleepDateEditText.setOnClickListener(new DatePickOnClickListener());
@@ -66,16 +95,8 @@ public class AddRecordActivity extends AppCompatActivity {
                 saveSleepRecord();
             }
         });
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                break;
-        }
-        return true;
+        return view;
     }
 
     private void resetDatetime() {
@@ -92,11 +113,9 @@ public class AddRecordActivity extends AppCompatActivity {
     private void handleSaveFailure(String message) {
         Snackbar.make(saveRecordButton, message, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
-        addRecordProgressBar.setVisibility(View.GONE);
     }
 
     private void saveSleepRecord() {
-        addRecordProgressBar.setVisibility(View.VISIBLE);
         Calendar from = getDatetime(fallAsleepDateEditText, fallAsleepTimeEditText);
         if (from == null) {
             handleSaveFailure(failureParseFallAsleepTime);
@@ -122,10 +141,8 @@ public class AddRecordActivity extends AppCompatActivity {
             return;
         }
 
-        //TODO invoke service api
-        addRecordProgressBar.setVisibility(View.GONE);
-        // return to the parent view
-        finish();
+        saveSleepRecordTask = new AddRecordDialogFragment.SaveSleepRecordTask(from.getTime(), to.getTime());
+        saveSleepRecordTask.execute((Void) null);
     }
 
     private Calendar getDatetime(EditText dateEdit, EditText timeEdit) {
@@ -217,5 +234,53 @@ public class AddRecordActivity extends AppCompatActivity {
                 timePickerDialog.show();
             }
         }
+    }
+
+    private class SaveSleepRecordTask extends AsyncTask<Void, Void, Boolean> {
+
+        Date from;
+        Date to;
+
+        public SaveSleepRecordTask(Date from, Date to) {
+            this.from = from;
+            this.to = to;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = DialogUtils.showProgressDialog(AddRecordDialogFragment.this.getActivity(), progressMessageSave);
+            progressDialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            progressDialog.dismiss();
+
+            if (result) {
+                if (mListener != null) {
+                    mListener.onSleepRecordSaved(from, to);
+                }
+                AddRecordDialogFragment.this.dismiss();
+            } else {
+                //TODO show error message
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            progressDialog.dismiss();
+            saveSleepRecordTask = null;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            sleepServiceClient.addSleepRecord(from, to, sessionManager.getUserId());
+            return true;
+        }
+    }
+
+    public interface AddRecordDialogListener {
+        public void onSleepRecordSaved(Date from, Date to);
     }
 }

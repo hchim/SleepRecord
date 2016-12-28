@@ -33,7 +33,7 @@ import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link BabyInfoDialogFragment.OnFragmentInteractionListener} interface
+ * {@link BabyInfoDialogFragmentListener} interface
  * to handle interaction events.
  * Use the {@link BabyInfoDialogFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -47,7 +47,7 @@ public class BabyInfoDialogFragment extends DialogFragment {
     private String babyBirthday = "";
     private BabyInfo.Gender babyGender = BabyInfo.Gender.Boy;
 
-    private OnFragmentInteractionListener mListener;
+    private BabyInfoDialogFragmentListener mListener;
     private SleepServiceClient sleepServiceClient;
     private SaveUserInfoTask mSaveUserInfoTask;
     private ProgressDialog progressDialog;
@@ -66,10 +66,6 @@ public class BabyInfoDialogFragment extends DialogFragment {
     @BindString(R.string.error_gender_required) String invalidGenderError;
     @BindString(R.string.babyinfo_fragment_title) String title;
     @BindString(R.string.progress_message_save) String progressMessageSave;
-
-    public BabyInfoDialogFragment() {
-        sleepServiceClient = new SleepServiceClient();
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -111,17 +107,19 @@ public class BabyInfoDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_baby_info, container, false);
         ButterKnife.bind(this, view);
 
-        getDialog().setTitle(title);
         Context context = this.getActivity();
         sessionManager = new SessionManager(context);
         sharedPreferenceUtil = new SharedPreferenceUtil(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        sleepServiceClient = new SleepServiceClient();
+
+        if (context instanceof BabyInfoDialogFragmentListener) {
+            mListener = (BabyInfoDialogFragmentListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement BabyInfoDialogFragmentListener");
         }
 
+        getDialog().setTitle(title);
         mBabyNameView.setText(babyName);
         mBabyBirthdayView.setText(babyBirthday);
         if (babyGender == BabyInfo.Gender.Boy) {
@@ -219,7 +217,7 @@ public class BabyInfoDialogFragment extends DialogFragment {
     /**
      * This task saves user info to the remote service.
      */
-    public class SaveUserInfoTask extends AsyncTask<Void, Void, Boolean> {
+    private class SaveUserInfoTask extends AsyncTask<Void, Void, Boolean> {
 
         private BabyInfo babyInfo;
 
@@ -271,7 +269,7 @@ public class BabyInfoDialogFragment extends DialogFragment {
         }
     }
 
-    public interface OnFragmentInteractionListener {
+    public interface BabyInfoDialogFragmentListener {
         /**
          * Invoked when baby info is updated. The Activity should implement this method and
          * update the UI.

@@ -8,10 +8,12 @@ import android.view.View;
 
 import java.util.Calendar;
 
+import im.hch.sleeprecord.activities.main.AddRecordDialogFragment;
 import im.hch.sleeprecord.activities.main.BabyInfoDialogFragment;
 import im.hch.sleeprecord.models.BabyInfo;
 
 public class DialogUtils {
+    public static final String DIALOG_TAG = "dialog";
 
     /**
      * Show date picker dialog.
@@ -36,8 +38,19 @@ public class DialogUtils {
      */
     public static BabyInfoDialogFragment showEditBabyInfoDialog(FragmentManager fragmentManager, BabyInfo babyInfo) {
         BabyInfoDialogFragment babyInfoFragment = BabyInfoDialogFragment.newInstance(babyInfo);
-        babyInfoFragment.show(fragmentManager, "dialog");
+        babyInfoFragment.show(fragmentManager, DIALOG_TAG);
         return babyInfoFragment;
+    }
+
+    /**
+     * Show the add record dialog.
+     * @param fragmentManager
+     * @return
+     */
+    public static AddRecordDialogFragment showAddRecordDialog(FragmentManager fragmentManager) {
+        AddRecordDialogFragment addRecordDialogFragment = AddRecordDialogFragment.newInstance();
+        addRecordDialogFragment.show(fragmentManager, DIALOG_TAG);
+        return addRecordDialogFragment;
     }
 
     /**

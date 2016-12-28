@@ -3,7 +3,6 @@ package im.hch.sleeprecord.utils;
 import android.app.Activity;
 import android.content.Intent;
 
-import im.hch.sleeprecord.activities.AddRecordActivity;
 import im.hch.sleeprecord.activities.LoginActivity;
 import im.hch.sleeprecord.activities.main.MainActivity;
 import im.hch.sleeprecord.activities.RegisterActivity;
@@ -26,10 +25,6 @@ public class ActivityUtils {
 
     public static void navigateToSettingsActivity(Activity currentActivity) {
         navigateTo(currentActivity, SettingsActivity.class, false);
-    }
-
-    public static void navigateToAddRecordActivity(Activity currentActivity) {
-        navigateTo(currentActivity, AddRecordActivity.class, false);
     }
 
     public static void navigateToSleepRecordsActivity(Activity currentActivity) {

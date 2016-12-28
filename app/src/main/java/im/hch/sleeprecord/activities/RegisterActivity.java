@@ -196,7 +196,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     /**
      * This task registers an account.
      */
-    public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
+    private class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
         private final String mPassword;

@@ -1,6 +1,5 @@
 package im.hch.sleeprecord.activities.main;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -34,8 +33,10 @@ import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.SessionManager;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, BabyInfoDialogFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener,
+        BabyInfoDialogFragment.BabyInfoDialogFragmentListener,
+        AddRecordDialogFragment.AddRecordDialogListener {
 
     private SleepRecordsAdapter sleepRecordsAdapter;
     private SessionManager sessionManager;
@@ -170,7 +171,8 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_new_sleep_record) {
-            ActivityUtils.navigateToAddRecordActivity(this);
+//            ActivityUtils.navigateToAddRecordActivity(this);
+            DialogUtils.showAddRecordDialog(getFragmentManager());
             return true;
         }
 
@@ -272,5 +274,10 @@ public class MainActivity extends AppCompatActivity
         public HeaderViewHolder(View root) {
             ButterKnife.bind(this, root);
         }
+    }
+
+    @Override
+    public void onSleepRecordSaved(Date from, Date to) {
+        //TODO reload sleep records
     }
 }
