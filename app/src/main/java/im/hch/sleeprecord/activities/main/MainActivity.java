@@ -48,9 +48,12 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.nav_view) NavigationView navigationView;
     @BindView(R.id.list_view) ListView listView;
 
-    @BindString(R.string.age_years) String AGE_YEARS;
-    @BindString(R.string.age_months) String AGE_MONTHS;
-    @BindString(R.string.age_days) String AGE_DAYS;
+    @BindString(R.string.age_years_singlular) String AGE_YEARS_S;
+    @BindString(R.string.age_months_singlular) String AGE_MONTHS_S;
+    @BindString(R.string.age_days_singlular) String AGE_DAYS_S;
+    @BindString(R.string.age_years_plural) String AGE_YEARS_P;
+    @BindString(R.string.age_months_plural) String AGE_MONTHS_P;
+    @BindString(R.string.age_days_plural) String AGE_DAYS_P;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -239,18 +242,22 @@ public class MainActivity extends AppCompatActivity
 
             if (years > 0) {
                 if (months == 0) {
-                    str += String.format(" %d%s", years, AGE_YEARS);
+                    str += String.format(" %d%s", years, years == 1 ? AGE_YEARS_S : AGE_YEARS_P);
                 } else {
-                    str += String.format(" %d%s %d%s", years, AGE_YEARS, (months - years * 12), AGE_MONTHS);
+                    str += String.format(" %d%s %d%s",
+                            years, years == 1 ? AGE_YEARS_S : AGE_YEARS_P,
+                            (months - years * 12), months == 1 ? AGE_MONTHS_S : AGE_MONTHS_P);
                 }
             } else if (months > 0) {
                 if (days == 0) {
-                    str += String.format(" %d%s", months, AGE_MONTHS);
+                    str += String.format(" %d%s", months, months == 1 ? AGE_MONTHS_S : AGE_MONTHS_P);
                 } else {
-                    str += String.format(" %d%s %d%s", months, AGE_MONTHS, days, AGE_DAYS);
+                    str += String.format(" %d%s %d%s",
+                            months, months == 1 ? AGE_MONTHS_S : AGE_MONTHS_P,
+                            days, days == 1 ? AGE_DAYS_S : AGE_DAYS_P);
                 }
             } else {
-                str += String.format(" %d%s", days, AGE_DAYS);
+                str += String.format(" %d%s", days, days == 1 ? AGE_DAYS_S : AGE_DAYS_P);
             }
         }
 
