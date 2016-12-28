@@ -20,7 +20,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -78,11 +77,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mSessionManager = new SessionManager(this);
         userProfileServiceClient = new UserProfileServiceClient();
         emailLoaderHelper = new EmailLoaderHelper(this);
-
-        if (mSessionManager.isLoggedIn()) {
-            ActivityUtils.navigateToMainActivity(this);
-            return;
-        }
 
         // Set up the login form.
         populateAutoComplete();
