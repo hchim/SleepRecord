@@ -1,6 +1,7 @@
 package im.hch.sleeprecord.activities;
 
 import android.app.LoaderManager.LoaderCallbacks;
+import android.app.ProgressDialog;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -31,9 +32,9 @@ import im.hch.sleeprecord.loader.EmailLoaderHelper;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.UserProfileServiceClient;
 import im.hch.sleeprecord.utils.ActivityUtils;
+import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.FieldValidator;
 import im.hch.sleeprecord.utils.PermissionUtils;
-import im.hch.sleeprecord.utils.ProgressBarHelper;
 import im.hch.sleeprecord.utils.SessionManager;
 
 /**
@@ -51,7 +52,6 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     @BindView(R.id.email) AutoCompleteTextView mEmailView;
     @BindView(R.id.password) EditText mPasswordView;
     @BindView(R.id.re_password) EditText mRepeatPasswordView;
-    @BindView(R.id.register_progress) ProgressBar mProgressView;
     @BindView(R.id.register_form) RelativeLayout mRegisterForm;
     @BindView(R.id.username) EditText mUsernameView;
     @BindView(R.id.email_register_button) Button mEmailRegisterButton;
@@ -61,11 +61,12 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     @BindString(R.string.error_unmatch_password) String unmatchPasswordError;
     @BindString(R.string.error_field_required) String requiredFieldError;
     @BindString(R.string.error_invalid_email) String invalidEmailError;
+    @BindString(R.string.progress_message_register) String progressMessageRegister;
 
     private SessionManager mSessionManager;
     private UserProfileServiceClient userProfileServiceClient;
     private EmailLoaderHelper emailLoaderHelper;
-    private ProgressBarHelper progressBarHelper;
+    private ProgressDialog progressDialog;
     private UserProfile userProfile;
 
     @Override
@@ -76,7 +77,6 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
         this.mSessionManager = new SessionManager(this);
         this.userProfileServiceClient = new UserProfileServiceClient();
-        this.progressBarHelper = new ProgressBarHelper(mProgressView, mRegisterForm, null);
         this.emailLoaderHelper = new EmailLoaderHelper(this);
 
         populateAutoComplete();
@@ -188,7 +188,6 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         if (cancel) {
             focusView.requestFocus();
         } else {
-            progressBarHelper.show();
             mRegisterTask = new UserRegisterTask(email, password, nickName);
             mRegisterTask.execute((Void) null);
         }
@@ -210,6 +209,13 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         }
 
         @Override
+        protected void onPreExecute() {
+            progressDialog = DialogUtils.showProgressDialog(RegisterActivity.this, progressMessageRegister);
+            progressDialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
         protected Boolean doInBackground(Void... params) {
             userProfile = userProfileServiceClient.register(mEmail, mPassword, mNickName);
             //TODO check the return result
@@ -219,7 +225,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         @Override
         protected void onPostExecute(final Boolean success) {
             mRegisterTask = null;
-            progressBarHelper.hide();
+            progressDialog.dismiss();
 
             if (success) {
                 userProfile.setEmail(mEmail);
@@ -233,7 +239,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         @Override
         protected void onCancelled() {
             mRegisterTask = null;
-            progressBarHelper.hide();
+            progressDialog.dismiss();
         }
     }
 }

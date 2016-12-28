@@ -2,8 +2,8 @@ package im.hch.sleeprecord.activities.main;
 
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,7 +27,6 @@ import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
 import im.hch.sleeprecord.utils.DateUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
-import im.hch.sleeprecord.utils.ProgressBarHelper;
 import im.hch.sleeprecord.utils.SessionManager;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 
@@ -51,7 +50,7 @@ public class BabyInfoDialogFragment extends DialogFragment {
     private OnFragmentInteractionListener mListener;
     private SleepServiceClient sleepServiceClient;
     private SaveUserInfoTask mSaveUserInfoTask;
-    private ProgressBarHelper progressBarHelper;
+    private ProgressDialog progressDialog;
     private SessionManager sessionManager;
     private SharedPreferenceUtil sharedPreferenceUtil;
 
@@ -66,6 +65,7 @@ public class BabyInfoDialogFragment extends DialogFragment {
     @BindString(R.string.error_field_required) String requiredFieldError;
     @BindString(R.string.error_gender_required) String invalidGenderError;
     @BindString(R.string.babyinfo_fragment_title) String title;
+    @BindString(R.string.progress_message_save) String progressMessageSave;
 
     public BabyInfoDialogFragment() {
         sleepServiceClient = new SleepServiceClient();
@@ -135,7 +135,6 @@ public class BabyInfoDialogFragment extends DialogFragment {
             girlRadioButton.setChecked(false);
         }
 
-        progressBarHelper = new ProgressBarHelper(mProgressBar, mBabyInfoView, null);
         mBabyInfoSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -207,8 +206,6 @@ public class BabyInfoDialogFragment extends DialogFragment {
         if (cancel) {
             focusView.requestFocus();
         } else {
-            progressBarHelper.show();
-
             BabyInfo babyInfo = new BabyInfo();
             babyInfo.setBabyName(babyName);
             babyInfo.setBabyGender(BabyInfo.Gender.create(gender));
@@ -244,9 +241,16 @@ public class BabyInfoDialogFragment extends DialogFragment {
         }
 
         @Override
+        protected void onPreExecute() {
+            progressDialog = DialogUtils.showProgressDialog(BabyInfoDialogFragment.this.getActivity(), progressMessageSave);
+            progressDialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
         protected void onPostExecute(final Boolean success) {
             mSaveUserInfoTask = null;
-            progressBarHelper.hide();
+            progressDialog.dismiss();
 
             if (success) {
                 sharedPreferenceUtil.storeBabyInfo(babyInfo);
@@ -263,7 +267,7 @@ public class BabyInfoDialogFragment extends DialogFragment {
         @Override
         protected void onCancelled() {
             mSaveUserInfoTask = null;
-            progressBarHelper.hide();
+            progressDialog.dismiss();
         }
     }
 

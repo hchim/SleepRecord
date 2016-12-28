@@ -1,5 +1,6 @@
 package im.hch.sleeprecord.activities;
 
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -33,9 +34,9 @@ import im.hch.sleeprecord.loader.EmailLoaderHelper;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.UserProfileServiceClient;
 import im.hch.sleeprecord.utils.ActivityUtils;
+import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.FieldValidator;
 import im.hch.sleeprecord.utils.PermissionUtils;
-import im.hch.sleeprecord.utils.ProgressBarHelper;
 import im.hch.sleeprecord.utils.SessionManager;
 
 /**
@@ -52,7 +53,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     // UI references.
     @BindView(R.id.email) AutoCompleteTextView mEmailView;
     @BindView(R.id.password) EditText mPasswordView;
-    @BindView(R.id.login_progress) ProgressBar mProgressView;
     @BindView(R.id.login_form) RelativeLayout mLoginForm;
     @BindView(R.id.email_sign_in_button) Button mEmailSigninButton;
     @BindView(R.id.email_register_button) Button mEmailRegisterButton;
@@ -61,12 +61,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @BindString(R.string.error_invalid_password) String invalidPassordError;
     @BindString(R.string.error_field_required) String requiredFieldError;
     @BindString(R.string.error_invalid_email) String invalidPasswordError;
+    @BindString(R.string.progress_message_sign_in) String signInProgressMessage;
 
     private SessionManager mSessionManager;
     private UserProfileServiceClient userProfileServiceClient;
     private EmailLoaderHelper emailLoaderHelper;
-    private ProgressBarHelper progressBarHelper;
-
+    private ProgressDialog progressDialog;
     private UserProfile userProfile;
 
     @Override
@@ -78,7 +78,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mSessionManager = new SessionManager(this);
         userProfileServiceClient = new UserProfileServiceClient();
         emailLoaderHelper = new EmailLoaderHelper(this);
-        progressBarHelper = new ProgressBarHelper(mProgressView, mLoginForm, null);
 
         if (mSessionManager.isLoggedIn()) {
             ActivityUtils.navigateToMainActivity(this);
@@ -190,9 +189,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            progressBarHelper.show();
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
@@ -213,6 +209,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         @Override
+        protected void onPreExecute() {
+            progressDialog = DialogUtils.showProgressDialog(LoginActivity.this, signInProgressMessage);
+            progressDialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
         protected Boolean doInBackground(Void... params) {
             userProfile = userProfileServiceClient.login(mEmail, mPassword);
             return userProfile != null;
@@ -221,7 +224,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
-            progressBarHelper.hide();
+            progressDialog.dismiss();
 
             if (success) {
                 mSessionManager.createSession(userProfile);
@@ -235,7 +238,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected void onCancelled() {
             mAuthTask = null;
-            progressBarHelper.hide();
+            progressDialog.dismiss();
         }
     }
 }

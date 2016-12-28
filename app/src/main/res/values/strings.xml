@@ -137,6 +137,11 @@
     <string name="prompt_babyname">Baby Name</string>
     <string name="prompt_baby_birthday">Baby Birthday</string>
 
+    <!-- Progress dialog messages -->
+    <string name="progress_message_sign_in">Signing in ...</string>
+    <string name="progress_message_register">Registering ...</string>
+    <string name="progress_message_save">Saving ...</string>
+
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_register_short">Register</string>
     <string name="error_invalid_email">Invalid email address</string>
