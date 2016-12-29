@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
+        
         headerViewHolder = new HeaderViewHolder(navigationView.getHeaderView(0));
 
         sessionManager = new SessionManager(this);
