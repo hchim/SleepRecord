@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -18,7 +19,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,7 +30,9 @@ import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.loader.EmailLoaderHelper;
 import im.hch.sleeprecord.models.UserProfile;
-import im.hch.sleeprecord.serviceclients.UserProfileServiceClient;
+import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
+import im.hch.sleeprecord.serviceclients.exceptions.EmailUsedException;
+import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.FieldValidator;
@@ -62,12 +64,13 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     @BindString(R.string.error_field_required) String requiredFieldError;
     @BindString(R.string.error_invalid_email) String invalidEmailError;
     @BindString(R.string.progress_message_register) String progressMessageRegister;
+    @BindString(R.string.error_failed_to_register) String failedToRegisterError;
+    @BindString(R.string.error_email_used) String emailUsedError;
 
     private SessionManager mSessionManager;
-    private UserProfileServiceClient userProfileServiceClient;
+    private IdentityServiceClient identityServiceClient;
     private EmailLoaderHelper emailLoaderHelper;
     private ProgressDialog progressDialog;
-    private UserProfile userProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +79,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         ButterKnife.bind(this);
 
         this.mSessionManager = new SessionManager(this);
-        this.userProfileServiceClient = new UserProfileServiceClient();
+        this.identityServiceClient = new IdentityServiceClient();
         this.emailLoaderHelper = new EmailLoaderHelper(this);
 
         populateAutoComplete();
@@ -145,6 +148,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             return;
         }
 
+        ActivityUtils.hideKeyboard(this);
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -201,11 +205,14 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         private final String mEmail;
         private final String mPassword;
         private final String mNickName;
+        private UserProfile userProfile;
+        private String errorMessage;
 
         UserRegisterTask(String email, String password, String nickName) {
             mEmail = email;
             mPassword = password;
             mNickName = nickName;
+            errorMessage = failedToRegisterError;
         }
 
         @Override
@@ -217,9 +224,15 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            userProfile = userProfileServiceClient.register(mEmail, mPassword, mNickName);
-            //TODO check the return result
-            return userProfile != null;
+            try {
+                userProfile = identityServiceClient.register(mEmail, mPassword, mNickName);
+                return userProfile != null;
+            } catch (EmailUsedException e) {
+                errorMessage = emailUsedError;
+            } catch (InternalServerException e) {
+                //Use the default error message
+            }
+            return false;
         }
 
         @Override
@@ -232,7 +245,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                 mSessionManager.createSession(userProfile);
                 ActivityUtils.navigateToMainActivity(RegisterActivity.this);
             } else {
-                //TODO show error based on the return result
+                Snackbar.make(mEmailRegisterButton, errorMessage, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         }
 

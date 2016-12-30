@@ -1,7 +1,10 @@
 package im.hch.sleeprecord.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import im.hch.sleeprecord.activities.LoginActivity;
 import im.hch.sleeprecord.activities.main.MainActivity;
@@ -48,6 +51,19 @@ public class ActivityUtils {
 
         if (clearTop) {
             current.finish();
+        }
+    }
+
+    /**
+     * Hide keyboard.
+     * @param activity
+     */
+    public static void hideKeyboard(Activity activity) {
+        View v = activity.getWindow().getCurrentFocus();
+        if (v != null) {
+            InputMethodManager imm =
+                    (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         }
     }
 }

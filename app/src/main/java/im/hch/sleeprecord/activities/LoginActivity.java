@@ -31,7 +31,10 @@ import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.loader.EmailLoaderHelper;
 import im.hch.sleeprecord.models.UserProfile;
-import im.hch.sleeprecord.serviceclients.UserProfileServiceClient;
+import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
+import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
+import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
+import im.hch.sleeprecord.serviceclients.exceptions.WrongPasswordException;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.FieldValidator;
@@ -63,7 +66,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @BindString(R.string.progress_message_sign_in) String signInProgressMessage;
 
     private SessionManager mSessionManager;
-    private UserProfileServiceClient userProfileServiceClient;
+    private IdentityServiceClient identityServiceClient;
     private EmailLoaderHelper emailLoaderHelper;
     private ProgressDialog progressDialog;
     private UserProfile userProfile;
@@ -75,7 +78,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         ButterKnife.bind(this);
 
         mSessionManager = new SessionManager(this);
-        userProfileServiceClient = new UserProfileServiceClient();
+        identityServiceClient = new IdentityServiceClient();
         emailLoaderHelper = new EmailLoaderHelper(this);
 
         // Set up the login form.
@@ -156,6 +159,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             return;
         }
 
+        ActivityUtils.hideKeyboard(this);
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -196,10 +200,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mEmail;
         private final String mPassword;
+        private String errorMessage;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
+            errorMessage = incorrectPasswordError;
         }
 
         @Override
@@ -211,8 +217,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            userProfile = userProfileServiceClient.login(mEmail, mPassword);
-            return userProfile != null;
+            try {
+                userProfile = identityServiceClient.login(mEmail, mPassword);
+                return userProfile != null;
+            } catch (AccountNotExistException e) {
+                //use the default error message
+            } catch (WrongPasswordException e) {
+                //use the default error message
+            } catch (InternalServerException e) {
+                //use the default error message
+            }
+            return false;
         }
 
         @Override

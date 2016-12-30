@@ -153,6 +153,8 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="error_failed_to_register">Failed to create the user account, please try again later.</string>
+    <string name="error_email_used">This email was already used with another account.</string>
 
     <string name="button_previous">Previous</string>
     <string name="button_next">Next</string>
