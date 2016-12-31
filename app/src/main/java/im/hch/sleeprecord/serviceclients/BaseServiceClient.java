@@ -35,6 +35,63 @@ public class BaseServiceClient {
     }
 
     /**
+     * Send the get, post, put, delete request.
+     * @param request
+     * @return
+     * @throws ConnectionFailureException
+     * @throws InternalServerException
+     */
+    private JSONObject sendRequest(Request request)
+            throws ConnectionFailureException, InternalServerException {
+        try {
+            Response response = httpClient.newCall(request).execute();
+            String resBody = response.body().string();
+            JSONObject jsonObj = new JSONObject(resBody);
+            return jsonObj;
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to submit the post request.", e);
+            throw new ConnectionFailureException();
+        } catch (JSONException ex) {
+            Log.e(TAG, "Illegal response.", ex);
+            throw new InternalServerException();
+        }
+    }
+
+    /**
+     * Submit a delete request.
+     * @param url
+     * @return
+     * @throws InternalServerException
+     * @throws ConnectionFailureException
+     */
+    public JSONObject delete(String url)
+            throws InternalServerException, ConnectionFailureException {
+        Request request = new Request.Builder()
+                .url(url)
+                .delete()
+                .build();
+
+        return sendRequest(request);
+    }
+
+    /**
+     * Submit a get request.
+     * @param url
+     * @return
+     * @throws InternalServerException
+     * @throws ConnectionFailureException
+     */
+    public JSONObject get(String url)
+            throws InternalServerException, ConnectionFailureException {
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        return sendRequest(request);
+    }
+
+    /**
      * Submit a post request.
      * @param url
      * @param object
@@ -50,19 +107,25 @@ public class BaseServiceClient {
                 .post(body)
                 .build();
 
-        Response response = null;
-        try {
-            response = httpClient.newCall(request).execute();
-            String resBody = response.body().string();
-            JSONObject jsonObj = new JSONObject(resBody);
-            return jsonObj;
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to submit the post request.", e);
-            throw new ConnectionFailureException();
-        } catch (JSONException ex) {
-            Log.e(TAG, "Illegal response.", ex);
-            throw new InternalServerException();
-        }
+        return sendRequest(request);
     }
 
+    /**
+     * Submit a put request.
+     * @param url
+     * @param object
+     * @return
+     * @throws InternalServerException
+     * @throws ConnectionFailureException
+     */
+    public JSONObject put(String url, JSONObject object)
+            throws InternalServerException, ConnectionFailureException {
+        RequestBody body = RequestBody.create(JSON, object.toString());
+        Request request = new Request.Builder()
+                .url(url)
+                .put(body)
+                .build();
+
+        return sendRequest(request);
+    }
 }

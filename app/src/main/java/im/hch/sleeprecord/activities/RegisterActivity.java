@@ -250,6 +250,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                 mSessionManager.createSession(userProfile);
                 ActivityUtils.navigateToMainActivity(RegisterActivity.this);
             } else {
+                mUsernameView.requestFocus();
                 Snackbar.make(mEmailRegisterButton, errorMessage, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }

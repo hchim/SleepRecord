@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -25,6 +26,9 @@ import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
+import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
+import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
+import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DateUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.SessionManager;
@@ -66,6 +70,8 @@ public class BabyInfoDialogFragment extends DialogFragment {
     @BindString(R.string.error_gender_required) String invalidGenderError;
     @BindString(R.string.babyinfo_fragment_title) String title;
     @BindString(R.string.progress_message_save) String progressMessageSave;
+    @BindString(R.string.error_failed_to_connect) String failedToConnectError;
+    @BindString(R.string.error_internal_server) String internalServerError;
 
     /**
      * Use this factory method to create a new instance of
@@ -74,7 +80,6 @@ public class BabyInfoDialogFragment extends DialogFragment {
      * @param babyInfo Baby information
      * @return A new instance of fragment BabyInfoDialogFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static BabyInfoDialogFragment newInstance(BabyInfo babyInfo) {
         BabyInfoDialogFragment fragment = new BabyInfoDialogFragment();
         if (babyInfo != null) {
@@ -139,7 +144,6 @@ public class BabyInfoDialogFragment extends DialogFragment {
                 attemptSaveInfo();
             }
         });
-
         mBabyBirthdayView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,6 +224,7 @@ public class BabyInfoDialogFragment extends DialogFragment {
     private class SaveUserInfoTask extends AsyncTask<Void, Void, Boolean> {
 
         private BabyInfo babyInfo;
+        private String errorMessage;
 
         public SaveUserInfoTask(BabyInfo babyInfo) {
             this.babyInfo = babyInfo;
@@ -227,11 +232,15 @@ public class BabyInfoDialogFragment extends DialogFragment {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            if (sessionManager != null) {
-                String userid = sessionManager.getUserId();
-                if (userid != null) {
+            String userid = sessionManager.getUserId();
+            if (userid != null) {
+                try {
                     sleepServiceClient.saveBabyInfo(this.babyInfo, userid);
                     return true;
+                } catch (InternalServerException e) {
+                    errorMessage = internalServerError;
+                } catch (ConnectionFailureException e) {
+                    errorMessage = failedToConnectError;
                 }
             }
 
@@ -257,8 +266,10 @@ public class BabyInfoDialogFragment extends DialogFragment {
                 }
                 BabyInfoDialogFragment.this.dismiss();
             } else {
-                //TODO show error message
                 mBabyNameView.requestFocus();
+                Snackbar.make(mBabyInfoSaveButton, errorMessage, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+
             }
         }
 

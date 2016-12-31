@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -21,6 +20,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     // UI references.
     @BindView(R.id.email) AutoCompleteTextView mEmailView;
-    @BindView(R.id.password) TextInputEditText mPasswordView;
+    @BindView(R.id.password) EditText mPasswordView;
     @BindView(R.id.login_form) RelativeLayout mLoginForm;
     @BindView(R.id.email_sign_in_button) Button mEmailSigninButton;
     @BindView(R.id.email_register_button) Button mEmailRegisterButton;
@@ -244,6 +244,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 mSessionManager.createSession(userProfile);
                 ActivityUtils.navigateToMainActivity(LoginActivity.this);
             } else {
+                mEmailView.requestFocus();
                 Snackbar.make(mEmailSigninButton, errorMessage, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
