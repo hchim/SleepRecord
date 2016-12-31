@@ -31,6 +31,7 @@ import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.loader.EmailLoaderHelper;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
+import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.EmailUsedException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.ActivityUtils;
@@ -66,6 +67,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     @BindString(R.string.progress_message_register) String progressMessageRegister;
     @BindString(R.string.error_failed_to_register) String failedToRegisterError;
     @BindString(R.string.error_email_used) String emailUsedError;
+    @BindString(R.string.error_failed_to_connect) String failedToConnectError;
+    @BindString(R.string.error_internal_server) String internalServerError;
 
     private SessionManager mSessionManager;
     private IdentityServiceClient identityServiceClient;
@@ -230,7 +233,9 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             } catch (EmailUsedException e) {
                 errorMessage = emailUsedError;
             } catch (InternalServerException e) {
-                //Use the default error message
+                errorMessage = internalServerError;
+            } catch (ConnectionFailureException e) {
+                errorMessage = failedToConnectError;
             }
             return false;
         }

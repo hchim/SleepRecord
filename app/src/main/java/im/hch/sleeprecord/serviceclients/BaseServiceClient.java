@@ -7,6 +7,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
+import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -32,7 +34,16 @@ public class BaseServiceClient {
         httpClient = new OkHttpClient();
     }
 
-    public JSONObject post(String url, JSONObject object) {
+    /**
+     * Submit a post request.
+     * @param url
+     * @param object
+     * @return
+     * @throws InternalServerException response has a wrong format.
+     * @throws ConnectionFailureException when failed to connect to the server.
+     */
+    public JSONObject post(String url, JSONObject object)
+            throws InternalServerException, ConnectionFailureException {
         RequestBody body = RequestBody.create(JSON, object.toString());
         Request request = new Request.Builder()
                 .url(url)
@@ -46,11 +57,11 @@ public class BaseServiceClient {
             JSONObject jsonObj = new JSONObject(resBody);
             return jsonObj;
         } catch (IOException e) {
-            Log.e(TAG, "Failed to submit the post request.");
-            return null;
+            Log.e(TAG, "Failed to submit the post request.", e);
+            throw new ConnectionFailureException();
         } catch (JSONException ex) {
-            Log.e(TAG, "Illegal response.");
-            return null;
+            Log.e(TAG, "Illegal response.", ex);
+            throw new InternalServerException();
         }
     }
 

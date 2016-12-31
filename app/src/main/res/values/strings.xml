@@ -147,6 +147,7 @@
     <string name="error_invalid_email">Invalid email address</string>
     <string name="error_invalid_password">Invalid password</string>
     <string name="error_incorrect_password">Account does not exist or wrong password</string>
+    <string name="error_internal_server">Service unavailable. Please try again later.</string>
     <string name="error_unmatch_password">Password does not match</string>
     <string name="error_field_required">This field is required</string>
     <string name="error_gender_required">The gender of the baby is required</string>
@@ -155,6 +156,7 @@
     </string>
     <string name="error_failed_to_register">Failed to create the user account, please try again later.</string>
     <string name="error_email_used">This email was already used with another account.</string>
+    <string name="error_failed_to_connect">Failed to connect to the server. Please try again later.</string>
 
     <string name="button_previous">Previous</string>
     <string name="button_next">Next</string>

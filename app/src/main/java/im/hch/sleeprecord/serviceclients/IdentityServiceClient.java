@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
+import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.EmailUsedException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongPasswordException;
@@ -34,7 +35,7 @@ public class IdentityServiceClient extends BaseServiceClient {
      * @return
      */
     public UserProfile login(String email, String password)
-            throws AccountNotExistException, WrongPasswordException, InternalServerException {
+            throws AccountNotExistException, WrongPasswordException, InternalServerException, ConnectionFailureException {
         JSONObject object = new JSONObject();
 
         try {
@@ -64,7 +65,7 @@ public class IdentityServiceClient extends BaseServiceClient {
             return userProfile;
         } catch (JSONException ex) {
             Log.e(TAG, "JSON format error");
-            return null;
+            throw new InternalServerException();
         }
     }
 
@@ -78,7 +79,7 @@ public class IdentityServiceClient extends BaseServiceClient {
      * @throws InternalServerException
      */
     public UserProfile register(String email, String password, String nickName)
-            throws EmailUsedException, InternalServerException {
+            throws EmailUsedException, InternalServerException, ConnectionFailureException {
         JSONObject object = new JSONObject();
 
         try {
@@ -107,7 +108,7 @@ public class IdentityServiceClient extends BaseServiceClient {
             return userProfile;
         } catch (JSONException ex) {
             Log.e(TAG, "JSON format error");
-            return null;
+            throw new InternalServerException();
         }
     }
 

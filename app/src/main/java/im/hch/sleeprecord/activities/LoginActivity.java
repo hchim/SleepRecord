@@ -3,6 +3,8 @@ package im.hch.sleeprecord.activities;
 import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -19,7 +21,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -33,6 +34,7 @@ import im.hch.sleeprecord.loader.EmailLoaderHelper;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
 import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
+import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongPasswordException;
 import im.hch.sleeprecord.utils.ActivityUtils;
@@ -54,16 +56,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     // UI references.
     @BindView(R.id.email) AutoCompleteTextView mEmailView;
-    @BindView(R.id.password) EditText mPasswordView;
+    @BindView(R.id.password) TextInputEditText mPasswordView;
     @BindView(R.id.login_form) RelativeLayout mLoginForm;
     @BindView(R.id.email_sign_in_button) Button mEmailSigninButton;
     @BindView(R.id.email_register_button) Button mEmailRegisterButton;
 
     @BindString(R.string.error_incorrect_password) String incorrectPasswordError;
-    @BindString(R.string.error_invalid_password) String invalidPassordError;
     @BindString(R.string.error_field_required) String requiredFieldError;
-    @BindString(R.string.error_invalid_email) String invalidPasswordError;
+    @BindString(R.string.error_invalid_email) String invalidEmailError;
     @BindString(R.string.progress_message_sign_in) String signInProgressMessage;
+    @BindString(R.string.error_failed_to_connect) String failedToConnectError;
+    @BindString(R.string.error_internal_server) String internalServerError;
 
     private SessionManager mSessionManager;
     private IdentityServiceClient identityServiceClient;
@@ -177,7 +180,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             focusView = mEmailView;
             cancel = true;
         } else if (!FieldValidator.isEmailValid(email)) {
-            mEmailView.setError(invalidPasswordError);
+            mEmailView.setError(invalidEmailError);
             focusView = mEmailView;
             cancel = true;
         }
@@ -225,7 +228,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             } catch (WrongPasswordException e) {
                 //use the default error message
             } catch (InternalServerException e) {
-                //use the default error message
+                errorMessage = internalServerError;
+            } catch (ConnectionFailureException e) {
+                errorMessage = failedToConnectError;
             }
             return false;
         }
@@ -239,8 +244,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 mSessionManager.createSession(userProfile);
                 ActivityUtils.navigateToMainActivity(LoginActivity.this);
             } else {
-                mPasswordView.setError(incorrectPasswordError);
-                mPasswordView.requestFocus();
+                Snackbar.make(mEmailSigninButton, errorMessage, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         }
 
