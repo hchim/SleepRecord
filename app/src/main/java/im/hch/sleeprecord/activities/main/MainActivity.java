@@ -1,5 +1,7 @@
 package im.hch.sleeprecord.activities.main;
 
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -7,12 +9,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -27,6 +31,9 @@ import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.records.SleepRecordsAdapter;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.SleepRecord;
+import im.hch.sleeprecord.models.UserProfile;
+import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
+import im.hch.sleeprecord.serviceclients.SleepServiceClient;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DateUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
@@ -37,17 +44,20 @@ public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         BabyInfoDialogFragment.BabyInfoDialogFragmentListener,
         AddRecordDialogFragment.AddRecordDialogListener {
+    public static final String TAG = "MainActivity";
 
     private SleepRecordsAdapter sleepRecordsAdapter;
     private SessionManager sessionManager;
     private SharedPreferenceUtil sharedPreferenceUtil;
-
+    private SleepServiceClient sleepServiceClient;
+    private IdentityServiceClient identityServiceClient;
     private HeaderViewHolder headerViewHolder;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.drawer_layout) DrawerLayout drawer;
     @BindView(R.id.nav_view) NavigationView navigationView;
     @BindView(R.id.list_view) ListView listView;
+    @BindView(R.id.progressBar) ProgressBar progressBar;
 
     @BindString(R.string.age_years_singlular) String AGE_YEARS_S;
     @BindString(R.string.age_months_singlular) String AGE_MONTHS_S;
@@ -66,8 +76,10 @@ public class MainActivity extends AppCompatActivity implements
 
         sessionManager = new SessionManager(this);
         sharedPreferenceUtil = new SharedPreferenceUtil(this);
-        setSupportActionBar(toolbar);
+        sleepServiceClient = new SleepServiceClient();
+        identityServiceClient = new IdentityServiceClient();
 
+        setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -78,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements
         if (!sessionManager.isLoggedIn()) {
             ActivityUtils.navigateToLoginActivity(this);
         } else {
-            updateUserInfo();
+            updateUserInfo(sharedPreferenceUtil.retrieveUserProfile());
         }
 
         BabyInfo babyInfo = sharedPreferenceUtil.retrieveBabyInfo();
@@ -144,6 +156,8 @@ public class MainActivity extends AppCompatActivity implements
                         sharedPreferenceUtil.retrieveBabyInfo());
             }
         });
+
+        loadRemoteData();
     }
 
     @Override
@@ -171,7 +185,6 @@ public class MainActivity extends AppCompatActivity implements
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_new_sleep_record) {
-//            ActivityUtils.navigateToAddRecordActivity(this);
             DialogUtils.showAddRecordDialog(getFragmentManager());
             return true;
         }
@@ -212,17 +225,27 @@ public class MainActivity extends AppCompatActivity implements
         updateBabyInfo(babyInfo);
     }
 
-    private void updateUserInfo() {
-        String username = sessionManager.getUsername();
-        if (username != null) {
-            headerViewHolder.nameTextView.setText(username);
+    private void updateUserInfo(UserProfile userProfile) {
+        if (userProfile != null) {
+            headerViewHolder.nameTextView.setText(userProfile.getUsername());
         }
-
-        //TODO setup header, implement image lazy loader
     }
 
     private void updateBabyInfo(BabyInfo babyInfo) {
-        headerViewHolder.babyNameTextView.setText(getBabyInfoDisplayString(babyInfo));
+        if (babyInfo != null) {
+            headerViewHolder.babyNameTextView.setText(getBabyInfoDisplayString(babyInfo));
+        }
+    }
+
+    /**
+     * Load the remote data.
+     * 1. Baby Info.
+     * 2. Sleep Record.
+     */
+    private void loadRemoteData() {
+        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setProgress(0);
+        new LoadRemoteDataTask().execute();
     }
 
     private String getBabyInfoDisplayString(BabyInfo babyInfo) {
@@ -279,5 +302,79 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSleepRecordSaved(Date from, Date to) {
         //TODO reload sleep records
+    }
+
+    /**
+     * Update baby info task.
+     */
+    private class LoadRemoteDataTask extends AsyncTask<Void, Integer, Boolean> {
+
+        BabyInfo babyInfo;
+        UserProfile userProfile;
+
+        public static final int BABY_INFO_UPDATED = 30;
+        public static final int USER_INFO_UPDATED = 60;
+        public static final int SLEEP_RECORDS_UPDATED = 100;
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            String userId = sessionManager.getUserId();
+            if (userId == null) {
+                Log.wtf(MainActivity.TAG, "User id is null.");
+                return false;
+            }
+
+            //update baby info
+            try {
+                babyInfo = sleepServiceClient.getBabyInfo(userId);
+                sharedPreferenceUtil.storeBabyInfo(babyInfo);
+            } catch (Exception e) {
+                Log.w(MainActivity.TAG, e);
+            }
+            publishProgress(BABY_INFO_UPDATED);
+
+            try {
+                userProfile = identityServiceClient.getUser(userId);
+                //TODO store download image if required
+                sharedPreferenceUtil.storeUserProfile(userProfile);
+            } catch (Exception e) {
+                Log.w(MainActivity.TAG, e);
+            }
+            publishProgress(USER_INFO_UPDATED);
+
+            //TODO update sleep records
+            publishProgress(SLEEP_RECORDS_UPDATED);
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            switch (values[0]) {
+                case BABY_INFO_UPDATED:
+                    updateBabyInfo(babyInfo);
+                    break;
+                case USER_INFO_UPDATED:
+                    updateUserInfo(userProfile);
+                    break;
+                case SLEEP_RECORDS_UPDATED:
+                    break;
+            }
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                progressBar.setProgress(values[0]);
+            } else {
+                progressBar.setProgress(values[0], true);
+            }
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {}
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            progressBar.setVisibility(View.GONE);
+        }
     }
 }

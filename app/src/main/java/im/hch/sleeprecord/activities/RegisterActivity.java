@@ -246,7 +246,6 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             progressDialog.dismiss();
 
             if (success) {
-                userProfile.setEmail(mEmail);
                 mSessionManager.createSession(userProfile);
                 ActivityUtils.navigateToMainActivity(RegisterActivity.this);
             } else {

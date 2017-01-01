@@ -23,6 +23,21 @@ public class DateUtils {
         }
     }
 
+    public static String dateToStr(Date date, String format) {
+        DateFormat dateFormat = new SimpleDateFormat(format);
+        return dateFormat.format(date);
+    }
+
+    public static Date strToDate(String str, String format) {
+        DateFormat dateFormat = new SimpleDateFormat(format);
+        try {
+            Date time = dateFormat.parse(str);
+            return time;
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
     public static int yearsBetween(Calendar from, Calendar to) {
         int year = from.get(Calendar.YEAR);
         int years = 0;

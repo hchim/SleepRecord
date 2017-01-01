@@ -11,6 +11,7 @@ import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.EmailUsedException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongPasswordException;
+import im.hch.sleeprecord.utils.DateUtils;
 
 public class IdentityServiceClient extends BaseServiceClient {
 
@@ -18,6 +19,7 @@ public class IdentityServiceClient extends BaseServiceClient {
 
     public static final String REGISTER_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "register";
     public static final String LOGIN_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "login";
+    public static final String USERS_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/";
 
     public static final String ERROR_CODE_EMAIL_USED = "EMAIL_USED";
     public static final String ERROR_CODE_WRONG_PASSWORD = "WRONG_PASSWORD";
@@ -25,6 +27,45 @@ public class IdentityServiceClient extends BaseServiceClient {
 
     public IdentityServiceClient() {
         super();
+    }
+
+    /**
+     * Get user.
+     * @param userId
+     * @return
+     * @throws AccountNotExistException
+     * @throws InternalServerException
+     * @throws ConnectionFailureException
+     */
+    public UserProfile getUser(String userId)
+            throws AccountNotExistException, InternalServerException, ConnectionFailureException {
+        String url = USERS_URL + userId;
+
+        try {
+            JSONObject result = get(url);
+            if (result.has(ERROR_CODE_KEY)) {
+                if (result.has(ERROR_MESSAGE_KEY)) {
+                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
+                }
+
+                String errorCode = result.getString(ERROR_CODE_KEY);
+                if (errorCode.equals(ERROR_CODE_ACCOUNT_NOT_EXIST)) {
+                    throw new AccountNotExistException();
+                }
+                throw new InternalServerException();
+            }
+
+            UserProfile userProfile = new UserProfile();
+            userProfile.setId(result.getString("userId"));
+            userProfile.setUsername(result.getString("nickName"));
+            userProfile.setHeaderIconUrl(result.getString("headerImageUrl"));
+            userProfile.setEmailVerified(result.getBoolean("emailVerified"));
+            userProfile.setCreateTime(DateUtils.strToDate(result.getString("createTime"), DATE_FORMAT));
+            return userProfile;
+        } catch (JSONException ex) {
+            Log.e(TAG, "JSON format error");
+            throw new InternalServerException();
+        }
     }
 
     /**

@@ -4,18 +4,17 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.util.Date;
 import java.util.Set;
 
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.UserProfile;
 
 public class SharedPreferenceUtil {
-
-    private Context mContext;
+    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private SharedPreferences mSharedPreference;
 
     public SharedPreferenceUtil(Context context) {
-        this.mContext = context;
         this.mSharedPreference = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
@@ -36,6 +35,12 @@ public class SharedPreferenceUtil {
             editor.putLong(key, (Long) value);
         } else if (value instanceof Set) {
             editor.putStringSet(key, (Set<String>) value);
+        } else if (value instanceof Date) {
+            String strDate = null;
+            if (value != null) {
+                strDate = DateUtils.dateToStr((Date) value, DATE_FORMAT);
+            }
+            editor.putString(key, strDate);
         }
 
         editor.commit();
@@ -43,6 +48,15 @@ public class SharedPreferenceUtil {
 
     public String getString(String key, String defaultValue) {
         return mSharedPreference.getString(key, defaultValue);
+    }
+
+    public Date getDate(String key, Date defaultValue) {
+        String str = mSharedPreference.getString(key, null);
+        if (str == null) {
+            return defaultValue;
+        } else {
+            return DateUtils.strToDate(str, DATE_FORMAT);
+        }
     }
 
     public Float getFloat(String key, float defaultValue) {
@@ -102,5 +116,36 @@ public class SharedPreferenceUtil {
         babyInfo.setBabyGender(BabyInfo.Gender.create(gender));
 
         return babyInfo;
+    }
+
+    public static final String USER_ID = "UserId";
+    public static final String EMAIL = "Email";
+    public static final String USER_NAME = "UserName";
+    public static final String HEADER_ICON_URL = "HeaderIconURL";
+    public static final String HEADER_ICON = "HeaderIcon";
+    public static final String ACCESS_TOKEN = "AccessToken";
+    public static final String SESSION_CREATE_TIME = "SessionCreateTime";
+    public static final String EMAIL_VERIFIED = "EmailVerified";
+    public static final String USER_CREATE_TIME = "UserCreateTime";
+
+    public void storeUserProfile(UserProfile userProfile) {
+        if (userProfile == null) {
+            return;
+        }
+
+        setValue(USER_NAME, userProfile.getUsername());
+        setValue(HEADER_ICON_URL, userProfile.getHeaderIconUrl());
+        setValue(EMAIL_VERIFIED, userProfile.isEmailVerified());
+        setValue(USER_CREATE_TIME, userProfile.getCreateTime());
+    }
+
+    public UserProfile retrieveUserProfile() {
+        UserProfile userProfile = new UserProfile();
+
+        userProfile.setUsername(getString(USER_NAME, null));
+        userProfile.setHeaderIconUrl(getString(HEADER_ICON_URL, null));
+        userProfile.setEmailVerified(getBoolean(EMAIL_VERIFIED, false));
+        userProfile.setCreateTime(getDate(USER_CREATE_TIME, null));
+        return userProfile;
     }
 }

@@ -15,10 +15,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-/**
- * Created by huiche on 11/11/16.
- */
-
 public class BaseServiceClient {
     public static final String TAG = "BaseServiceClient";
 
@@ -27,6 +23,7 @@ public class BaseServiceClient {
     public static final String ERROR_CODE_INTERNAL_FAILURE = "INTERNAL_FAILURE";
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
     protected OkHttpClient httpClient;
 

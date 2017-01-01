@@ -33,6 +33,7 @@ import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.loader.EmailLoaderHelper;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
+import im.hch.sleeprecord.serviceclients.SleepServiceClient;
 import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
@@ -42,6 +43,7 @@ import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.FieldValidator;
 import im.hch.sleeprecord.utils.PermissionUtils;
 import im.hch.sleeprecord.utils.SessionManager;
+import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 
 /**
  * A login screen that offers login via email/password.
@@ -222,7 +224,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
             try {
                 userProfile = identityServiceClient.login(mEmail, mPassword);
-                return userProfile != null;
+                if (userProfile != null) {
+                    mSessionManager.createSession(userProfile);
+                    return true;
+                } else {
+                    return false;
+                }
             } catch (AccountNotExistException e) {
                 //use the default error message
             } catch (WrongPasswordException e) {
@@ -232,6 +239,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             } catch (ConnectionFailureException e) {
                 errorMessage = failedToConnectError;
             }
+
             return false;
         }
 
@@ -241,7 +249,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             progressDialog.dismiss();
 
             if (success) {
-                mSessionManager.createSession(userProfile);
                 ActivityUtils.navigateToMainActivity(LoginActivity.this);
             } else {
                 mEmailView.requestFocus();
@@ -257,4 +264,3 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 }
-

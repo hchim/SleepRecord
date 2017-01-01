@@ -12,4 +12,6 @@ public class UserProfile {
     private String headerIconUrl;
     private String headerIconPath;
     private String accessToken;
+    private boolean emailVerified;
+    private Date createTime;
 }
