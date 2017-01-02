@@ -328,6 +328,7 @@ public class MainActivity extends AppCompatActivity implements
             try {
                 babyInfo = sleepServiceClient.getBabyInfo(userId);
                 sharedPreferenceUtil.storeBabyInfo(babyInfo);
+                Thread.sleep(1000);
             } catch (Exception e) {
                 Log.w(MainActivity.TAG, e);
             }
@@ -337,6 +338,7 @@ public class MainActivity extends AppCompatActivity implements
                 userProfile = identityServiceClient.getUser(userId);
                 //TODO store download image if required
                 sharedPreferenceUtil.storeUserProfile(userProfile);
+                Thread.sleep(1000);
             } catch (Exception e) {
                 Log.w(MainActivity.TAG, e);
             }
@@ -366,10 +368,6 @@ public class MainActivity extends AppCompatActivity implements
             } else {
                 progressBar.setProgress(values[0], true);
             }
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {}
         }
 
         @Override

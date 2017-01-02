@@ -27,6 +27,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
+import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
+import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
+import im.hch.sleeprecord.serviceclients.exceptions.TimeOverlapException;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.SessionManager;
 
@@ -46,6 +49,9 @@ public class AddRecordDialogFragment extends DialogFragment {
     @BindString(R.string.time_between_too_long) String timeBetweenTooLong;
     @BindString(R.string.title_activity_add_record) String title;
     @BindString(R.string.progress_message_save) String progressMessageSave;
+    @BindString(R.string.error_failed_to_connect) String failedToConnectError;
+    @BindString(R.string.error_internal_server) String internalServerError;
+    @BindString(R.string.error_sleep_record_overlap) String sleepRecordOverlapError;
 
     private static DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT);
     private static DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
@@ -115,14 +121,17 @@ public class AddRecordDialogFragment extends DialogFragment {
                 .setAction("Action", null).show();
     }
 
+    /**
+     * Client side date check:
+     * 1. from time must be before to time.
+     * 2. The time span between from and to is less than 24 hours.
+     */
     private void saveSleepRecord() {
         Calendar from = getDatetime(fallAsleepDateEditText, fallAsleepTimeEditText);
         if (from == null) {
             handleSaveFailure(failureParseFallAsleepTime);
             return;
         }
-
-        //TODO from time should after last fallasleep time
 
         Calendar to = getDatetime(wakeupDateEditText, wakeupTimeEditText);
         if (to == null) {
@@ -240,6 +249,7 @@ public class AddRecordDialogFragment extends DialogFragment {
 
         Date from;
         Date to;
+        String errorMessage;
 
         public SaveSleepRecordTask(Date from, Date to) {
             this.from = from;
@@ -263,7 +273,7 @@ public class AddRecordDialogFragment extends DialogFragment {
                 }
                 AddRecordDialogFragment.this.dismiss();
             } else {
-                //TODO show error message
+                handleSaveFailure(errorMessage);
             }
         }
 
@@ -275,8 +285,17 @@ public class AddRecordDialogFragment extends DialogFragment {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            sleepServiceClient.addSleepRecord(from, to, sessionManager.getUserId());
-            return true;
+            try {
+                sleepServiceClient.addSleepRecord(from, to, sessionManager.getUserId());
+                return true;
+            } catch (ConnectionFailureException e) {
+                errorMessage = failedToConnectError;
+            } catch (InternalServerException e) {
+                errorMessage = internalServerError;
+            } catch (TimeOverlapException e) {
+                errorMessage = sleepRecordOverlapError;
+            }
+            return false;
         }
     }
 
