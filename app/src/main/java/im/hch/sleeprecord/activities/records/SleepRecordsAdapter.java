@@ -8,9 +8,9 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindArray;
-import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
@@ -20,7 +20,7 @@ public class SleepRecordsAdapter extends BaseAdapter {
 
     private Context mContext;
     private LayoutInflater mInflater;
-    private ArrayList<SleepRecord> mDataSource;
+    private List<SleepRecord> mDataSource;
 
     public SleepRecordsAdapter(Context context, ArrayList<SleepRecord> items) {
         mContext = context;
@@ -61,6 +61,13 @@ public class SleepRecordsAdapter extends BaseAdapter {
         return convertView;
     }
 
+    public void updateSleepRecords(List<SleepRecord> sleepRecords) {
+        if (sleepRecords != null) {
+            this.mDataSource = sleepRecords;
+            notifyDataSetChanged();
+        }
+    }
+
     class SleepRecordViewHolder {
 
         View itemView;
@@ -79,6 +86,8 @@ public class SleepRecordsAdapter extends BaseAdapter {
             dateTextView.setText(String.valueOf(sleepRecord.getDate()));
             sleepRecordView.setSleepQuality(sleepRecord.getSleepQuality());
             sleepRecordView.setSleepTimePairs(sleepRecord.getSleepTimePairs());
+            //force to update sleep record view
+            sleepRecordView.invalidate();
         }
     }
 }

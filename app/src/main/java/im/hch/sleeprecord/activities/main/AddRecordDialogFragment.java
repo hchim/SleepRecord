@@ -122,7 +122,7 @@ public class AddRecordDialogFragment extends DialogFragment {
     }
 
     /**
-     * Client side date check:
+     * Client side dateTime check:
      * 1. from time must be before to time.
      * 2. The time span between from and to is less than 24 hours.
      */
@@ -174,7 +174,7 @@ public class AddRecordDialogFragment extends DialogFragment {
             calendar.setTime(date);
             return calendar;
         } catch (ParseException e) {
-            Log.e(TAG, "Failed to parse date str: " + dateStr);
+            Log.e(TAG, "Failed to parse dateTime str: " + dateStr);
             return null;
         }
     }

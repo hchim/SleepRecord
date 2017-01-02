@@ -10,7 +10,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,6 +44,10 @@ public class MainActivity extends AppCompatActivity implements
         BabyInfoDialogFragment.BabyInfoDialogFragmentListener,
         AddRecordDialogFragment.AddRecordDialogListener {
     public static final String TAG = "MainActivity";
+    /**
+     * The number of sleep records to show in the sleep records widget.
+     */
+    public static final int SHOW_SLEEP_RECORDS_NUM = 5;
 
     private SleepRecordsAdapter sleepRecordsAdapter;
     private SessionManager sessionManager;
@@ -100,52 +103,7 @@ public class MainActivity extends AppCompatActivity implements
             updateBabyInfo(babyInfo);
         }
 
-        //TODO replace these default data with real data
-        List<Pair<Date, Date>> sleepTimes = new ArrayList<>();
-        Calendar calendar = Calendar.getInstance();
-        Date begin, end;
-
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        begin = calendar.getTime();
-        calendar.set(Calendar.HOUR_OF_DAY, 6);
-        calendar.set(Calendar.MINUTE, 15);
-        end = calendar.getTime();
-        sleepTimes.add(new Pair<Date, Date>(begin, end));
-
-        calendar.set(Calendar.HOUR_OF_DAY, 10);
-        calendar.set(Calendar.MINUTE, 20);
-        begin = calendar.getTime();
-        calendar.set(Calendar.HOUR_OF_DAY, 11);
-        calendar.set(Calendar.MINUTE, 33);
-        end = calendar.getTime();
-        sleepTimes.add(new Pair<Date, Date>(begin, end));
-
-        calendar.set(Calendar.HOUR_OF_DAY, 13);
-        calendar.set(Calendar.MINUTE, 20);
-        begin = calendar.getTime();
-        calendar.set(Calendar.HOUR_OF_DAY, 16);
-        calendar.set(Calendar.MINUTE, 30);
-        end = calendar.getTime();
-        sleepTimes.add(new Pair<Date, Date>(begin, end));
-
-        calendar.set(Calendar.HOUR_OF_DAY, 20);
-        calendar.set(Calendar.MINUTE, 0);
-        begin = calendar.getTime();
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        end = calendar.getTime();
-        sleepTimes.add(new Pair<Date, Date>(begin, end));
-
-        //test data
-        ArrayList<SleepRecord> records = new ArrayList<>();
-        for (int i = 27; i >= 25; i--) {
-            SleepRecord sleepRecord = new SleepRecord(11, i);
-            sleepRecord.setSleepTimePairs(sleepTimes);
-            records.add(sleepRecord);
-        }
-
-        sleepRecordsAdapter = new SleepRecordsAdapter(this, records);
+        sleepRecordsAdapter = new SleepRecordsAdapter(this, new ArrayList<SleepRecord>());
         listView.setAdapter(sleepRecordsAdapter);
 
         headerViewHolder.babyNameTextView.setOnClickListener(new View.OnClickListener() {
@@ -311,6 +269,7 @@ public class MainActivity extends AppCompatActivity implements
 
         BabyInfo babyInfo;
         UserProfile userProfile;
+        List<SleepRecord> sleepRecords;
 
         public static final int BABY_INFO_UPDATED = 30;
         public static final int USER_INFO_UPDATED = 60;
@@ -344,10 +303,19 @@ public class MainActivity extends AppCompatActivity implements
             }
             publishProgress(USER_INFO_UPDATED);
 
-            //TODO update sleep records
+            //update sleep records
+            Calendar to = Calendar.getInstance();
+            Calendar from = Calendar.getInstance();
+            from.add(Calendar.DATE, SHOW_SLEEP_RECORDS_NUM * -1);
+
+            try {
+                sleepRecords = sleepServiceClient.getSleepRecords(userId, from.getTime(), to.getTime());
+            } catch (Exception e) {
+                Log.w(MainActivity.TAG, e);
+            }
             publishProgress(SLEEP_RECORDS_UPDATED);
 
-            return null;
+            return Boolean.TRUE;
         }
 
         @Override
@@ -360,6 +328,7 @@ public class MainActivity extends AppCompatActivity implements
                     updateUserInfo(userProfile);
                     break;
                 case SLEEP_RECORDS_UPDATED:
+                    sleepRecordsAdapter.updateSleepRecords(sleepRecords);
                     break;
             }
 

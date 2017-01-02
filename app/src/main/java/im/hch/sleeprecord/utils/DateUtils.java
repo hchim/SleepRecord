@@ -84,4 +84,36 @@ public class DateUtils {
 
         return (int) ((toTime - fromTime) / 1000/ 60/ 60/ 24);
     }
+
+    public static boolean before(Calendar cal1, Calendar cal2) {
+        if (cal1.get(Calendar.YEAR) < cal2.get(Calendar.YEAR)) {
+            return true;
+        }
+
+        if (cal1.get(Calendar.MONTH) < cal2.get(Calendar.MONTH)) {
+            return true;
+        }
+
+        if (cal1.get(Calendar.DATE) < cal2.get(Calendar.DATE)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean after(Calendar cal1, Calendar cal2) {
+        if (cal1.get(Calendar.YEAR) > cal2.get(Calendar.YEAR)) {
+            return true;
+        }
+
+        if (cal1.get(Calendar.MONTH) > cal2.get(Calendar.MONTH)) {
+            return true;
+        }
+
+        if (cal1.get(Calendar.DATE) > cal2.get(Calendar.DATE)) {
+            return true;
+        }
+
+        return false;
+    }
 }

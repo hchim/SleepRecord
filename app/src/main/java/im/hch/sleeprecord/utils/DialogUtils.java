@@ -16,7 +16,7 @@ public class DialogUtils {
     public static final String DIALOG_TAG = "dialog";
 
     /**
-     * Show date picker dialog.
+     * Show dateTime picker dialog.
      * @param v
      * @param listener
      */
