@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +17,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.models.SleepRecord;
-import im.hch.sleeprecord.serviceclients.SleepServiceClient;
 import im.hch.sleeprecord.utils.DateUtils;
 
 public class SleepRecordsAdapter extends BaseAdapter {
@@ -69,6 +67,13 @@ public class SleepRecordsAdapter extends BaseAdapter {
     public void updateSleepRecords(List<SleepRecord> sleepRecords) {
         if (sleepRecords != null) {
             this.mDataSource = sleepRecords;
+            notifyDataSetChanged();
+        }
+    }
+
+    public void addSleepRecords(List<SleepRecord> sleepRecords) {
+        if (sleepRecords != null) {
+            this.mDataSource.addAll(sleepRecords);
             notifyDataSetChanged();
         }
     }

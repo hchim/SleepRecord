@@ -2,7 +2,6 @@ package im.hch.sleeprecord.activities.records;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -24,26 +23,27 @@ import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.main.AddRecordDialogFragment;
 import im.hch.sleeprecord.activities.main.MainActivity;
-import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.SleepRecord;
-import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
-import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.SessionManager;
-import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 
 public class SleepRecordsActivity extends AppCompatActivity implements AddRecordDialogFragment.AddRecordDialogListener {
+    public static final String TAG = "SleepRecordsActivity";
     /**
      * The number of sleep records to show in the sleep records widget.
      */
     public static final int SHOW_SLEEP_RECORDS_NUM = 30;
+    public static final int THRESHOLD = 1;
 
     private SleepRecordsAdapter sleepRecordsAdapter;
     private SessionManager sessionManager;
     private SleepServiceClient sleepServiceClient;
+    private LoadRemoteDataTask loadRemoteDataTask;
+    private int page = 0;
+    private boolean isLoading = false;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.list_view) ListView listView;
@@ -66,8 +66,25 @@ public class SleepRecordsActivity extends AppCompatActivity implements AddRecord
 
         sleepRecordsAdapter = new SleepRecordsAdapter(this, new ArrayList<SleepRecord>());
         listView.setAdapter(sleepRecordsAdapter);
+        new LoadRemoteDataTask().execute(page);
 
-        new LoadRemoteDataTask().execute();
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                int count = listView.getCount();
+
+                if (scrollState == SCROLL_STATE_IDLE) {
+                    if (listView.getLastVisiblePosition() >= count - THRESHOLD) {
+                        Log.i(TAG, "Loading more data");
+                        // Execute LoadMoreDataTask AsyncTask
+                        new LoadRemoteDataTask().execute(page);
+                    }
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
+        });
     }
 
     @Override
@@ -103,7 +120,7 @@ public class SleepRecordsActivity extends AppCompatActivity implements AddRecord
         //TODO reload add records
     }
 
-    private class LoadRemoteDataTask extends AsyncTask<Void, Integer, Boolean> {
+    private class LoadRemoteDataTask extends AsyncTask<Integer, Void, Boolean> {
 
         List<SleepRecord> sleepRecords;
         ProgressDialog progressDialog;
@@ -111,11 +128,12 @@ public class SleepRecordsActivity extends AppCompatActivity implements AddRecord
 
         @Override
         protected void onPreExecute() {
+            isLoading = true;
             progressDialog = DialogUtils.showProgressDialog(SleepRecordsActivity.this, loadingMessage);
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected Boolean doInBackground(Integer... params) {
             String userId = sessionManager.getUserId();
             if (userId == null) {
                 Log.wtf(MainActivity.TAG, "User id is null.");
@@ -125,7 +143,8 @@ public class SleepRecordsActivity extends AppCompatActivity implements AddRecord
             //update sleep records
             Calendar to = Calendar.getInstance();
             Calendar from = Calendar.getInstance();
-            from.add(Calendar.DATE, SHOW_SLEEP_RECORDS_NUM * -1);
+            to.add(Calendar.DATE, SHOW_SLEEP_RECORDS_NUM * -1 * page);
+            from.add(Calendar.DATE, SHOW_SLEEP_RECORDS_NUM * -1 * (page + 1));
 
             try {
                 sleepRecords = sleepServiceClient.getSleepRecords(userId, from.getTime(), to.getTime());
@@ -142,9 +161,11 @@ public class SleepRecordsActivity extends AppCompatActivity implements AddRecord
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             progressDialog.dismiss();
+            isLoading = false;
 
             if (aBoolean) {
-                sleepRecordsAdapter.updateSleepRecords(sleepRecords);
+                page += 1;
+                sleepRecordsAdapter.addSleepRecords(sleepRecords);
             } else {
                 Snackbar.make(listView, errorMessage, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
