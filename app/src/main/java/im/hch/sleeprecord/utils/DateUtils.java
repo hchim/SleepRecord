@@ -116,4 +116,14 @@ public class DateUtils {
 
         return false;
     }
+
+    public static boolean sameDay(Calendar cal1, Calendar cal2) {
+        if (cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
+                && cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH)
+                && cal1.get(Calendar.DATE) == cal2.get(Calendar.DATE)) {
+            return true;
+        }
+
+        return false;
+    }
 }

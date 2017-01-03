@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.drawer_layout) DrawerLayout drawer;
     @BindView(R.id.nav_view) NavigationView navigationView;
-    @BindView(R.id.list_view) ListView listView;
+    @BindView(R.id.list_view) ListView sleepRecordListView;
     @BindView(R.id.progressBar) ProgressBar progressBar;
 
     @BindString(R.string.age_years_singlular) String AGE_YEARS_S;
@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements
 
         sleepRecordsAdapter = new SleepRecordsAdapter(this,
                 SleepRecordUtils.fillSleepRecords(records, from.getTime(), to.getTime()));
-        listView.setAdapter(sleepRecordsAdapter);
+        sleepRecordListView.setAdapter(sleepRecordsAdapter);
     }
 
     /**
@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onSleepRecordSaved(Date from, Date to) {
-        //TODO reload sleep records
+        new LoadSleepRecordTask().execute();
     }
 
     /**
@@ -360,6 +360,40 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    private class LoadSleepRecordTask extends AsyncTask<Void, Integer, Boolean> {
+        List<SleepRecord> sleepRecords;
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            String userId = sessionManager.getUserId();
+            if (userId == null) {
+                Log.wtf(MainActivity.TAG, "User id is null.");
+                return false;
+            }
+
+            //update sleep records
+            Calendar to = Calendar.getInstance();
+            Calendar from = Calendar.getInstance();
+            from.add(Calendar.DATE, SHOW_SLEEP_RECORDS_NUM * -1);
+
+            try {
+                sleepRecords = sleepServiceClient.getSleepRecords(userId, from.getTime(), to.getTime());
+                sharedPreferenceUtil.storeSleepRecords(sleepRecords, userId);
+            } catch (Exception e) {
+                Log.w(MainActivity.TAG, e);
+            }
+
+            return Boolean.TRUE;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            if (aBoolean) {
+                sleepRecordsAdapter.updateSleepRecords(sleepRecords);
+            }
         }
     }
 }
