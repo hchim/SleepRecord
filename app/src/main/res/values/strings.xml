@@ -88,9 +88,9 @@
     <!-- Add Record Failure Message-->
     <string name="failed_to_parse_fallasleep_time">Fall asleep time has a wrong format.</string>
     <string name="failed_to_parse_wakeup_time">Wakeup time has a wrong format.</string>
-    <string name="wakeup_time_before_fallasleep_time">Wakeup time larger than fall asleep time.</string>
+    <string name="wakeup_time_before_fallasleep_time">Wakeup time is ahead of fall asleep time.</string>
+    <string name="wakeup_time_after_current_time">Wakeup time is behind current time.</string>
     <string name="time_between_too_long">The time between fall asleep time and wakeup time is larger than 24 hours.</string>
-    <string name="title_activity_record_list">RecordListActivity</string>
 
     <!-- Nav Menu -->
     <string name="nav_menu_sleep_records">Record List</string>

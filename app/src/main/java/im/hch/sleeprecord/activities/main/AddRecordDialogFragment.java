@@ -47,6 +47,7 @@ public class AddRecordDialogFragment extends DialogFragment {
     @BindString(R.string.failed_to_parse_wakeup_time) String failureParseWakeupTime;
     @BindString(R.string.wakeup_time_before_fallasleep_time) String wakeupTimeBeforeFallAsleepTime;
     @BindString(R.string.time_between_too_long) String timeBetweenTooLong;
+    @BindString(R.string.wakeup_time_after_current_time) String wakeupTimeAfterCurrentTime;
     @BindString(R.string.title_activity_add_record) String title;
     @BindString(R.string.progress_message_save) String progressMessageSave;
     @BindString(R.string.error_failed_to_connect) String failedToConnectError;
@@ -141,6 +142,11 @@ public class AddRecordDialogFragment extends DialogFragment {
 
         if (from.after(to)) {
             handleSaveFailure(wakeupTimeBeforeFallAsleepTime);
+            return;
+        }
+
+        if (to.after(Calendar.getInstance())) {
+            handleSaveFailure(wakeupTimeAfterCurrentTime);
             return;
         }
 
