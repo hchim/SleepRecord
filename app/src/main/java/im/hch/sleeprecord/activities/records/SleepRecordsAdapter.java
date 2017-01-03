@@ -22,7 +22,7 @@ public class SleepRecordsAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private List<SleepRecord> mDataSource;
 
-    public SleepRecordsAdapter(Context context, ArrayList<SleepRecord> items) {
+    public SleepRecordsAdapter(Context context, List<SleepRecord> items) {
         mContext = context;
         mDataSource = items;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

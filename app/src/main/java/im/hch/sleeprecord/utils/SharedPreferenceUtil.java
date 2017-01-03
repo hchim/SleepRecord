@@ -4,10 +4,17 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import im.hch.sleeprecord.models.BabyInfo;
+import im.hch.sleeprecord.models.SleepRecord;
 import im.hch.sleeprecord.models.UserProfile;
 
 public class SharedPreferenceUtil {
@@ -147,5 +154,44 @@ public class SharedPreferenceUtil {
         userProfile.setEmailVerified(getBoolean(EMAIL_VERIFIED, false));
         userProfile.setCreateTime(getDate(USER_CREATE_TIME, null));
         return userProfile;
+    }
+
+    public static final String SLEEP_RECORDS = "SleepRecords";
+
+    public void storeSleepRecords(List<SleepRecord> records, String userId) {
+        if (records == null || userId == null) {
+            return;
+        }
+
+        JSONArray jsonArray = new JSONArray();
+        for (SleepRecord record : records) {
+            jsonArray.put(record.toJson());
+        }
+
+        JSONObject object = new JSONObject();
+        try {
+            object.put("records", jsonArray);
+            setValue(SLEEP_RECORDS + "-" + userId, object.toString());
+        } catch (JSONException e) {}
+    }
+
+    public List<SleepRecord> retrieveSleepRecords(String userId) {
+        String json = getString(SLEEP_RECORDS + "-" + userId, null);
+        List<SleepRecord> records = new ArrayList<>();
+
+        if (json == null) {
+            return records;
+        }
+
+        try {
+            JSONObject object = new JSONObject(json);
+            JSONArray array = object.getJSONArray("records");
+            for (int i = 0; i < array.length(); i++) {
+                SleepRecord record = SleepRecord.create(array.getJSONObject(i));
+                records.add(record);
+            }
+        } catch (JSONException e) {}
+
+        return records;
     }
 }

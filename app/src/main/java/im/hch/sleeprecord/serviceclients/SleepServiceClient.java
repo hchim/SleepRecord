@@ -20,6 +20,7 @@ import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.serviceclients.exceptions.TimeOverlapException;
 import im.hch.sleeprecord.utils.DateUtils;
+import im.hch.sleeprecord.utils.SleepRecordUtils;
 
 public class SleepServiceClient extends BaseServiceClient {
     public static final String TAG = "SleepServiceClient";
@@ -162,38 +163,17 @@ public class SleepServiceClient extends BaseServiceClient {
             List<SleepRecord> list = new ArrayList<>();
 
             for (int i = 0; i < array.length(); i++) {
-                JSONObject obj = array.getJSONObject(i);
-                Date date = DateUtils.strToDate(obj.getString("date"), DATE_FORMAT);
-                SleepRecord rec = new SleepRecord(date, obj.getDouble("quality"));
-                list.add(rec);
-
-                JSONArray timesArray = obj.getJSONArray("times");
-                for (int j = 0; j < timesArray.length(); j++) {
-                    JSONObject timeObj = timesArray.getJSONObject(j);
-                    rec.addSleepTime(new Pair<Date, Date>(
-                            DateUtils.strToDate(timeObj.getString("fallAsleepTime"), DATE_FORMAT),
-                            DateUtils.strToDate(timeObj.getString("wakeupTime"), DATE_FORMAT)
-                    ));
+                SleepRecord rec = SleepRecord.create(array.getJSONObject(i));
+                if (rec != null) {
+                    list.add(rec);
                 }
             }
-            // fill empty sleep records
+
             Calendar fromCal = Calendar.getInstance();
             fromCal.setTime(from);
             Calendar toCal = Calendar.getInstance();
             toCal.setTime(to);
-
-            LinkedHashMap<String, SleepRecord> map = new LinkedHashMap<>();
-            while (DateUtils.after(toCal, fromCal)) {
-                map.put(DateUtils.dateToStr(toCal.getTime()), new SleepRecord(toCal.getTime(), 0));
-                toCal.add(Calendar.DATE, -1);
-            }
-
-            for (SleepRecord record : list) {
-                map.put(DateUtils.dateToStr(record.getDateTime().getTime()), record);
-            }
-
-            list.clear();
-            list.addAll(map.values());
+            list = SleepRecordUtils.fillSleepRecords(list, from, to);
 
             return list;
         } catch (JSONException e) {

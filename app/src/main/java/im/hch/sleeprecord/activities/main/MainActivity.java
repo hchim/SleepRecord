@@ -38,6 +38,7 @@ import im.hch.sleeprecord.utils.DateUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.SessionManager;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
+import im.hch.sleeprecord.utils.SleepRecordUtils;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -103,8 +104,7 @@ public class MainActivity extends AppCompatActivity implements
             updateBabyInfo(babyInfo);
         }
 
-        sleepRecordsAdapter = new SleepRecordsAdapter(this, new ArrayList<SleepRecord>());
-        listView.setAdapter(sleepRecordsAdapter);
+        initSleepRecords();
 
         headerViewHolder.babyNameTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,6 +193,25 @@ public class MainActivity extends AppCompatActivity implements
         if (babyInfo != null) {
             headerViewHolder.babyNameTextView.setText(getBabyInfoDisplayString(babyInfo));
         }
+    }
+
+    /**
+     * Load sleep records from shared preference.
+     */
+    private void initSleepRecords() {
+        String userId = sessionManager.getUserId();
+        List<SleepRecord> records = sharedPreferenceUtil.retrieveSleepRecords(userId);
+        if (records == null) {
+            records = new ArrayList<>();
+        }
+
+        Calendar to = Calendar.getInstance();
+        Calendar from = Calendar.getInstance();
+        from.add(Calendar.DATE, SHOW_SLEEP_RECORDS_NUM * -1);
+
+        sleepRecordsAdapter = new SleepRecordsAdapter(this,
+                SleepRecordUtils.fillSleepRecords(records, from.getTime(), to.getTime()));
+        listView.setAdapter(sleepRecordsAdapter);
     }
 
     /**
@@ -287,7 +306,6 @@ public class MainActivity extends AppCompatActivity implements
             try {
                 babyInfo = sleepServiceClient.getBabyInfo(userId);
                 sharedPreferenceUtil.storeBabyInfo(babyInfo);
-                Thread.sleep(1000);
             } catch (Exception e) {
                 Log.w(MainActivity.TAG, e);
             }
@@ -297,7 +315,6 @@ public class MainActivity extends AppCompatActivity implements
                 userProfile = identityServiceClient.getUser(userId);
                 //TODO store download image if required
                 sharedPreferenceUtil.storeUserProfile(userProfile);
-                Thread.sleep(1000);
             } catch (Exception e) {
                 Log.w(MainActivity.TAG, e);
             }
@@ -310,6 +327,7 @@ public class MainActivity extends AppCompatActivity implements
 
             try {
                 sleepRecords = sleepServiceClient.getSleepRecords(userId, from.getTime(), to.getTime());
+                sharedPreferenceUtil.storeSleepRecords(sleepRecords, userId);
             } catch (Exception e) {
                 Log.w(MainActivity.TAG, e);
             }
