@@ -98,9 +98,7 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         BabyInfo babyInfo = sharedPreferenceUtil.retrieveBabyInfo();
-        if (babyInfo == null) {
-            DialogUtils.showEditBabyInfoDialog(getFragmentManager(), babyInfo);
-        } else {
+        if (babyInfo != null) {
             updateBabyInfo(babyInfo);
         }
 
@@ -341,6 +339,9 @@ public class MainActivity extends AppCompatActivity implements
             switch (values[0]) {
                 case BABY_INFO_UPDATED:
                     updateBabyInfo(babyInfo);
+                    if (babyInfo == null) {
+                        DialogUtils.showEditBabyInfoDialog(getFragmentManager(), babyInfo);
+                    }
                     break;
                 case USER_INFO_UPDATED:
                     updateUserInfo(userProfile);
