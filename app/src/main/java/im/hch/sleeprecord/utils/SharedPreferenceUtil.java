@@ -106,6 +106,12 @@ public class SharedPreferenceUtil {
         setValue(BABY_GENDER, babyInfo.getBabyGender().getValue());
     }
 
+    public void removeBabyInfo() {
+        removeValue(BABY_NAME);
+        removeValue(BABY_BIRTHDAY);
+        removeValue(BABY_GENDER);
+    }
+
     public BabyInfo retrieveBabyInfo() {
         String name = getString(BABY_NAME, null);
         if (name == null) {
@@ -146,6 +152,13 @@ public class SharedPreferenceUtil {
         setValue(USER_CREATE_TIME, userProfile.getCreateTime());
     }
 
+    public void removeUserProfile() {
+        removeValue(USER_NAME);
+        removeValue(HEADER_ICON_URL);
+        removeValue(EMAIL_VERIFIED);
+        removeValue(USER_CREATE_TIME);
+    }
+
     public UserProfile retrieveUserProfile() {
         UserProfile userProfile = new UserProfile();
 
@@ -171,12 +184,16 @@ public class SharedPreferenceUtil {
         JSONObject object = new JSONObject();
         try {
             object.put("records", jsonArray);
-            setValue(SLEEP_RECORDS + "-" + userId, object.toString());
+            setValue(SLEEP_RECORDS, object.toString());
         } catch (JSONException e) {}
     }
 
-    public List<SleepRecord> retrieveSleepRecords(String userId) {
-        String json = getString(SLEEP_RECORDS + "-" + userId, null);
+    public void removeSleepRecords() {
+        removeValue(SLEEP_RECORDS);
+    }
+
+    public List<SleepRecord> retrieveSleepRecords() {
+        String json = getString(SLEEP_RECORDS, null);
         List<SleepRecord> records = new ArrayList<>();
 
         if (json == null) {
@@ -193,5 +210,11 @@ public class SharedPreferenceUtil {
         } catch (JSONException e) {}
 
         return records;
+    }
+
+    public void removeAllData() {
+        removeBabyInfo();
+        removeUserProfile();
+        removeSleepRecords();
     }
 }

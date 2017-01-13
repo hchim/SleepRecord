@@ -170,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case R.id.nav_logout:
                 sessionManager.clearSession();
+                sharedPreferenceUtil.removeAllData();
                 ActivityUtils.navigateToLoginActivity(this);
                 break;
         }
@@ -199,8 +200,7 @@ public class MainActivity extends AppCompatActivity implements
      * Load sleep records from shared preference.
      */
     private void initSleepRecords() {
-        String userId = sessionManager.getUserId();
-        List<SleepRecord> records = sharedPreferenceUtil.retrieveSleepRecords(userId);
+        List<SleepRecord> records = sharedPreferenceUtil.retrieveSleepRecords();
         if (records == null) {
             records = new ArrayList<>();
         }
