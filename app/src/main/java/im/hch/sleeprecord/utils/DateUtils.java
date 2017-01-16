@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class DateUtils {
 
@@ -125,5 +126,14 @@ public class DateUtils {
         }
 
         return false;
+    }
+
+    /**
+     * Return ID of local timezone and replace forward slash with -.
+     * @return
+     */
+    public static String getLocalTimezone() {
+        TimeZone timeZone = TimeZone.getDefault();
+        return timeZone.getID().replace('/', '-');
     }
 }

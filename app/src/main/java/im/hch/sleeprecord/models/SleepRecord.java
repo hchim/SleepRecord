@@ -20,6 +20,7 @@ public class SleepRecord {
     private Calendar dateTime;
     private List<Pair<Date, Date>> sleepTimePairs;
     private double sleepQuality = 0;
+    public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
 
     public SleepRecord(Date date, double sleepQuality) {
         this.dateTime = Calendar.getInstance();
@@ -31,7 +32,7 @@ public class SleepRecord {
     public static SleepRecord create(JSONObject object) {
         try {
             SleepRecord record = new SleepRecord(
-                    DateUtils.strToDate(object.getString("date"), BaseServiceClient.DATE_FORMAT),
+                    DateUtils.strToDate(object.getString("date"), DATE_FORMAT),
                     object.getDouble("quality")
             );
 
@@ -39,8 +40,8 @@ public class SleepRecord {
             for (int j = 0; j < timesArray.length(); j++) {
                 JSONObject timeObj = timesArray.getJSONObject(j);
                 record.addSleepTime(new Pair<Date, Date>(
-                        DateUtils.strToDate(timeObj.getString("fallAsleepTime"), BaseServiceClient.DATE_FORMAT),
-                        DateUtils.strToDate(timeObj.getString("wakeupTime"), BaseServiceClient.DATE_FORMAT)
+                        DateUtils.strToDate(timeObj.getString("fallAsleepTime"), DATE_FORMAT),
+                        DateUtils.strToDate(timeObj.getString("wakeupTime"), DATE_FORMAT)
                 ));
             }
 
@@ -65,15 +66,15 @@ public class SleepRecord {
     public JSONObject toJson() {
         JSONObject object = new JSONObject();
         try {
-            object.put("date", DateUtils.dateToStr(dateTime.getTime(), BaseServiceClient.DATE_FORMAT));
+            object.put("date", DateUtils.dateToStr(dateTime.getTime(), DATE_FORMAT));
             object.put("quality", sleepQuality);
 
             JSONArray arr = new JSONArray();
             object.put("times", arr);
             for (Pair<Date, Date> pair : sleepTimePairs) {
                 JSONObject object2 = new JSONObject();
-                object2.put("fallAsleepTime", DateUtils.dateToStr(pair.first, BaseServiceClient.DATE_FORMAT));
-                object2.put("wakeupTime", DateUtils.dateToStr(pair.second, BaseServiceClient.DATE_FORMAT));
+                object2.put("fallAsleepTime", DateUtils.dateToStr(pair.first, DATE_FORMAT));
+                object2.put("wakeupTime", DateUtils.dateToStr(pair.second, DATE_FORMAT));
                 arr.put(object2);
             }
             return object;

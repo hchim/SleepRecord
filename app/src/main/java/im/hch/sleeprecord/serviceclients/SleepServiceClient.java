@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,7 +45,7 @@ public class SleepServiceClient extends BaseServiceClient {
 
         try {
             object.put("name", babyInfo.getBabyName());
-            object.put("birthday", babyInfo.getBabyBirthday());
+            object.put("birthday", DateUtils.dateToStr(babyInfo.getBabyBirthday(), QUERY_DATE_FORMAT));
             object.put("gender", babyInfo.getBabyGender().getValue());
 
             JSONObject result = post(url, object);
@@ -88,7 +89,7 @@ public class SleepServiceClient extends BaseServiceClient {
 
             BabyInfo babyInfo = new BabyInfo();
             babyInfo.setBabyName(result.getString("name"));
-            babyInfo.setBabyBirthday(DateUtils.strToDate(result.getString("birthday"), DATE_FORMAT));
+            babyInfo.setBabyBirthday(DateUtils.strToDate(result.getString("birthday"), QUERY_DATE_FORMAT));
             babyInfo.setBabyGender(BabyInfo.Gender.create(result.getInt("gender")));
             return babyInfo;
         } catch (JSONException e) {
@@ -144,9 +145,10 @@ public class SleepServiceClient extends BaseServiceClient {
      */
     public List<SleepRecord> getSleepRecords(String userId, Date from, Date to)
             throws ConnectionFailureException, InternalServerException {
-        String url = String.format(SLEEP_RECORDS_URL + "%s/%s/%s", userId,
+        String url = String.format(SLEEP_RECORDS_URL + "%s/%s/%s/%s", userId,
                 DateUtils.dateToStr(from, QUERY_DATE_FORMAT),
-                DateUtils.dateToStr(to, QUERY_DATE_FORMAT));
+                DateUtils.dateToStr(to, QUERY_DATE_FORMAT),
+                DateUtils.getLocalTimezone());
 
         try {
             JSONObject result = get(url);
