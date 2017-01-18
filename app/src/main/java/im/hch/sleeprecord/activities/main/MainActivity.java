@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -21,6 +23,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements
      * The number of sleep records to show in the sleep records widget.
      */
     public static final int SHOW_SLEEP_RECORDS_NUM = 5;
+    public static final int CROP_WIN_SIZE = 1024;
 
     private SleepRecordsAdapter sleepRecordsAdapter;
     private SessionManager sessionManager;
@@ -87,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements
     @BindString(R.string.age_months_plural) String AGE_MONTHS_P;
     @BindString(R.string.age_days_plural) String AGE_DAYS_P;
     @BindString(R.string.permission_not_granted) String permissionNotGranted;
+    @BindString(R.string.crop_image_menu_crop) String cropMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -218,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements
                             CropImage.PICK_IMAGE_PERMISSIONS_REQUEST_CODE);
                 } else {
                     // no permissions required or already grunted, can start crop image activity
-                    CropImage.activity(imageUri).start(this);
+                    startHeaderCropActivity(imageUri);
                 }
                 break;
             case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
@@ -248,12 +253,20 @@ public class MainActivity extends AppCompatActivity implements
         if (requestCode == CropImage.PICK_IMAGE_PERMISSIONS_REQUEST_CODE) {
             if (mCropImageUri != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // required permissions granted, start crop image activity
-                CropImage.activity(mCropImageUri).start(this);
+                startHeaderCropActivity(mCropImageUri);
             } else {
                 Snackbar.make(headerViewHolder.headerImage, permissionNotGranted, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         }
+    }
+
+    private void startHeaderCropActivity(Uri imageUri) {
+        CropImage.activity(imageUri)
+                .setMinCropResultSize(CROP_WIN_SIZE, CROP_WIN_SIZE)
+                .setAllowRotation(false)
+                .setFixAspectRatio(true)
+                .start(this);
     }
 
     private void updateUserInfo(UserProfile userProfile) {

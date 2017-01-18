@@ -176,4 +176,5 @@
         <item>Cancel</item>
     </string-array>
     <string name="choose_photo_title">Select a Photo</string>
+    <string name="crop_image_menu_crop">Crop</string>
 </resources>
