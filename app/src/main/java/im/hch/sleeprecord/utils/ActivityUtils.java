@@ -3,9 +3,16 @@ package im.hch.sleeprecord.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+
+import java.io.File;
+import java.io.IOException;
 
 import im.hch.sleeprecord.activities.LoginActivity;
 import im.hch.sleeprecord.activities.main.MainActivity;
@@ -68,6 +75,55 @@ public class ActivityUtils {
             InputMethodManager imm =
                     (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
+    }
+
+    public static final int PICKUP_IMAGE_REQUEST_CODE = 214;
+    public static final int TAKE_PHOTO_REQUEST_CODE = 215;
+
+    /**
+     * Show the select image view.
+     * @param activity
+     */
+    public static void selectImageFromGallery(Activity activity) {
+        Intent intentGallery = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        intentGallery.setType("image/*");
+        activity.startActivityForResult(intentGallery, PICKUP_IMAGE_REQUEST_CODE);
+    }
+
+    /**
+     * Take a photo and select the image.
+     *
+     * If fullSizeImage is true, activity must implement ImageCaptureListener.
+     * If fullSizeImage is false, get the bitmap as follows:
+     *
+     * Bundle extras = data.getExtras();
+     * Bitmap imageBitmap = (Bitmap) extras.get("data")
+     *
+     * @param activity
+     * @param fullSizeImage
+     */
+    public static void selectImageFromCamera(Activity activity, boolean fullSizeImage) {
+        Intent intentCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intentCamera.resolveActivity(activity.getPackageManager()) != null) {
+            if (fullSizeImage) {
+                try {
+                    File photoFile = ImageUtils.createImageFile(activity);
+                    if (photoFile != null) {
+                        Uri photoURI = FileProvider.getUriForFile(activity,
+                                activity.getPackageName() + ".fileprovider",
+                                photoFile);
+                        intentCamera.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                        if (activity instanceof ImageCaptureListener) {
+                            ((ImageCaptureListener) activity).onImageFileCreated(photoURI);
+                        }
+                    }
+                } catch (IOException e) {
+                    Log.e(MainActivity.TAG, "Failed to create image file.", e);
+                }
+            }
+            activity.startActivityForResult(intentCamera, TAKE_PHOTO_REQUEST_CODE);
         }
     }
 }

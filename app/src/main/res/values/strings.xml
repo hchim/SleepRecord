@@ -155,6 +155,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+
     <string name="error_failed_to_register">Failed to create the user account, please try again later.</string>
     <string name="error_email_used">This email was already used with another account.</string>
     <string name="error_failed_to_connect">Failed to connect to the server. Please try again later.</string>
@@ -165,6 +166,14 @@
     <string name="button_Save">Save</string>
     <string name="button_boy">Boy</string>
     <string name="button_girl">Girl</string>
-
+    
     <string name="babyinfo_fragment_title">Edit Baby Information</string>
+    <string name="permission_not_granted">Cancelling, required permissions are not granted.</string>
+    <!-- Choose photo -->
+    <string-array name="choose_photo_options">
+        <item>Take Photo</item>
+        <item>Choose from Library</item>
+        <item>Cancel</item>
+    </string-array>
+    <string name="choose_photo_title">Select a Photo</string>
 </resources>

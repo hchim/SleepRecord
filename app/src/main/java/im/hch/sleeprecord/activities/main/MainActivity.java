@@ -1,9 +1,20 @@
 package im.hch.sleeprecord.activities.main;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,6 +29,10 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,6 +51,7 @@ import im.hch.sleeprecord.serviceclients.SleepServiceClient;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DateUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
+import im.hch.sleeprecord.utils.ImageCaptureListener;
 import im.hch.sleeprecord.utils.SessionManager;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 import im.hch.sleeprecord.utils.SleepRecordUtils;
@@ -56,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements
     private SleepServiceClient sleepServiceClient;
     private IdentityServiceClient identityServiceClient;
     private HeaderViewHolder headerViewHolder;
+    private Uri mCropImageUri;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.drawer_layout) DrawerLayout drawer;
@@ -69,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements
     @BindString(R.string.age_years_plural) String AGE_YEARS_P;
     @BindString(R.string.age_months_plural) String AGE_MONTHS_P;
     @BindString(R.string.age_days_plural) String AGE_DAYS_P;
+    @BindString(R.string.permission_not_granted) String permissionNotGranted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +128,13 @@ public class MainActivity extends AppCompatActivity implements
                 DialogUtils.showEditBabyInfoDialog(
                         MainActivity.this.getFragmentManager(),
                         sharedPreferenceUtil.retrieveBabyInfo());
+            }
+        });
+
+        headerViewHolder.headerImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CropImage.startPickImageActivity(MainActivity.this);
             }
         });
 
@@ -177,9 +202,58 @@ public class MainActivity extends AppCompatActivity implements
         return true;
     }
 
+    @SuppressLint("NewApi")
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE:
+                Uri imageUri = CropImage.getPickImageResultUri(this, data);
+
+                // For API >= 23 we need to check specifically that we have permissions to read external storage.
+                if (CropImage.isReadExternalStoragePermissionsRequired(this, imageUri)) {
+                    // request permissions and handle the result in onRequestPermissionsResult()
+                    mCropImageUri = imageUri;
+                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                            CropImage.PICK_IMAGE_PERMISSIONS_REQUEST_CODE);
+                } else {
+                    // no permissions required or already grunted, can start crop image activity
+                    CropImage.activity(imageUri).start(this);
+                }
+                break;
+            case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                if (resultCode == RESULT_OK && result != null && result.getUri() != null) {
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), result.getUri());
+                        headerViewHolder.headerImage.setImageBitmap(bitmap);
+                    } catch (IOException e) {
+                        Log.e(TAG, e.getMessage(), e);
+                    }
+                }
+                break;
+            case CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE:
+                Log.e(TAG, "Failed to crop image.");
+                break;
+        }
+    }
+
     @Override
     public void onBabyInfoUpdated(BabyInfo babyInfo) {
         updateBabyInfo(babyInfo);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == CropImage.PICK_IMAGE_PERMISSIONS_REQUEST_CODE) {
+            if (mCropImageUri != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // required permissions granted, start crop image activity
+                CropImage.activity(mCropImageUri).start(this);
+            } else {
+                Snackbar.make(headerViewHolder.headerImage, permissionNotGranted, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        }
     }
 
     private void updateUserInfo(UserProfile userProfile) {
