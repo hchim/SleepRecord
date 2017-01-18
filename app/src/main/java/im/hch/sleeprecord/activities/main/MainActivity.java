@@ -44,6 +44,7 @@ import java.util.List;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.records.SleepRecordsAdapter;
 import im.hch.sleeprecord.models.BabyInfo;
@@ -352,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     static class HeaderViewHolder {
-        @BindView(R.id.headerImageView) ImageView headerImage;
+        @BindView(R.id.headerImageView) CircleImageView headerImage;
         @BindView(R.id.usernameTextView) TextView nameTextView;
         @BindView(R.id.babyNameTextView) TextView babyNameTextView;
 
