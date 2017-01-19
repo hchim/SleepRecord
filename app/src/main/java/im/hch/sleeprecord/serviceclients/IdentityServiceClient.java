@@ -156,4 +156,8 @@ public class IdentityServiceClient extends BaseServiceClient {
     public void updateUserProfile(UserProfile userProfile) {
         //TODO save user nick name
     }
+
+    public void uploadHeaderIcon(String imagePath, String userId) {
+        //TODO save user nick name
+    }
 }

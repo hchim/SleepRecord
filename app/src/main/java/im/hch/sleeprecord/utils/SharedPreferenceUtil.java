@@ -156,6 +156,7 @@ public class SharedPreferenceUtil {
         removeValue(USER_NAME);
         removeValue(HEADER_ICON_URL);
         removeValue(EMAIL_VERIFIED);
+        removeValue(HEADER_ICON);
         removeValue(USER_CREATE_TIME);
     }
 
@@ -164,9 +165,21 @@ public class SharedPreferenceUtil {
 
         userProfile.setUsername(getString(USER_NAME, null));
         userProfile.setHeaderIconUrl(getString(HEADER_ICON_URL, null));
+        userProfile.setHeaderIconPath(getString(HEADER_ICON, null));
         userProfile.setEmailVerified(getBoolean(EMAIL_VERIFIED, false));
         userProfile.setCreateTime(getDate(USER_CREATE_TIME, null));
         return userProfile;
+    }
+
+    public void storeHeaderImage(String headerImagePath) {
+        if (headerImagePath == null) {
+            return;
+        }
+        setValue(HEADER_ICON, headerImagePath);
+    }
+
+    public String retrieveHeaderImage() {
+        return getString(HEADER_ICON, null);
     }
 
     public static final String SLEEP_RECORDS = "SleepRecords";

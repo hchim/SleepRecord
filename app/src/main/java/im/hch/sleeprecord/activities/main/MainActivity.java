@@ -32,9 +32,11 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -56,6 +58,7 @@ import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DateUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.ImageCaptureListener;
+import im.hch.sleeprecord.utils.ImageUtils;
 import im.hch.sleeprecord.utils.SessionManager;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 import im.hch.sleeprecord.utils.SleepRecordUtils;
@@ -233,6 +236,8 @@ public class MainActivity extends AppCompatActivity implements
                     try {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), result.getUri());
                         headerViewHolder.headerImage.setImageBitmap(bitmap);
+                        //start a async task to save image to local cache, add image path to shared preference and upload the image
+                        new SaveImageFileTask(bitmap).execute();
                     } catch (IOException e) {
                         Log.e(TAG, e.getMessage(), e);
                     }
@@ -273,6 +278,11 @@ public class MainActivity extends AppCompatActivity implements
     private void updateUserInfo(UserProfile userProfile) {
         if (userProfile != null) {
             headerViewHolder.nameTextView.setText(userProfile.getUsername());
+            if (userProfile.getHeaderIconPath() != null) {
+                Picasso.with(this)
+                        .load(new File(userProfile.getHeaderIconPath()))
+                        .into(headerViewHolder.headerImage);
+            }
         }
     }
 
@@ -482,6 +492,36 @@ public class MainActivity extends AppCompatActivity implements
         protected void onPostExecute(Boolean aBoolean) {
             if (aBoolean) {
                 sleepRecordsAdapter.updateSleepRecords(sleepRecords);
+            }
+        }
+    }
+
+    private class SaveImageFileTask extends AsyncTask<Void, Void, Boolean> {
+        private Bitmap bitmap;
+
+        public SaveImageFileTask(Bitmap bitmap) {
+            this.bitmap = bitmap;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            if (bitmap == null) {
+                return Boolean.FALSE;
+            }
+            //save local image
+            String imagePath = ImageUtils.saveImageFile(MainActivity.this, bitmap);
+            //store header path to shared preference
+            sharedPreferenceUtil.storeHeaderImage(imagePath);
+            //upload header image
+            String userId = sessionManager.getUserId();
+            identityServiceClient.uploadHeaderIcon(imagePath, userId);
+            return Boolean.TRUE;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            if (aBoolean) {
+
             }
         }
     }
