@@ -54,6 +54,8 @@ import im.hch.sleeprecord.models.SleepRecord;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
+import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
+import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DateUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
@@ -514,15 +516,13 @@ public class MainActivity extends AppCompatActivity implements
             sharedPreferenceUtil.storeHeaderImage(imagePath);
             //upload header image
             String userId = sessionManager.getUserId();
-            identityServiceClient.uploadHeaderIcon(imagePath, userId);
-            return Boolean.TRUE;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            if (aBoolean) {
-
+            try {
+                String url = identityServiceClient.uploadHeaderIcon(imagePath, userId);
+                sharedPreferenceUtil.setValue(SharedPreferenceUtil.HEADER_ICON_URL, url);
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage(), e);
             }
+            return Boolean.TRUE;
         }
     }
 }

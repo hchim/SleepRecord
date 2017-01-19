@@ -5,11 +5,13 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -21,7 +23,7 @@ public class BaseServiceClient {
     public static final String ERROR_MESSAGE_KEY = "message";
     public static final String ERROR_CODE_KEY = "errorCode";
     public static final String ERROR_CODE_INTERNAL_FAILURE = "INTERNAL_FAILURE";
-
+    public static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
@@ -125,4 +127,29 @@ public class BaseServiceClient {
 
         return sendRequest(request);
     }
+
+    /**
+     * Upload an image.
+     * @param url
+     * @param imagePath
+     * @return
+     * @throws InternalServerException
+     * @throws ConnectionFailureException
+     */
+    public JSONObject uploadImage(String url, String imagePath)
+            throws InternalServerException, ConnectionFailureException {
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("image", "header_icon.jpg",
+                        RequestBody.create(MEDIA_TYPE_PNG, new File(imagePath)))
+                .build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+
+        return sendRequest(request);
+    }
+
 }

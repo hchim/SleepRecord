@@ -20,6 +20,7 @@ public class IdentityServiceClient extends BaseServiceClient {
     public static final String REGISTER_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "register";
     public static final String LOGIN_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "login";
     public static final String USERS_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/";
+    public static final String UPDATE_HEADER_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/%s/update-header";
 
     public static final String ERROR_CODE_EMAIL_USED = "EMAIL_USED";
     public static final String ERROR_CODE_WRONG_PASSWORD = "WRONG_PASSWORD";
@@ -157,7 +158,31 @@ public class IdentityServiceClient extends BaseServiceClient {
         //TODO save user nick name
     }
 
-    public void uploadHeaderIcon(String imagePath, String userId) {
-        //TODO save user nick name
+    /**
+     * Upload header image.
+     * @param imagePath
+     * @param userId
+     * @return url of the new header image.
+     * @throws ConnectionFailureException
+     * @throws InternalServerException
+     */
+    public String uploadHeaderIcon(String imagePath, String userId)
+            throws ConnectionFailureException, InternalServerException {
+        String url = String.format(UPDATE_HEADER_URL, userId);
+        JSONObject result = uploadImage(url, imagePath);
+        try {
+            if (result.has(ERROR_CODE_KEY)) {
+                if (result.has(ERROR_MESSAGE_KEY)) {
+                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
+                }
+
+                throw new InternalServerException();
+            }
+
+            return result.getString("headerImageUrl");
+        } catch (JSONException ex) {
+            Log.e(TAG, "JSON format error");
+            throw new InternalServerException();
+        }
     }
 }
