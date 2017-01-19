@@ -10,6 +10,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class ImageUtils {
     public static final String TAG = "ImageUtils";
 
@@ -33,5 +37,28 @@ public class ImageUtils {
             Log.e(TAG, "Failed to save image file.", e);
             return null;
         }
+    }
+
+    public static String downloadImage(final Context context, final String downloadUrl) {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder().url(downloadUrl).build();
+        Response response = null;
+        try {
+            response = client.newCall(request).execute();
+            if (!response.isSuccessful()) {
+                return null;
+            }
+
+            File imageFile = createImageFile(context);
+            FileOutputStream fos = new FileOutputStream(imageFile);
+            fos.write(response.body().bytes());
+            fos.close();
+
+            return imageFile.getAbsolutePath();
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to download image.", e);
+        }
+
+        return null;
     }
 }

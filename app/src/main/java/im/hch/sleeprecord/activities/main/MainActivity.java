@@ -4,11 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -23,18 +19,15 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,12 +47,9 @@ import im.hch.sleeprecord.models.SleepRecord;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
-import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
-import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DateUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
-import im.hch.sleeprecord.utils.ImageCaptureListener;
 import im.hch.sleeprecord.utils.ImageUtils;
 import im.hch.sleeprecord.utils.SessionManager;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
@@ -387,6 +377,7 @@ public class MainActivity extends AppCompatActivity implements
         BabyInfo babyInfo;
         UserProfile userProfile;
         List<SleepRecord> sleepRecords;
+        boolean reloadHeaderImage = false;
 
         public static final int BABY_INFO_UPDATED = 30;
         public static final int USER_INFO_UPDATED = 60;
@@ -411,8 +402,19 @@ public class MainActivity extends AppCompatActivity implements
 
             try {
                 userProfile = identityServiceClient.getUser(userId);
-                //TODO store download image if required
+
+                String currentHeaderUrl = sharedPreferenceUtil.retrieveHeaderImageUrl();
                 sharedPreferenceUtil.storeUserProfile(userProfile);
+                //download header image the url of the header
+                if (userProfile.getHeaderIconUrl() != null) {
+                    if (!userProfile.getHeaderIconUrl().equals(currentHeaderUrl)) {
+                        String imagePath = ImageUtils.downloadImage(MainActivity.this, userProfile.getHeaderIconUrl());
+                        if (imagePath != null) {
+                            userProfile.setHeaderIconPath(imagePath);
+                            reloadHeaderImage = true;
+                        }
+                    }
+                }
             } catch (Exception e) {
                 Log.w(MainActivity.TAG, e);
             }
@@ -445,6 +447,11 @@ public class MainActivity extends AppCompatActivity implements
                     break;
                 case USER_INFO_UPDATED:
                     updateUserInfo(userProfile);
+                    if (reloadHeaderImage) {
+                        Picasso.with(MainActivity.this)
+                                .load(new File(userProfile.getHeaderIconPath()))
+                                .into(headerViewHolder.headerImage);
+                    }
                     break;
                 case SLEEP_RECORDS_UPDATED:
                     sleepRecordsAdapter.updateSleepRecords(sleepRecords);
@@ -518,7 +525,7 @@ public class MainActivity extends AppCompatActivity implements
             String userId = sessionManager.getUserId();
             try {
                 String url = identityServiceClient.uploadHeaderIcon(imagePath, userId);
-                sharedPreferenceUtil.setValue(SharedPreferenceUtil.HEADER_ICON_URL, url);
+                sharedPreferenceUtil.storeHeaderImageUrl(url);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage(), e);
             }

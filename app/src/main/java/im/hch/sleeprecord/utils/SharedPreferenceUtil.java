@@ -182,6 +182,17 @@ public class SharedPreferenceUtil {
         return getString(HEADER_ICON, null);
     }
 
+    public void storeHeaderImageUrl(String headerImageUrl) {
+        if (headerImageUrl == null) {
+            return;
+        }
+        setValue(HEADER_ICON_URL, headerImageUrl);
+    }
+
+    public String retrieveHeaderImageUrl() {
+        return getString(HEADER_ICON_URL, null);
+    }
+
     public static final String SLEEP_RECORDS = "SleepRecords";
 
     public void storeSleepRecords(List<SleepRecord> records, String userId) {
