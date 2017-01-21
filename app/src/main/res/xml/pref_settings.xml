@@ -20,4 +20,12 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="@string/pref_title_baby"
+        android:key="pref_baby_settings">
+        <PreferenceScreen
+            android:key="pref_baby_info"
+            android:title="@string/pref_title_baby_information"
+            android:persistent="false"/>
+    </PreferenceCategory>
 </PreferenceScreen>

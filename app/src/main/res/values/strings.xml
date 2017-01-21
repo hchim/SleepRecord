@@ -14,6 +14,10 @@
     <string name="pref_title_new_password">New Password</string>
     <string name="pref_title_repeat_password">Repeat New Password</string>
 
+    <!-- Baby settings-->
+    <string name="pref_title_baby">Baby</string>
+    <string name="pref_title_baby_information">Update Baby Information</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

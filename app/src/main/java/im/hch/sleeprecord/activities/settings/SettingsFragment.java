@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import im.hch.sleeprecord.R;
+import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
 import im.hch.sleeprecord.utils.DialogUtils;
@@ -20,6 +21,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     public static final String TAG = "SettingsFragment";
     public static final String PREFERENCE_KEY_NICKNAME = "nickname_text";
     public static final String PREFERENCE_KEY_PASSWORD = "pref_password_settings";
+    public static final String PREFERENCE_KEY_baby_info = "pref_baby_info";
 
     private SharedPreferenceUtil sharedPreferenceUtil;
     private SessionManager sessionManager;
@@ -46,6 +48,15 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 DialogUtils.showUpdatePasswordDialog(SettingsFragment.this.getFragmentManager());
+                return true;
+            }
+        });
+
+        findPreference(PREFERENCE_KEY_baby_info).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                BabyInfo babyInfo = sharedPreferenceUtil.retrieveBabyInfo();
+                DialogUtils.showEditBabyInfoDialog(SettingsFragment.this.getFragmentManager(), babyInfo);
                 return true;
             }
         });

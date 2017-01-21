@@ -162,7 +162,7 @@ public class SharedPreferenceUtil {
 
     public UserProfile retrieveUserProfile() {
         UserProfile userProfile = new UserProfile();
-
+        userProfile.setId(getString(USER_ID, null));
         userProfile.setUsername(getString(USER_NAME, null));
         userProfile.setHeaderIconUrl(getString(HEADER_ICON_URL, null));
         userProfile.setHeaderIconPath(getString(HEADER_ICON, null));
