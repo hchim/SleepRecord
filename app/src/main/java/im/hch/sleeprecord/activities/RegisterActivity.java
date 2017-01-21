@@ -170,8 +170,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             focusView = mPasswordView;
             cancel = true;
         } else if (!password.equals(rePassword)) {
-            mPasswordView.setError(unmatchPasswordError);
-            focusView = mPasswordView;
+            mRepeatPasswordView.setError(unmatchPasswordError);
+            focusView = mRepeatPasswordView;
             cancel = true;
         }
 

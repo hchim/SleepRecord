@@ -42,6 +42,7 @@ import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.records.SleepRecordsAdapter;
+import im.hch.sleeprecord.activities.settings.SettingsFragment;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.SleepRecord;
 import im.hch.sleeprecord.models.UserProfile;
@@ -139,6 +140,12 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
+        headerViewHolder.nameTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogUtils.showUpdatePasswordDialog(MainActivity.this.getFragmentManager());
+            }
+        });
         loadRemoteData();
     }
 
@@ -404,10 +411,12 @@ public class MainActivity extends AppCompatActivity implements
                 userProfile = identityServiceClient.getUser(userId);
 
                 String currentHeaderUrl = sharedPreferenceUtil.retrieveHeaderImageUrl();
+                String headerImagePath = sharedPreferenceUtil.retrieveHeaderImage();
                 sharedPreferenceUtil.storeUserProfile(userProfile);
                 //download header image the url of the header
                 if (userProfile.getHeaderIconUrl() != null) {
-                    if (!userProfile.getHeaderIconUrl().equals(currentHeaderUrl)) {
+                    if (headerImagePath == null
+                            || !userProfile.getHeaderIconUrl().equals(currentHeaderUrl)) {
                         String imagePath = ImageUtils.downloadImage(MainActivity.this, userProfile.getHeaderIconUrl());
                         if (imagePath != null) {
                             userProfile.setHeaderIconPath(imagePath);

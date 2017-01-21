@@ -171,6 +171,17 @@ public class SharedPreferenceUtil {
         return userProfile;
     }
 
+    public void storeUserName(String userName) {
+        if (userName == null) {
+            return;
+        }
+        setValue(USER_NAME, userName);
+    }
+
+    public String retrieveUserName() {
+        return getString(USER_NAME, null);
+    }
+
     public void storeHeaderImage(String headerImagePath) {
         if (headerImagePath == null) {
             return;

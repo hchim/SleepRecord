@@ -21,6 +21,8 @@ public class IdentityServiceClient extends BaseServiceClient {
     public static final String LOGIN_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "login";
     public static final String USERS_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/";
     public static final String UPDATE_HEADER_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/%s/update-header";
+    public static final String UPDATE_USER_NAME = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/%s/update-name";
+    public static final String UPDATE_USER_PASSWORD = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/%s/update-pswd";
 
     public static final String ERROR_CODE_EMAIL_USED = "EMAIL_USED";
     public static final String ERROR_CODE_WRONG_PASSWORD = "WRONG_PASSWORD";
@@ -154,8 +156,37 @@ public class IdentityServiceClient extends BaseServiceClient {
         }
     }
 
-    public void updateUserProfile(UserProfile userProfile) {
-        //TODO save user nick name
+    /**
+     * Update the user name.
+     * @param userName
+     * @param userId
+     * @throws ConnectionFailureException
+     * @throws InternalServerException
+     * @throws AccountNotExistException
+     */
+    public void updateUserName(String userName, String userId)
+            throws ConnectionFailureException, InternalServerException, AccountNotExistException {
+        String url = String.format(UPDATE_USER_NAME, userId);
+        JSONObject object = new JSONObject();
+        try {
+            object.put("nickName", userName);
+            JSONObject result = put(url, object);
+
+            if (result.has(ERROR_CODE_KEY)) {
+                if (result.has(ERROR_MESSAGE_KEY)) {
+                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
+                }
+
+                String errorCode = result.getString(ERROR_CODE_KEY);
+                if (errorCode.equals(ERROR_CODE_ACCOUNT_NOT_EXIST)) {
+                    throw new AccountNotExistException();
+                }
+                throw new InternalServerException();
+            }
+        } catch (JSONException ex) {
+            Log.e(TAG, "JSON format error");
+            throw new InternalServerException();
+        }
     }
 
     /**
@@ -180,6 +211,43 @@ public class IdentityServiceClient extends BaseServiceClient {
             }
 
             return result.getString("headerImageUrl");
+        } catch (JSONException ex) {
+            Log.e(TAG, "JSON format error");
+            throw new InternalServerException();
+        }
+    }
+
+    /**
+     * Update user password.
+     * @param oldPassword
+     * @param newPassword
+     * @param userId
+     * @throws ConnectionFailureException
+     * @throws InternalServerException
+     * @throws AccountNotExistException
+     */
+    public void updateUserPassword(String oldPassword, String newPassword, String userId)
+            throws ConnectionFailureException, InternalServerException, AccountNotExistException, WrongPasswordException {
+        String url = String.format(UPDATE_USER_PASSWORD, userId);
+        JSONObject object = new JSONObject();
+        try {
+            object.put("oldPassword", oldPassword);
+            object.put("newPassword", newPassword);
+            JSONObject result = put(url, object);
+
+            if (result.has(ERROR_CODE_KEY)) {
+                if (result.has(ERROR_MESSAGE_KEY)) {
+                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
+                }
+
+                String errorCode = result.getString(ERROR_CODE_KEY);
+                if (errorCode.equals(ERROR_CODE_ACCOUNT_NOT_EXIST)) {
+                    throw new AccountNotExistException();
+                } else if (errorCode.equals(ERROR_CODE_WRONG_PASSWORD)) {
+                    throw new WrongPasswordException();
+                }
+                throw new InternalServerException();
+            }
         } catch (JSONException ex) {
             Log.e(TAG, "JSON format error");
             throw new InternalServerException();
