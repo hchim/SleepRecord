@@ -18,6 +18,10 @@
     <string name="pref_title_baby">Baby</string>
     <string name="pref_title_baby_information">Update Baby Information</string>
 
+    <!-- Others-->
+    <string name="pref_title_suggestion">Add Suggestion</string>
+    <string name="suggestion_thanks_message">Thank you for your suggestion!</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

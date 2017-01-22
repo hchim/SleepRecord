@@ -6,12 +6,14 @@ import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.MenuItem;
 
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.UserProfile;
+import im.hch.sleeprecord.serviceclients.AppInfoServiceClient;
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.SessionManager;
@@ -21,22 +23,28 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     public static final String TAG = "SettingsFragment";
     public static final String PREFERENCE_KEY_NICKNAME = "nickname_text";
     public static final String PREFERENCE_KEY_PASSWORD = "pref_password_settings";
-    public static final String PREFERENCE_KEY_baby_info = "pref_baby_info";
+    public static final String PREFERENCE_KEY_BABY_INFO = "pref_baby_info";
+    public static final String PREFERENCE_KEY_SUGGESTION = "suggestion_text";
 
     private SharedPreferenceUtil sharedPreferenceUtil;
     private SessionManager sessionManager;
     private IdentityServiceClient identityServiceClient;
     private UserProfile userProfile;
+    private AppInfoServiceClient appInfoServiceClient;
+
+    private EditTextPreference suggestionPreference;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_settings);
         setHasOptionsMenu(true);
+
         sharedPreferenceUtil = new SharedPreferenceUtil(this.getActivity());
         identityServiceClient = new IdentityServiceClient();
         sessionManager = new SessionManager(getActivity());
         userProfile = sharedPreferenceUtil.retrieveUserProfile();
+        appInfoServiceClient = new AppInfoServiceClient();
 
         EditTextPreference nicknamePref = (EditTextPreference) findPreference(PREFERENCE_KEY_NICKNAME);
         nicknamePref.setOnPreferenceChangeListener(this);
@@ -52,7 +60,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             }
         });
 
-        findPreference(PREFERENCE_KEY_baby_info).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        findPreference(PREFERENCE_KEY_BABY_INFO).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 BabyInfo babyInfo = sharedPreferenceUtil.retrieveBabyInfo();
@@ -60,6 +68,9 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                 return true;
             }
         });
+
+        suggestionPreference = (EditTextPreference)findPreference(PREFERENCE_KEY_SUGGESTION);
+        suggestionPreference.setOnPreferenceChangeListener(this);
     }
 
     @Override
@@ -80,7 +91,12 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             preference.setSummary(newName);
             new SaveUserNameAsyncTask(newName).execute();
             return true;
+        } else if (preference.getKey().equals(PREFERENCE_KEY_SUGGESTION)) {
+            String suggestion = (String) newValue;
+            new AddSuggestionAsyncTask(suggestion).execute();
+            return true;
         }
+
         return false;
     }
 
@@ -106,6 +122,37 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         protected void onPostExecute(Boolean aBoolean) {
             if (aBoolean) {
                 sharedPreferenceUtil.storeUserName(userName);
+            }
+        }
+    }
+
+    private class AddSuggestionAsyncTask extends AsyncTask<Void, Void, Boolean> {
+        private String suggestion;
+
+        public AddSuggestionAsyncTask(String suggestion) {
+            this.suggestion = suggestion;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                appInfoServiceClient.addSuggestion(sessionManager.getUserId(), suggestion);
+                return Boolean.TRUE;
+             } catch (Exception e) {
+                Log.e(TAG, e.getMessage(), e);
+                return Boolean.FALSE;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            if (aBoolean) {
+                suggestionPreference.setText("");
+                String thanksMessage = SettingsFragment.this
+                        .getResources()
+                        .getString(R.string.suggestion_thanks_message);
+                Snackbar.make(SettingsFragment.this.getView(), thanksMessage, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         }
     }

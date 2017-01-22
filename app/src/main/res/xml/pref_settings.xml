@@ -9,11 +9,11 @@
             android:inputType="textCapWords"
             android:key="nickname_text"
             android:maxLines="1"
-            android:selectAllOnFocus="true"
+            android:selectAllOnFocus="false"
             android:singleLine="true"
             android:title="@string/pref_title_nickname" />
 
-        <PreferenceScreen
+        <Preference
             android:key="pref_password_settings"
             android:title="@string/pref_title_update_password"
             android:persistent="false" />
@@ -28,4 +28,17 @@
             android:title="@string/pref_title_baby_information"
             android:persistent="false"/>
     </PreferenceCategory>
+
+    <EditTextPreference
+        android:capitalize="sentences"
+        android:inputType="textCapSentences|textMultiLine"
+        android:key="suggestion_text"
+        android:lines="5"
+        android:maxLines="5"
+        android:selectAllOnFocus="false"
+        android:singleLine="false"
+        android:persistent="false"
+        android:gravity="top|left"
+        android:title="@string/pref_title_suggestion" />
+
 </PreferenceScreen>

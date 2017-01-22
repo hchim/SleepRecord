@@ -10,7 +10,7 @@ import android.util.Log;
 import java.io.FileOutputStream;
 
 import im.hch.sleeprecord.models.AppConfig;
-import im.hch.sleeprecord.serviceclients.AppConfigServiceClient;
+import im.hch.sleeprecord.serviceclients.AppInfoServiceClient;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -32,14 +32,14 @@ public class AppConfigUpdateService extends IntentService {
 
 //    private static final String EXTRA_PARAM1 = "im.hch.sleeprecord.services.extra.PARAM1";
 
-    private AppConfigServiceClient appConfigServiceClient;
+    private AppInfoServiceClient appConfigServiceClient;
     private SharedPreferenceUtil sharedPreferenceUtil;
     private AppConfig appConfig;
     final OkHttpClient okHttpClient;
 
     public AppConfigUpdateService() {
         super("AppConfigUpdateService");
-        this.appConfigServiceClient = new AppConfigServiceClient();
+        this.appConfigServiceClient = new AppInfoServiceClient();
         this.okHttpClient = new OkHttpClient();
     }
 
