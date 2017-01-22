@@ -39,4 +39,13 @@
         <item name="android:layout_marginBottom">@dimen/widget_title_margin_bottom</item>
     </style>
 
+    <style name="verifyEmailText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/widget_title_margin_bottom</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
 </resources>

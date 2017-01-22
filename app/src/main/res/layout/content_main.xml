@@ -23,10 +23,23 @@
         android:max="100" />
 
     <LinearLayout
+        android:id="@+id/verify_email_layout"
+        android:orientation="vertical"
+        android:visibility="gone"
+        style="@style/MainActivityWidget"
+        android:layout_below="@id/progressBar">
+
+        <TextView
+            android:text="@string/email_verify_title"
+            android:id="@+id/verifyEmailTextView"
+            style="@style/verifyEmailText"/>
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/sleep_records_widget"
         android:orientation="vertical"
         style="@style/MainActivityWidget"
-        android:layout_below="@+id/progressBar">
+        android:layout_below="@+id/verify_email_layout">
 
         <TextView
             android:text="@string/widget_title_sleep_records"

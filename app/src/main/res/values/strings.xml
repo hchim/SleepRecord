@@ -28,6 +28,12 @@
     <!-- Toolbar menu title -->
     <string name="menu_add_sleep_record">Add</string>
 
+    <!-- Main Activity-->
+    <string name="email_verify_title">Verify Your Email.</string>
+    <string name="verify_code">Verification Code</string>
+    <string name="verify_btn">Verify</string>
+    <string name="email_verify_dialog_title">Email Verification</string>
+
     <!-- Add Record Activity -->
     <string name="title_activity_add_record">Add Sleep Record</string>
     <string name="fall_asleep_time_label">Fall Asleep Time</string>
@@ -91,6 +97,7 @@
     <string name="progress_message_register">Registering ...</string>
     <string name="progress_message_save">Saving ...</string>
     <string name="progress_message_load">Loading ...</string>
+    <string name="progress_message_verify">Verifying ...</string>
 
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_register_short">Register</string>
@@ -111,6 +118,7 @@
     <string name="error_sleep_record_overlap">The sleep record overlaps with other records.</string>
     <string name="error_account_does_not_exist">Account does not exist.</string>
     <string name="error_wrong_password">Wrong password.</string>
+    <string name="error_wrong_verify_code">The verify code is wrong.</string>
 
     <string name="button_previous">Previous</string>
     <string name="button_next">Next</string>

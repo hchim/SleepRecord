@@ -58,7 +58,8 @@ import im.hch.sleeprecord.utils.SleepRecordUtils;
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         BabyInfoDialogFragment.BabyInfoDialogFragmentListener,
-        AddRecordDialogFragment.AddRecordDialogListener {
+        AddRecordDialogFragment.AddRecordDialogListener,
+        VerifyEmailDialogFragment.OnEmailVerifiedListener {
     public static final String TAG = "MainActivity";
     /**
      * The number of sleep records to show in the sleep records widget.
@@ -79,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements
     @BindView(R.id.nav_view) NavigationView navigationView;
     @BindView(R.id.list_view) ListView sleepRecordListView;
     @BindView(R.id.progressBar) ProgressBar progressBar;
+    @BindView(R.id.verify_email_layout) View verifyEmailView;
+    @BindView(R.id.verifyEmailTextView) TextView verifyEmailTextView;
 
     @BindString(R.string.age_years_singlular) String AGE_YEARS_S;
     @BindString(R.string.age_months_singlular) String AGE_MONTHS_S;
@@ -136,6 +139,13 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 CropImage.startPickImageActivity(MainActivity.this);
+            }
+        });
+
+        verifyEmailTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogUtils.showVerifyEmailDialog(MainActivity.this.getFragmentManager());
             }
         });
 
@@ -369,6 +379,11 @@ public class MainActivity extends AppCompatActivity implements
         new LoadSleepRecordTask().execute();
     }
 
+    @Override
+    public void onEmailVerified() {
+        verifyEmailView.setVisibility(View.GONE);
+    }
+
     /**
      * Update baby info task.
      */
@@ -450,6 +465,11 @@ public class MainActivity extends AppCompatActivity implements
                     break;
                 case USER_INFO_UPDATED:
                     updateUserInfo(userProfile);
+                    //show email verify widget
+                    if (!userProfile.isEmailVerified()) {
+                        verifyEmailView.setVisibility(View.VISIBLE);
+                    }
+
                     if (reloadHeaderImage) {
                         Picasso.with(MainActivity.this)
                                 .load(new File(userProfile.getHeaderIconPath()))

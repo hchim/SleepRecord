@@ -11,6 +11,7 @@ import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.EmailUsedException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongPasswordException;
+import im.hch.sleeprecord.serviceclients.exceptions.WrongVerifyCodeException;
 import im.hch.sleeprecord.utils.DateUtils;
 
 public class IdentityServiceClient extends BaseServiceClient {
@@ -23,10 +24,12 @@ public class IdentityServiceClient extends BaseServiceClient {
     public static final String UPDATE_HEADER_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/%s/update-header";
     public static final String UPDATE_USER_NAME = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/%s/update-name";
     public static final String UPDATE_USER_PASSWORD = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/%s/update-pswd";
+    public static final String VERIFY_EMAIL_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/%s/verify-email";
 
     public static final String ERROR_CODE_EMAIL_USED = "EMAIL_USED";
     public static final String ERROR_CODE_WRONG_PASSWORD = "WRONG_PASSWORD";
     public static final String ERROR_CODE_ACCOUNT_NOT_EXIST = "ACCOUNT_NOT_EXIST";
+    public static final String ERROR_CODE_WRONG_VERIFY_CODE = "WRONG_VERIFY_CODE";
 
     public IdentityServiceClient() {
         super();
@@ -245,6 +248,42 @@ public class IdentityServiceClient extends BaseServiceClient {
                     throw new AccountNotExistException();
                 } else if (errorCode.equals(ERROR_CODE_WRONG_PASSWORD)) {
                     throw new WrongPasswordException();
+                }
+                throw new InternalServerException();
+            }
+        } catch (JSONException ex) {
+            Log.e(TAG, "JSON format error");
+            throw new InternalServerException();
+        }
+    }
+
+    /**
+     * Verify email.
+     * @param verifyCode
+     * @param userId
+     * @throws ConnectionFailureException
+     * @throws InternalServerException
+     * @throws AccountNotExistException
+     * @throws WrongVerifyCodeException
+     */
+    public void verifyEmail(String verifyCode, String userId)
+            throws ConnectionFailureException, InternalServerException, AccountNotExistException, WrongVerifyCodeException {
+        String url = String.format(VERIFY_EMAIL_URL, userId);
+        JSONObject object = new JSONObject();
+        try {
+            object.put("verifyCode", verifyCode);
+            JSONObject result = post(url, object);
+
+            if (result.has(ERROR_CODE_KEY)) {
+                if (result.has(ERROR_MESSAGE_KEY)) {
+                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
+                }
+
+                String errorCode = result.getString(ERROR_CODE_KEY);
+                if (errorCode.equals(ERROR_CODE_ACCOUNT_NOT_EXIST)) {
+                    throw new AccountNotExistException();
+                } else if (errorCode.equals(ERROR_CODE_WRONG_VERIFY_CODE)) {
+                    throw new WrongVerifyCodeException();
                 }
                 throw new InternalServerException();
             }

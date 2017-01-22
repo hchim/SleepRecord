@@ -10,6 +10,7 @@ import java.util.Calendar;
 
 import im.hch.sleeprecord.activities.main.AddRecordDialogFragment;
 import im.hch.sleeprecord.activities.main.BabyInfoDialogFragment;
+import im.hch.sleeprecord.activities.main.VerifyEmailDialogFragment;
 import im.hch.sleeprecord.activities.settings.UpdatePasswordDialogFragment;
 import im.hch.sleeprecord.models.BabyInfo;
 
@@ -76,6 +77,17 @@ public class DialogUtils {
      */
     public static UpdatePasswordDialogFragment showUpdatePasswordDialog(FragmentManager fragmentManager) {
         UpdatePasswordDialogFragment fragment = UpdatePasswordDialogFragment.newInstance();
+        fragment.show(fragmentManager, DIALOG_TAG);
+        return fragment;
+    }
+
+    /**
+     * Show the verify email dialog.
+     * @param fragmentManager
+     * @return
+     */
+    public static VerifyEmailDialogFragment showVerifyEmailDialog(FragmentManager fragmentManager) {
+        VerifyEmailDialogFragment fragment = VerifyEmailDialogFragment.newInstance();
         fragment.show(fragmentManager, DIALOG_TAG);
         return fragment;
     }
