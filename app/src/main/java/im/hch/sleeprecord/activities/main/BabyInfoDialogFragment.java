@@ -119,9 +119,6 @@ public class BabyInfoDialogFragment extends DialogFragment {
 
         if (context instanceof BabyInfoDialogFragmentListener) {
             mListener = (BabyInfoDialogFragmentListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement BabyInfoDialogFragmentListener");
         }
 
         getDialog().setTitle(title);
