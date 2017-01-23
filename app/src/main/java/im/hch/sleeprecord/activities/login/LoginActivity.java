@@ -1,4 +1,4 @@
-package im.hch.sleeprecord.activities;
+package im.hch.sleeprecord.activities.login;
 
 import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
@@ -33,7 +33,6 @@ import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.loader.EmailLoaderHelper;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
-import im.hch.sleeprecord.serviceclients.SleepServiceClient;
 import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
@@ -43,7 +42,6 @@ import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.FieldValidator;
 import im.hch.sleeprecord.utils.PermissionUtils;
 import im.hch.sleeprecord.utils.SessionManager;
-import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 
 /**
  * A login screen that offers login via email/password.
@@ -62,6 +60,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @BindView(R.id.login_form) RelativeLayout mLoginForm;
     @BindView(R.id.email_sign_in_button) Button mEmailSigninButton;
     @BindView(R.id.email_register_button) Button mEmailRegisterButton;
+    @BindView(R.id.forgetPswdTextView) TextView forgetPswdTextView;
 
     @BindString(R.string.error_incorrect_password) String incorrectPasswordError;
     @BindString(R.string.error_field_required) String requiredFieldError;
@@ -111,6 +110,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View v) {
                 ActivityUtils.navigateToRegisterActivity(LoginActivity.this);
+            }
+        });
+
+        forgetPswdTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogUtils.showResetPasswordDialog(LoginActivity.this.getFragmentManager());
             }
         });
     }

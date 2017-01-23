@@ -8,6 +8,7 @@ import android.view.View;
 
 import java.util.Calendar;
 
+import im.hch.sleeprecord.activities.login.ResetPasswordDialogFragment;
 import im.hch.sleeprecord.activities.main.AddRecordDialogFragment;
 import im.hch.sleeprecord.activities.main.BabyInfoDialogFragment;
 import im.hch.sleeprecord.activities.main.VerifyEmailDialogFragment;
@@ -88,6 +89,17 @@ public class DialogUtils {
      */
     public static VerifyEmailDialogFragment showVerifyEmailDialog(FragmentManager fragmentManager) {
         VerifyEmailDialogFragment fragment = VerifyEmailDialogFragment.newInstance();
+        fragment.show(fragmentManager, DIALOG_TAG);
+        return fragment;
+    }
+
+    /**
+     * Show the reset password dialog.
+     * @param fragmentManager
+     * @return
+     */
+    public static ResetPasswordDialogFragment showResetPasswordDialog(FragmentManager fragmentManager) {
+        ResetPasswordDialogFragment fragment = ResetPasswordDialogFragment.newInstance();
         fragment.show(fragmentManager, DIALOG_TAG);
         return fragment;
     }

@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="im.hch.sleeprecord.activities.LoginActivity">
+    tools:context="im.hch.sleeprecord.activities.login.LoginActivity">
 
     <RelativeLayout
         android:id="@+id/login_form"
@@ -52,6 +52,16 @@
                     android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:text="@string/forget_password_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:textStyle="italic"
+                android:textColor="@color/colorAccent"
+                android:paddingTop="10dp"
+                android:id="@+id/forgetPswdTextView" />
 
             <LinearLayout
                 android:orientation="horizontal"

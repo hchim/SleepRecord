@@ -3,7 +3,6 @@ package im.hch.sleeprecord.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -15,7 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import java.io.File;
 import java.io.IOException;
 
-import im.hch.sleeprecord.activities.LoginActivity;
+import im.hch.sleeprecord.activities.login.LoginActivity;
 import im.hch.sleeprecord.activities.main.MainActivity;
 import im.hch.sleeprecord.activities.RegisterActivity;
 import im.hch.sleeprecord.activities.records.SleepRecordsActivity;

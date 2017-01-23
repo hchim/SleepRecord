@@ -46,7 +46,7 @@
                 android:value="im.hch.sleeprecord.activities.main.MainActivity" />
         </activity>
         <activity
-            android:name=".activities.LoginActivity"
+            android:name=".activities.login.LoginActivity"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_login" />
         <activity

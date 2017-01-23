@@ -25,6 +25,14 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <!-- LoginActivity -->
+    <string name="security_code_title">Security Code</string>
+    <string name="reset_password_title">Reset Password</string>
+    <string name="error_invalid_security_code">Invalid security code.</string>
+    <string name="reset_btn">Reset</string>
+    <string name="send_email_btn">Send Email</string>
+    <string name="forget_password_title">Forget password?</string>
+
     <!-- Toolbar menu title -->
     <string name="menu_add_sleep_record">Add</string>
 
@@ -98,6 +106,8 @@
     <string name="progress_message_save">Saving ...</string>
     <string name="progress_message_load">Loading ...</string>
     <string name="progress_message_verify">Verifying ...</string>
+    <string name="progress_message_send">Sending ...</string>
+    <string name="progress_message_reset">Reseting ...</string>
 
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_register_short">Register</string>
@@ -119,6 +129,7 @@
     <string name="error_account_does_not_exist">Account does not exist.</string>
     <string name="error_wrong_password">Wrong password.</string>
     <string name="error_wrong_verify_code">The verify code is wrong.</string>
+    <string name="error_wrong_security_code">The security code is wrong.</string>
 
     <string name="button_previous">Previous</string>
     <string name="button_next">Next</string>

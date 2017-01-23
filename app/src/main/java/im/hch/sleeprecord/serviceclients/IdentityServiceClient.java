@@ -11,6 +11,7 @@ import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.EmailUsedException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongPasswordException;
+import im.hch.sleeprecord.serviceclients.exceptions.WrongSecurityCodeException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongVerifyCodeException;
 import im.hch.sleeprecord.utils.DateUtils;
 
@@ -25,11 +26,14 @@ public class IdentityServiceClient extends BaseServiceClient {
     public static final String UPDATE_USER_NAME = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/%s/update-name";
     public static final String UPDATE_USER_PASSWORD = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/%s/update-pswd";
     public static final String VERIFY_EMAIL_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/%s/verify-email";
+    public static final String SEND_PASSWORD_RESET_EMAIL_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "reset-email";
+    public static final String PASSWORD_RESET_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "reset-pswd";
 
     public static final String ERROR_CODE_EMAIL_USED = "EMAIL_USED";
     public static final String ERROR_CODE_WRONG_PASSWORD = "WRONG_PASSWORD";
     public static final String ERROR_CODE_ACCOUNT_NOT_EXIST = "ACCOUNT_NOT_EXIST";
     public static final String ERROR_CODE_WRONG_VERIFY_CODE = "WRONG_VERIFY_CODE";
+    public static final String ERROR_CODE_WRONG_SECURITY_CODE = "WRONG_SECURITY_CODE";
 
     public IdentityServiceClient() {
         super();
@@ -284,6 +288,76 @@ public class IdentityServiceClient extends BaseServiceClient {
                     throw new AccountNotExistException();
                 } else if (errorCode.equals(ERROR_CODE_WRONG_VERIFY_CODE)) {
                     throw new WrongVerifyCodeException();
+                }
+                throw new InternalServerException();
+            }
+        } catch (JSONException ex) {
+            Log.e(TAG, "JSON format error");
+            throw new InternalServerException();
+        }
+    }
+
+    /**
+     * Send the reset password email.
+     * @param email
+     * @throws ConnectionFailureException
+     * @throws InternalServerException
+     * @throws AccountNotExistException
+     */
+    public void sendPasswordResetEmail(String email)
+            throws ConnectionFailureException, InternalServerException, AccountNotExistException {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("email", email);
+            JSONObject result = post(SEND_PASSWORD_RESET_EMAIL_URL, object);
+
+            if (result.has(ERROR_CODE_KEY)) {
+                if (result.has(ERROR_MESSAGE_KEY)) {
+                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
+                }
+
+                String errorCode = result.getString(ERROR_CODE_KEY);
+                if (errorCode.equals(ERROR_CODE_ACCOUNT_NOT_EXIST)) {
+                    throw new AccountNotExistException();
+                }
+                throw new InternalServerException();
+            }
+        } catch (JSONException ex) {
+            Log.e(TAG, "JSON format error");
+            throw new InternalServerException();
+        }
+    }
+
+    /**
+     * Reset password.
+     * @param email
+     * @param securityCode
+     * @param password
+     * @throws ConnectionFailureException
+     * @throws InternalServerException
+     * @throws AccountNotExistException
+     * @throws WrongSecurityCodeException
+     */
+    public void resetPassword(String email, String securityCode, String password)
+            throws ConnectionFailureException, InternalServerException, AccountNotExistException, WrongSecurityCodeException {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("email", email);
+            object.put("securityCode", securityCode);
+            object.put("newPassword", password);
+
+            JSONObject result = post(PASSWORD_RESET_URL, object);
+
+            if (result.has(ERROR_CODE_KEY)) {
+                if (result.has(ERROR_MESSAGE_KEY)) {
+                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
+                }
+
+                String errorCode = result.getString(ERROR_CODE_KEY);
+                if (errorCode.equals(ERROR_CODE_ACCOUNT_NOT_EXIST)) {
+                    throw new AccountNotExistException();
+                } else if (errorCode.equals(ERROR_CODE_WRONG_SECURITY_CODE)) {
+                    throw new WrongSecurityCodeException();
                 }
                 throw new InternalServerException();
             }
