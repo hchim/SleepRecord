@@ -132,8 +132,11 @@ public class DateUtils {
      * Return ID of local timezone and replace forward slash with -.
      * @return
      */
-    public static String getLocalTimezone() {
+    public static String getLocalTimezone(boolean encode) {
         TimeZone timeZone = TimeZone.getDefault();
-        return timeZone.getID().replace('/', '-');
+        if (encode) {
+            return timeZone.getID().replace('/', '-');
+        }
+        return timeZone.getID();
     }
 }

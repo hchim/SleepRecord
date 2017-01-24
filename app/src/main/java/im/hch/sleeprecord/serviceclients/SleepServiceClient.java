@@ -6,7 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -109,12 +108,13 @@ public class SleepServiceClient extends BaseServiceClient {
      */
     public void addSleepRecord(Date from, Date to, String userId)
             throws ConnectionFailureException, InternalServerException, TimeOverlapException {
-        String url = SLEEP_RECORDS_URL + userId;
+        String url = SLEEP_RECORDS_URL;
         try {
             JSONObject object = new JSONObject();
             object.put("userId", userId);
             object.put("fallAsleepTime", from);
             object.put("wakeupTime", to);
+            object.put("timezone", DateUtils.getLocalTimezone(false));
 
             JSONObject result = post(url, object);
             if (result.has(ERROR_CODE_KEY)) {
@@ -148,7 +148,7 @@ public class SleepServiceClient extends BaseServiceClient {
         String url = String.format(SLEEP_RECORDS_URL + "%s/%s/%s/%s", userId,
                 DateUtils.dateToStr(from, QUERY_DATE_FORMAT),
                 DateUtils.dateToStr(to, QUERY_DATE_FORMAT),
-                DateUtils.getLocalTimezone());
+                DateUtils.getLocalTimezone(true));
 
         try {
             JSONObject result = get(url);
