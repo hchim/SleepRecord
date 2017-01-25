@@ -35,33 +35,59 @@
             style="@style/verifyEmailText"/>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/sleep_records_widget"
-        android:orientation="vertical"
-        style="@style/MainActivityWidget"
-        android:layout_below="@+id/verify_email_layout">
-
-        <TextView
-            android:text="@string/widget_title_sleep_records"
-            style="@style/WidgetTitle"/>
-
-        <ListView
-            android:id="@+id/list_view"
+    <ScrollView
+        android:layout_below="@id/verify_email_layout"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:dividerHeight="@dimen/sleep_record_list_divider_height" />
-    </LinearLayout>
+            android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/widget2"
-        android:orientation="vertical"
-        style="@style/MainActivityWidget"
-        android:layout_below="@id/sleep_records_widget">
+            <LinearLayout
+                android:id="@+id/sleep_records_widget"
+                android:orientation="vertical"
+                style="@style/MainActivityWidget"
+                android:layout_alignParentTop="true">
 
-        <TextView
-            android:text="TextView"
-            style="@style/WidgetTitle"/>
-    </LinearLayout>
+                <TextView
+                    android:text="@string/widget_title_sleep_records"
+                    style="@style/WidgetTitle"/>
+
+                <ListView
+                    android:id="@+id/list_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:dividerHeight="@dimen/sleep_record_list_divider_height" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/widget2"
+                android:orientation="vertical"
+                style="@style/MainActivityWidget"
+                android:layout_below="@id/sleep_records_widget">
+
+                <TextView
+                    android:text="@string/sleep_trend_widget_title"
+                    style="@style/WidgetTitle"/>
+
+                <im.hch.sleeprecord.activities.main.SleepQualityTrendView
+                    android:id="@+id/sleepQualityTrend"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:ScaleLineColor="@color/colorPrimaryDark"
+                    app:GridLineColor="@color/black_overlay"
+                    app:LabelColor="@color/timeLabelColor"
+                    app:TrendLineColor="@color/timeLabelColor"
+                    app:PointWidth="@dimen/quality_trend_point_width"
+                    app:GridLineNumber="5"
+                    app:MarginBottomPercent="0.1"
+                    app:HeightPercent="0.55"/>
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
 </RelativeLayout>

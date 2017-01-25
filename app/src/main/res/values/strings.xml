@@ -41,7 +41,7 @@
     <string name="verify_code">Verification Code</string>
     <string name="verify_btn">Verify</string>
     <string name="email_verify_dialog_title">Email Verification</string>
-
+    <string name="sleep_trend_widget_title">Sleep Trend</string>
     <!-- Add Record Activity -->
     <string name="title_activity_add_record">Add Sleep Record</string>
     <string name="fall_asleep_time_label">Fall Asleep Time</string>

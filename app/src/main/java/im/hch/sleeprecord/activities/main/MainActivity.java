@@ -21,7 +21,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -35,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import butterknife.BindString;
 import butterknife.BindView;
@@ -43,6 +47,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.records.SleepRecordsAdapter;
 import im.hch.sleeprecord.models.BabyInfo;
+import im.hch.sleeprecord.models.SleepQuality;
 import im.hch.sleeprecord.models.SleepRecord;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
@@ -82,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements
     @BindView(R.id.progressBar) ProgressBar progressBar;
     @BindView(R.id.verify_email_layout) View verifyEmailView;
     @BindView(R.id.verifyEmailTextView) TextView verifyEmailTextView;
+    @BindView(R.id.sleepQualityTrend) SleepQualityTrendView sleepQualityTrendView;
 
     @BindString(R.string.age_years_singlular) String AGE_YEARS_S;
     @BindString(R.string.age_months_singlular) String AGE_MONTHS_S;
@@ -149,7 +155,52 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
+        // Disallow the touch request for parent scroll on touch of child view
+        sleepRecordListView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
+
+        ArrayList<SleepQuality> sleepQualities = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -30);
+        Random random = new Random(System.currentTimeMillis());
+        for (int i = 0; i < 30; i++) {
+            sleepQualities.add(new SleepQuality(calendar.getTime(), 10 - random.nextInt(4)));
+            calendar.add(Calendar.DATE, 1);
+        }
+        sleepQualityTrendView.setSleepQualities(sleepQualities);
         loadRemoteData();
+    }
+
+    /**** Method for Setting the Height of the ListView dynamically.
+     **** Hack to fix the issue of not showing all the items of the ListView
+     **** when placed inside a ScrollView  ****/
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null)
+            return;
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0) {
+                view.setLayoutParams(
+                        new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
+                );
+            }
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
     }
 
     @Override
@@ -310,6 +361,7 @@ public class MainActivity extends AppCompatActivity implements
         sleepRecordsAdapter = new SleepRecordsAdapter(this,
                 SleepRecordUtils.fillSleepRecords(records, from.getTime(), to.getTime()));
         sleepRecordListView.setAdapter(sleepRecordsAdapter);
+        setListViewHeightBasedOnChildren(sleepRecordListView);
     }
 
     /**

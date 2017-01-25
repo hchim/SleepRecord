@@ -1,0 +1,12 @@
+<resources>
+    <declare-styleable name="SleepQualityTrendView">
+        <attr name="ScaleLineColor" format="color" />
+        <attr name="GridLineColor" format="color" />
+        <attr name="GridLineNumber" format="integer" />
+        <attr name="TrendLineColor" format="color" />
+        <attr name="LabelColor" format="color" />
+        <attr name="PointWidth" format="dimension" />
+        <attr name="MarginBottomPercent" format="float" />
+        <attr name="HeightPercent" format="float" />
+    </declare-styleable>
+</resources>
