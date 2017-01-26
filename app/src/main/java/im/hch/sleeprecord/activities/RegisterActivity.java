@@ -27,6 +27,7 @@ import java.util.List;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.loader.EmailLoaderHelper;
 import im.hch.sleeprecord.models.UserProfile;
@@ -37,6 +38,7 @@ import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.FieldValidator;
+import im.hch.sleeprecord.utils.MetricHelper;
 import im.hch.sleeprecord.utils.PermissionUtils;
 import im.hch.sleeprecord.utils.SessionManager;
 
@@ -74,6 +76,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     private IdentityServiceClient identityServiceClient;
     private EmailLoaderHelper emailLoaderHelper;
     private ProgressDialog progressDialog;
+    private MetricHelper metricHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +87,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         this.mSessionManager = new SessionManager(this);
         this.identityServiceClient = new IdentityServiceClient();
         this.emailLoaderHelper = new EmailLoaderHelper(this);
+        this.metricHelper = new MetricHelper(this);
 
         populateAutoComplete();
 
@@ -234,6 +238,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                 errorMessage = emailUsedError;
             } catch (InternalServerException e) {
                 errorMessage = internalServerError;
+                metricHelper.errorMetric(Metrics.REGISTER_ERROR_METRIC, e);
             } catch (ConnectionFailureException e) {
                 errorMessage = failedToConnectError;
             }

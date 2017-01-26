@@ -25,12 +25,14 @@ import java.util.Date;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.serviceclients.exceptions.TimeOverlapException;
 import im.hch.sleeprecord.utils.DialogUtils;
+import im.hch.sleeprecord.utils.MetricHelper;
 import im.hch.sleeprecord.utils.SessionManager;
 
 public class AddRecordDialogFragment extends DialogFragment {
@@ -61,6 +63,7 @@ public class AddRecordDialogFragment extends DialogFragment {
     private SleepServiceClient sleepServiceClient;
     private SessionManager sessionManager;
     private AddRecordDialogListener mListener;
+    private MetricHelper metricHelper;
 
     public static AddRecordDialogFragment newInstance() {
         AddRecordDialogFragment fragment = new AddRecordDialogFragment();
@@ -81,6 +84,7 @@ public class AddRecordDialogFragment extends DialogFragment {
         Context context = getActivity();
         sleepServiceClient = new SleepServiceClient();
         sessionManager = new SessionManager(context);
+        metricHelper = new MetricHelper(context);
 
         if (context instanceof AddRecordDialogListener) {
             mListener = (AddRecordDialogListener) context;
@@ -298,6 +302,7 @@ public class AddRecordDialogFragment extends DialogFragment {
                 errorMessage = failedToConnectError;
             } catch (InternalServerException e) {
                 errorMessage = internalServerError;
+                metricHelper.errorMetric(Metrics.ADD_SLEEP_RECORD_ERROR_METRIC, e);
             } catch (TimeOverlapException e) {
                 errorMessage = sleepRecordOverlapError;
             }

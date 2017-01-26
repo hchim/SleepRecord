@@ -44,6 +44,7 @@ import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
+import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.records.SleepRecordsAdapter;
 import im.hch.sleeprecord.models.BabyInfo;
@@ -52,10 +53,12 @@ import im.hch.sleeprecord.models.SleepRecord;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
+import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DateUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.ImageUtils;
+import im.hch.sleeprecord.utils.MetricHelper;
 import im.hch.sleeprecord.utils.SessionManager;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 import im.hch.sleeprecord.utils.SleepRecordUtils;
@@ -79,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements
     private IdentityServiceClient identityServiceClient;
     private HeaderViewHolder headerViewHolder;
     private Uri mCropImageUri;
+    private MetricHelper metricHelper;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.drawer_layout) DrawerLayout drawer;
@@ -110,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements
         sharedPreferenceUtil = new SharedPreferenceUtil(this);
         sleepServiceClient = new SleepServiceClient();
         identityServiceClient = new IdentityServiceClient();
+        metricHelper = new MetricHelper(this);
 
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -176,9 +181,23 @@ public class MainActivity extends AppCompatActivity implements
         loadRemoteData();
     }
 
-    /**** Method for Setting the Height of the ListView dynamically.
-     **** Hack to fix the issue of not showing all the items of the ListView
-     **** when placed inside a ScrollView  ****/
+    @Override
+    protected void onResume() {
+        super.onResume();
+        metricHelper.startTimeMetric(Metrics.MAIN_ACTIVITY_USAGE_TIME_METRIC);
+    }
+
+    @Override
+    protected void onPause() {
+        metricHelper.stopTimeMetric(Metrics.MAIN_ACTIVITY_USAGE_TIME_METRIC);
+        super.onPause();
+    }
+
+    /**
+     * Method for Setting the Height of the ListView dynamically. Hack to fix the issue of
+     * not showing all the items of the ListView when placed inside a ScrollView.
+     * @param listView
+     */
     public static void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null)
@@ -464,6 +483,9 @@ public class MainActivity extends AppCompatActivity implements
                 sharedPreferenceUtil.storeBabyInfo(babyInfo);
             } catch (Exception e) {
                 Log.w(MainActivity.TAG, e);
+                if (e instanceof InternalServerException) {
+                    metricHelper.errorMetric(Metrics.GET_BABY_INFO_ERROR_METRIC, e);
+                }
             }
             publishProgress(BABY_INFO_UPDATED);
 
@@ -487,6 +509,9 @@ public class MainActivity extends AppCompatActivity implements
                 }
             } catch (Exception e) {
                 Log.w(MainActivity.TAG, e);
+                if (e instanceof InternalServerException) {
+                    metricHelper.errorMetric(Metrics.GET_USER_ERROR_METRIC, e);
+                }
             }
             publishProgress(USER_INFO_UPDATED);
 
@@ -500,6 +525,9 @@ public class MainActivity extends AppCompatActivity implements
                 sharedPreferenceUtil.storeSleepRecords(sleepRecords, userId);
             } catch (Exception e) {
                 Log.w(MainActivity.TAG, e);
+                if (e instanceof InternalServerException) {
+                    metricHelper.errorMetric(Metrics.GET_SLEEP_RECORDS_ERROR_METRIC, e);
+                }
             }
             publishProgress(SLEEP_RECORDS_UPDATED);
 
@@ -543,6 +571,12 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             progressBar.setVisibility(View.GONE);
+            metricHelper.stopTimeMetric(Metrics.MAIN_ACTIVITY_LOADING_TIME_METRIC);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            metricHelper.startTimeMetric(Metrics.MAIN_ACTIVITY_LOADING_TIME_METRIC);
         }
     }
 
@@ -567,6 +601,9 @@ public class MainActivity extends AppCompatActivity implements
                 sharedPreferenceUtil.storeSleepRecords(sleepRecords, userId);
             } catch (Exception e) {
                 Log.w(MainActivity.TAG, e);
+                if (e instanceof InternalServerException) {
+                    metricHelper.errorMetric(Metrics.GET_SLEEP_RECORDS_ERROR_METRIC, e);
+                }
             }
 
             return Boolean.TRUE;

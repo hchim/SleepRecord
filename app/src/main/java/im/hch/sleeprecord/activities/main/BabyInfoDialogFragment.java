@@ -23,6 +23,7 @@ import java.util.Calendar;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
@@ -31,6 +32,7 @@ import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DateUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
+import im.hch.sleeprecord.utils.MetricHelper;
 import im.hch.sleeprecord.utils.SessionManager;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 
@@ -57,6 +59,7 @@ public class BabyInfoDialogFragment extends DialogFragment {
     private ProgressDialog progressDialog;
     private SessionManager sessionManager;
     private SharedPreferenceUtil sharedPreferenceUtil;
+    private MetricHelper metricHelper;
 
     @BindView(R.id.progressBar) ProgressBar mProgressBar;
     @BindView(R.id.babyinfo_form) View mBabyInfoView;
@@ -116,6 +119,7 @@ public class BabyInfoDialogFragment extends DialogFragment {
         sessionManager = new SessionManager(context);
         sharedPreferenceUtil = new SharedPreferenceUtil(context);
         sleepServiceClient = new SleepServiceClient();
+        metricHelper = new MetricHelper(context);
 
         if (context instanceof BabyInfoDialogFragmentListener) {
             mListener = (BabyInfoDialogFragmentListener) context;
@@ -236,6 +240,7 @@ public class BabyInfoDialogFragment extends DialogFragment {
                     return true;
                 } catch (InternalServerException e) {
                     errorMessage = internalServerError;
+                    metricHelper.errorMetric(Metrics.SAVE_BABY_INFO_ERROR_METRIC, e);
                 } catch (ConnectionFailureException e) {
                     errorMessage = failedToConnectError;
                 }

@@ -20,6 +20,7 @@ import java.util.List;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.main.AddRecordDialogFragment;
 import im.hch.sleeprecord.activities.main.MainActivity;
@@ -28,6 +29,7 @@ import im.hch.sleeprecord.serviceclients.SleepServiceClient;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.DialogUtils;
+import im.hch.sleeprecord.utils.MetricHelper;
 import im.hch.sleeprecord.utils.SessionManager;
 
 public class SleepRecordsActivity extends AppCompatActivity implements AddRecordDialogFragment.AddRecordDialogListener {
@@ -41,9 +43,9 @@ public class SleepRecordsActivity extends AppCompatActivity implements AddRecord
     private SleepRecordsAdapter sleepRecordsAdapter;
     private SessionManager sessionManager;
     private SleepServiceClient sleepServiceClient;
-    private LoadRemoteDataTask loadRemoteDataTask;
+    private MetricHelper metricHelper;
+
     private int page = 0;
-    private boolean isLoading = false;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.list_view) ListView listView;
@@ -60,6 +62,7 @@ public class SleepRecordsActivity extends AppCompatActivity implements AddRecord
 
         sessionManager = new SessionManager(this);
         sleepServiceClient = new SleepServiceClient();
+        metricHelper = new MetricHelper(this);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -88,6 +91,18 @@ public class SleepRecordsActivity extends AppCompatActivity implements AddRecord
     }
 
     @Override
+    protected void onPause() {
+        metricHelper.startTimeMetric(Metrics.SLEEP_RECORD_ACTIVITY_USAGE_TIME_METRIC);
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        metricHelper.startTimeMetric(Metrics.SLEEP_RECORD_ACTIVITY_USAGE_TIME_METRIC);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.home, menu);
@@ -111,13 +126,9 @@ public class SleepRecordsActivity extends AppCompatActivity implements AddRecord
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public void onSleepRecordSaved(Date from, Date to) {
-        //TODO reload add records
+        page = 0; // reset page to first page
+        new LoadRemoteDataTask().execute(page);
     }
 
     private class LoadRemoteDataTask extends AsyncTask<Integer, Void, Boolean> {
@@ -128,7 +139,6 @@ public class SleepRecordsActivity extends AppCompatActivity implements AddRecord
 
         @Override
         protected void onPreExecute() {
-            isLoading = true;
             progressDialog = DialogUtils.showProgressDialog(SleepRecordsActivity.this, loadingMessage);
         }
 
@@ -140,6 +150,7 @@ public class SleepRecordsActivity extends AppCompatActivity implements AddRecord
                 return false;
             }
 
+            int page = params[0];
             //update sleep records
             Calendar to = Calendar.getInstance();
             Calendar from = Calendar.getInstance();
@@ -153,6 +164,7 @@ public class SleepRecordsActivity extends AppCompatActivity implements AddRecord
                 errorMessage = failedToConnectError;
             } catch (InternalServerException e) {
                 errorMessage = internalServerError;
+                metricHelper.errorMetric(Metrics.GET_SLEEP_RECORDS_ERROR_METRIC, e);
             }
 
             return false;
@@ -161,7 +173,6 @@ public class SleepRecordsActivity extends AppCompatActivity implements AddRecord
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             progressDialog.dismiss();
-            isLoading = false;
 
             if (aBoolean) {
                 page += 1;

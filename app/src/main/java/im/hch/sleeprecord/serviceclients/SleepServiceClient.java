@@ -55,7 +55,7 @@ public class SleepServiceClient extends BaseServiceClient {
                 throw new InternalServerException();
             }
         } catch (JSONException e) {
-            Log.e(TAG, "JSON format error");
+            Log.e(TAG, "JSON format error", e);
             throw new InternalServerException();
         }
     }

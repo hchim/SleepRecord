@@ -4,13 +4,16 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 
 import im.hch.sleeprecord.serviceclients.MetricServiceClient;
 
 public class MetricHelper {
     public static final String TAG = "MetricHelper";
-
+    public static final int ERROR_SIZE = 4096;
     public enum MetricType {
         COUNT("count"), TIME("time"), ERROR("error"), MESSAGE("msg");
 
@@ -51,6 +54,17 @@ public class MetricHelper {
      */
     public void errorMetric(String tag, String error) {
         new SendMetricAsyncTask(tag, MetricType.ERROR, error).execute();
+    }
+
+    /**
+     * Add an error metric.
+     * @param tag
+     * @param e
+     */
+    public void errorMetric(String tag, Exception e) {
+        StringWriter writer = new StringWriter(ERROR_SIZE);
+        e.printStackTrace(new PrintWriter(writer));
+        new SendMetricAsyncTask(tag, MetricType.ERROR, writer.toString()).execute();
     }
 
     /**
