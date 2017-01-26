@@ -78,7 +78,6 @@
                     android:id="@+id/sleepQualityTrend"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
                     app:ScaleLineColor="@color/colorPrimaryDark"
                     app:GridLineColor="@color/black_overlay"
                     app:LabelColor="@color/timeLabelColor"

@@ -82,6 +82,8 @@ public class SleepRecordView extends View {
                 hourLabels[i] = String.valueOf(i);
             }
         }
+
+        initPaintResources();
     }
 
     public void setSleepTimePairs(List<Pair<Date, Date>> mSleepTimePairs) {
@@ -100,24 +102,42 @@ public class SleepRecordView extends View {
     private int contentHeight = 0;
     private int scaleLinePosition = 0;
 
-    private void updateDrawValues() {
-        // allocations per draw cycle.
+    private Paint scaleLinePaint;
+    private Paint mTextPaint;
+    private Paint sleepTimePaint;
+
+    private void initPaintResources() {
+        //scale line paint
+        scaleLinePaint = new Paint();
+        scaleLinePaint.setColor(mScaleLineColor);
+
+        //scale label paint
+        mTextPaint = new TextPaint();
+        mTextPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
+        mTextPaint.setTextAlign(Paint.Align.LEFT);
+        mTextPaint.setTextSize(mTimeLabelFontSize);
+        mTextPaint.setColor(mTimeLabelColor);
+
+        //sleep time paint
+        sleepTimePaint = new Paint();
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+
         paddingLeft = getPaddingLeft();
         paddingTop = getPaddingTop();
         paddingRight = getPaddingRight();
         paddingBottom = getPaddingBottom();
-
         contentWidth = getWidth() - paddingLeft - paddingRight;
         contentHeight = getHeight() - paddingTop - paddingBottom;
-
         scaleLinePosition = paddingTop + (int) (contentHeight * (1 - mScaleHeightPercentage));
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        updateDrawValues();
-
         drawScalesAndLabels(canvas);
         drawSleepTimes(canvas);
     }
@@ -127,16 +147,6 @@ public class SleepRecordView extends View {
      * @param canvas
      */
     private void drawScalesAndLabels(Canvas canvas) {
-        //scale line paint
-        Paint scaleLinePaint = new Paint();
-        scaleLinePaint.setColor(mScaleLineColor);
-
-        //scale label paint
-        TextPaint mTextPaint = new TextPaint();
-        mTextPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.setTextAlign(Paint.Align.LEFT);
-        mTextPaint.setTextSize(mTimeLabelFontSize);
-        mTextPaint.setColor(mTimeLabelColor);
         Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
         float mTextWidth;
         float mTextHeight = fontMetrics.bottom;
@@ -171,13 +181,12 @@ public class SleepRecordView extends View {
             return;
         }
 
-        Paint paint = new Paint();
-        updateSleepTimePaintColor(paint);
+        updateSleepTimePaintColor(sleepTimePaint);
 
         for (Pair<Date, Date> pair : mSleepTimePairs) {
             float beginPos = calculateTimePosition(pair.first);
             float endPos = calculateTimePosition(pair.second);
-            canvas.drawRect(beginPos, 0, endPos, scaleLinePosition, paint);
+            canvas.drawRect(beginPos, 0, endPos, scaleLinePosition, sleepTimePaint);
         }
     }
 

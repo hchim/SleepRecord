@@ -38,6 +38,11 @@ public class SleepQualityTrendView extends View {
     @Setter
     private List<SleepQuality> sleepQualities = new ArrayList<>();
 
+    private Paint scaleLinePaint;
+    private Paint gridLinePaint;
+    private Paint trendLinePaint;
+    private Paint pointPaint;
+
     public SleepQualityTrendView(Context context) {
         super(context);
         init(null, 0);
@@ -67,6 +72,25 @@ public class SleepQualityTrendView extends View {
         mPointWidth = a.getDimension(R.styleable.SleepQualityTrendView_PointWidth, mPointWidth);
 
         a.recycle();
+
+        //init paint Resources
+        scaleLinePaint = new Paint();
+        scaleLinePaint.setStyle(Paint.Style.STROKE);
+        scaleLinePaint.setColor(mScaleLineColor);
+
+        gridLinePaint = new Paint();
+        gridLinePaint.setStyle(Paint.Style.STROKE);
+        gridLinePaint.setPathEffect(new DashPathEffect(new float[]{5, 5, 5, 5}, 1));
+        gridLinePaint.setColor(mGridLineColor);
+
+        trendLinePaint = new Paint();
+        trendLinePaint.setStyle(Paint.Style.STROKE);
+        trendLinePaint.setColor(mScaleLineColor);
+
+        pointPaint = new Paint();
+        pointPaint.setStrokeWidth(mPointWidth);
+        pointPaint.setStyle(Paint.Style.STROKE);
+        pointPaint.setColor(mScaleLineColor);
     }
 
     private int paddingLeft = 0;
@@ -77,7 +101,10 @@ public class SleepQualityTrendView extends View {
     private int contentWidth = 0;
     private int contentHeight = 0;
 
-    private void updateDrawValues() {
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+
         paddingLeft = getPaddingLeft();
         paddingTop = getPaddingTop();
         paddingRight = getPaddingRight();
@@ -91,7 +118,7 @@ public class SleepQualityTrendView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        updateDrawValues();
+
         drawScalesAndLabels(canvas);
         drawGridLines(canvas);
         drawSleepQuality(canvas);
@@ -102,10 +129,6 @@ public class SleepQualityTrendView extends View {
      * @param canvas
      */
     private void drawScalesAndLabels(Canvas canvas) {
-        //scale line paint
-        Paint scaleLinePaint = new Paint();
-        scaleLinePaint.setStyle(Paint.Style.STROKE);
-        scaleLinePaint.setColor(mScaleLineColor);
         Rect paintArea = new Rect(0, 0, contentWidth, bottomLineHeight);
         canvas.drawRect(paintArea, scaleLinePaint);
 
@@ -120,11 +143,6 @@ public class SleepQualityTrendView extends View {
      * @param canvas
      */
     private void drawGridLines(Canvas canvas) {
-        Paint gridLinePaint = new Paint();
-        gridLinePaint.setStyle(Paint.Style.STROKE);
-        gridLinePaint.setPathEffect(new DashPathEffect(new float[]{5, 5, 5, 5}, 1));
-        gridLinePaint.setColor(mGridLineColor);
-
         float margin = bottomLineHeight * 1.0f / (mGridLineNumber + 1);
         for (int i = 0; i < mGridLineNumber; i++) {
             Path path = new Path();
@@ -139,15 +157,6 @@ public class SleepQualityTrendView extends View {
      * @param canvas
      */
     private void drawSleepQuality(Canvas canvas) {
-        Paint trendLinePaint = new Paint();
-        trendLinePaint.setStyle(Paint.Style.STROKE);
-        trendLinePaint.setColor(mScaleLineColor);
-
-        Paint pointPaint = new Paint();
-        pointPaint.setStrokeWidth(mPointWidth);
-        pointPaint.setStyle(Paint.Style.STROKE);
-        pointPaint.setColor(mScaleLineColor);
-
         float margin = contentWidth * 1.0f / (sleepQualities.size() + 1);
         float lastx = -1;
         float lasty = -1;
