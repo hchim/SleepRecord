@@ -139,4 +139,25 @@ public class DateUtils {
         }
         return timeZone.getID();
     }
+
+    /**
+     * @param date
+     * @return true if the date is Monday
+     */
+    public static boolean isMonday(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY;
+    }
+
+    /**
+     * @param date
+     * @return true if it is the first day of a month
+     */
+    public static boolean isFirstDayOfMonth(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        int d = calendar.get(Calendar.DATE);
+        return d == 1;
+    }
 }

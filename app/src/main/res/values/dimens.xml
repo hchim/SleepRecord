@@ -17,6 +17,7 @@
     <dimen name="widget_margin_bottom">10dp</dimen>
     <dimen name="widget_title_margin_bottom">5dp</dimen>
     <dimen name="quality_trend_point_width">8dp</dimen>
+    <dimen name="label_text_size">12dp</dimen>
 
     <!-- Sleep Record ListView -->
     <dimen name="sleep_record_list_divider_height">5dp</dimen>

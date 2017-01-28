@@ -65,7 +65,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/widget2"
+                android:id="@+id/sleep_trend_widget"
                 android:orientation="vertical"
                 style="@style/MainActivityWidget"
                 android:layout_below="@id/sleep_records_widget">
@@ -81,11 +81,23 @@
                     app:ScaleLineColor="@color/colorPrimaryDark"
                     app:GridLineColor="@color/black_overlay"
                     app:LabelColor="@color/timeLabelColor"
+                    app:LabelTextSize="@dimen/label_text_size"
                     app:TrendLineColor="@color/timeLabelColor"
                     app:PointWidth="@dimen/quality_trend_point_width"
                     app:GridLineNumber="5"
-                    app:MarginBottomPercent="0.1"
+                    app:MarginBottomPercent="0.08"
                     app:HeightPercent="0.55"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/widget2"
+                android:orientation="vertical"
+                style="@style/MainActivityWidget"
+                android:layout_below="@id/sleep_trend_widget">
+
+                <TextView
+                    android:text="A new widget"
+                    style="@style/WidgetTitle"/>
             </LinearLayout>
         </RelativeLayout>
     </ScrollView>
