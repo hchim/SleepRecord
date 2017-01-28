@@ -64,6 +64,12 @@ public class SleepRecordsAdapter extends BaseAdapter {
         return convertView;
     }
 
+    @Override
+    public boolean isEnabled(int position) {
+        //Override this method and return false to make the listview item unslectable.
+        return false;
+    }
+
     public void updateSleepRecords(List<SleepRecord> sleepRecords) {
         if (sleepRecords != null) {
             this.mDataSource = sleepRecords;
