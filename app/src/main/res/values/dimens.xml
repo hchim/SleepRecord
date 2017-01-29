@@ -24,7 +24,7 @@
     <dimen name="label_text_size">12dp</dimen>
 
     <!-- Sleep Record ListView -->
-    <dimen name="sleep_record_list_divider_height">5dp</dimen>
+    <dimen name="sleep_record_list_divider_height">10dp</dimen>
 
     <!-- Sleep Record List Item View -->
     <dimen name="sleep_record_list_item_height">40dp</dimen>

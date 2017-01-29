@@ -4,7 +4,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_records"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_list_black_24p"
             android:title="@string/nav_menu_sleep_records" />
     </group>
 
@@ -12,7 +12,7 @@
         <menu>
             <item
                 android:id="@+id/nav_sleep_training"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@drawable/ic_sleep_black_24p"
                 android:title="@string/nav_menu_sleep_training" />
         </menu>
     </item>
@@ -30,11 +30,11 @@
         <menu>
             <item
                 android:id="@+id/nav_settings"
-                android:icon="@drawable/ic_menu_manage"
+                android:icon="@drawable/ic_settings_black_24p"
                 android:title="@string/nav_menu_settings" />
             <item
                 android:id="@+id/nav_logout"
-                android:icon="@drawable/ic_menu_manage"
+                android:icon="@drawable/ic_logout_black_24p"
                 android:title="@string/nav_logout" />
         </menu>
     </item>
