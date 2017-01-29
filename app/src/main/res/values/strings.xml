@@ -46,7 +46,7 @@
     <string name="title_activity_add_record">Add Sleep Record</string>
     <string name="fall_asleep_time_label">Fall Asleep Time</string>
     <string name="wakeup_time_label">Wakeup Time</string>
-    <string name="save_record_button_label">Save Sleep Record</string>
+    <string name="cancel_btn">Cancel</string>
 
     <!-- Add Record Failure Message-->
     <string name="failed_to_parse_fallasleep_time">Fall asleep time has a wrong format.</string>

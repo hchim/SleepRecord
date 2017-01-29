@@ -1,18 +1,19 @@
 package im.hch.sleeprecord.activities.main;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
@@ -43,7 +44,6 @@ public class AddRecordDialogFragment extends DialogFragment {
     @BindView(R.id.fall_asleep_time_editText) EditText fallAsleepTimeEditText;
     @BindView(R.id.wakeup_date_editText) EditText wakeupDateEditText;
     @BindView(R.id.wakeup_time_editText) EditText wakeupTimeEditText;
-    @BindView(R.id.save_record_button) Button saveRecordButton;
 
     @BindString(R.string.failed_to_parse_fallasleep_time) String failureParseFallAsleepTime;
     @BindString(R.string.failed_to_parse_wakeup_time) String failureParseWakeupTime;
@@ -76,38 +76,45 @@ public class AddRecordDialogFragment extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.content_add_record, container, false);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.content_add_record, null, false);
         ButterKnife.bind(this, view);
+        init(getActivity());
 
-        Context context = getActivity();
+        builder.setView(view)
+                .setTitle(R.string.title_activity_add_record)
+                // Add action buttons
+                .setPositiveButton(R.string.button_Save, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        saveSleepRecord();
+                    }
+                })
+                .setNegativeButton(R.string.cancel_btn, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        AddRecordDialogFragment.this.getDialog().cancel();
+                    }
+                });
+        return builder.create();
+    }
+
+    private void init(Activity activity) {
         sleepServiceClient = new SleepServiceClient();
-        sessionManager = new SessionManager(context);
-        metricHelper = new MetricHelper(context);
+        sessionManager = new SessionManager(activity);
+        metricHelper = new MetricHelper(activity);
 
-        if (context instanceof AddRecordDialogListener) {
-            mListener = (AddRecordDialogListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement AddRecordDialogListener");
+        if (activity instanceof AddRecordDialogListener) {
+            mListener = (AddRecordDialogListener) activity;
         }
 
-        getDialog().setTitle(title);
         resetDatetime();
 
         fallAsleepDateEditText.setOnClickListener(new DatePickOnClickListener());
         fallAsleepTimeEditText.setOnClickListener(new TimePickOnClickListener());
         wakeupDateEditText.setOnClickListener(new DatePickOnClickListener());
         wakeupTimeEditText.setOnClickListener(new TimePickOnClickListener());
-        saveRecordButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveSleepRecord();
-            }
-        });
-
-        return view;
     }
 
     private void resetDatetime() {
@@ -122,7 +129,7 @@ public class AddRecordDialogFragment extends DialogFragment {
     }
 
     private void handleSaveFailure(String message) {
-        Snackbar.make(saveRecordButton, message, Snackbar.LENGTH_LONG)
+        Snackbar.make(wakeupDateEditText, message, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
     }
 
