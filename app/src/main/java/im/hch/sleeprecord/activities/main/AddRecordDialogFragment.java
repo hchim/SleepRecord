@@ -14,6 +14,7 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
@@ -86,18 +87,26 @@ public class AddRecordDialogFragment extends DialogFragment {
         builder.setView(view)
                 .setTitle(R.string.title_activity_add_record)
                 // Add action buttons
-                .setPositiveButton(R.string.button_Save, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        saveSleepRecord();
-                    }
-                })
+                .setPositiveButton(R.string.button_Save, null)
                 .setNegativeButton(R.string.cancel_btn, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         AddRecordDialogFragment.this.getDialog().cancel();
                     }
                 });
-        return builder.create();
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        saveSleepRecord();
+                    }
+                });
+            }
+        });
+        return dialog;
     }
 
     private void init(Activity activity) {

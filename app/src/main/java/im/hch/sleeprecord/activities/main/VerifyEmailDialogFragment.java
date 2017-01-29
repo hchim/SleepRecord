@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -67,18 +68,26 @@ public class VerifyEmailDialogFragment extends DialogFragment {
         builder.setView(view)
                 .setTitle(R.string.email_verify_dialog_title)
                 // Add action buttons
-                .setPositiveButton(R.string.button_Save, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        attempVerifyEmail();
-                    }
-                })
+                .setPositiveButton(R.string.button_Save, null)
                 .setNegativeButton(R.string.cancel_btn, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         VerifyEmailDialogFragment.this.getDialog().cancel();
                     }
                 });
-        return builder.create();
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        attempVerifyEmail();
+                    }
+                });
+            }
+        });
+        return dialog;
     }
 
     private void init(Activity activity) {

@@ -14,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -117,18 +118,26 @@ public class BabyInfoDialogFragment extends DialogFragment {
         builder.setView(view)
                 .setTitle(R.string.babyinfo_fragment_title)
                 // Add action buttons
-                .setPositiveButton(R.string.button_Save, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        attemptSaveInfo();
-                    }
-                })
+                .setPositiveButton(R.string.button_Save, null)
                 .setNegativeButton(R.string.cancel_btn, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         BabyInfoDialogFragment.this.getDialog().cancel();
                     }
                 });
-        return builder.create();
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        attemptSaveInfo();
+                    }
+                });
+            }
+        });
+        return dialog;
     }
 
     private void init(Activity activity) {
