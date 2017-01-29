@@ -72,5 +72,6 @@
     <style name="sleep_records_list_view">
         <item name="android:dividerHeight">@dimen/sleep_record_list_divider_height</item>
         <item name="android:divider">@color/divider</item>
+        <item name="android:scrollbars">none</item>
     </style>
 </resources>

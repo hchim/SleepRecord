@@ -21,7 +21,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -161,13 +160,7 @@ public class MainActivity extends AppCompatActivity implements
         });
 
         // Disallow the touch request for parent scroll on touch of child view
-        sleepRecordListView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                v.getParent().requestDisallowInterceptTouchEvent(true);
-                return false;
-            }
-        });
+        sleepRecordListView.setClickable(false);
 
         ArrayList<SleepQuality> sleepQualities = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
