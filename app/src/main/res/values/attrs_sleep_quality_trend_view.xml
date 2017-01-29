@@ -7,6 +7,7 @@
         <attr name="LabelColor" format="color" />
         <attr name="LabelTextSize" format="dimension" />
         <attr name="PointWidth" format="dimension" />
+        <attr name="PointColor" format="color" />
         <attr name="MarginBottomPercent" format="float" />
         <attr name="HeightPercent" format="float" />
     </declare-styleable>

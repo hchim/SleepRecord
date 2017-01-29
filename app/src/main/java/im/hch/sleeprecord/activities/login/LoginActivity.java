@@ -1,17 +1,15 @@
 package im.hch.sleeprecord.activities.login;
 
+import android.app.LoaderManager.LoaderCallbacks;
 import android.app.ProgressDialog;
+import android.content.Loader;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.Loader;
-import android.database.Cursor;
-import android.os.AsyncTask;
-
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -21,7 +19,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -59,10 +56,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     // UI references.
     @BindView(R.id.email) AutoCompleteTextView mEmailView;
     @BindView(R.id.password) EditText mPasswordView;
-    @BindView(R.id.login_form) RelativeLayout mLoginForm;
     @BindView(R.id.email_sign_in_button) Button mEmailSigninButton;
-    @BindView(R.id.email_register_button) Button mEmailRegisterButton;
     @BindView(R.id.forgetPswdTextView) TextView forgetPswdTextView;
+    @BindView(R.id.registerAccountTextView) TextView registerAccountTextView;
 
     @BindString(R.string.error_incorrect_password) String incorrectPasswordError;
     @BindString(R.string.error_field_required) String requiredFieldError;
@@ -110,7 +106,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        mEmailRegisterButton.setOnClickListener(new OnClickListener() {
+        registerAccountTextView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 ActivityUtils.navigateToRegisterActivity(LoginActivity.this);

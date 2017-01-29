@@ -43,6 +43,8 @@ public class SleepQualityTrendView extends View {
     @Setter
     private float mPointWidth = 5.0f;
     @Setter
+    private int mPointColor = Color.BLACK;
+    @Setter
     private List<SleepQuality> sleepQualities = new ArrayList<>();
 
     @BindArray(R.array.month_short) String[] monthsShort;
@@ -83,7 +85,7 @@ public class SleepQualityTrendView extends View {
         mHeightPercent = a.getFloat(R.styleable.SleepQualityTrendView_HeightPercent, mHeightPercent);
         mGridLineNumber = a.getInteger(R.styleable.SleepQualityTrendView_GridLineNumber, mGridLineNumber);
         mPointWidth = a.getDimension(R.styleable.SleepQualityTrendView_PointWidth, mPointWidth);
-
+        mPointColor = a.getColor(R.styleable.SleepQualityTrendView_PointColor, mPointColor);
         a.recycle();
 
         //init paint Resources
@@ -103,12 +105,12 @@ public class SleepQualityTrendView extends View {
 
         trendLinePaint = new Paint();
         trendLinePaint.setStyle(Paint.Style.STROKE);
-        trendLinePaint.setColor(mScaleLineColor);
+        trendLinePaint.setColor(mTrendLineColor);
 
         pointPaint = new Paint();
         pointPaint.setStrokeWidth(mPointWidth);
         pointPaint.setStyle(Paint.Style.STROKE);
-        pointPaint.setColor(mScaleLineColor);
+        pointPaint.setColor(mPointColor);
     }
 
     private int paddingLeft = 0;

@@ -19,7 +19,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -57,7 +56,6 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     @BindView(R.id.email) AutoCompleteTextView mEmailView;
     @BindView(R.id.password) EditText mPasswordView;
     @BindView(R.id.re_password) EditText mRepeatPasswordView;
-    @BindView(R.id.register_form) RelativeLayout mRegisterForm;
     @BindView(R.id.username) EditText mUsernameView;
     @BindView(R.id.email_register_button) Button mEmailRegisterButton;
 

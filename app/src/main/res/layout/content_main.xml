@@ -43,7 +43,7 @@
         android:layout_height="match_parent">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:id="@+id/sleep_records_widget"
@@ -59,9 +59,8 @@
                     android:id="@+id/list_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_centerHorizontal="true"
-                    android:dividerHeight="@dimen/sleep_record_list_divider_height" />
+                    style="@style/sleep_records_list_view"
+                    tools:ignore="NestedScrolling" />
             </LinearLayout>
 
             <LinearLayout
@@ -78,12 +77,13 @@
                     android:id="@+id/sleepQualityTrend"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:ScaleLineColor="@color/colorPrimaryDark"
-                    app:GridLineColor="@color/black_overlay"
-                    app:LabelColor="@color/timeLabelColor"
+                    app:ScaleLineColor="@color/primary_dark"
+                    app:GridLineColor="@color/divider"
+                    app:LabelColor="@color/accent"
                     app:LabelTextSize="@dimen/label_text_size"
-                    app:TrendLineColor="@color/timeLabelColor"
+                    app:TrendLineColor="@color/accent"
                     app:PointWidth="@dimen/quality_trend_point_width"
+                    app:PointColor="@color/secondary_text"
                     app:GridLineNumber="5"
                     app:MarginBottomPercent="0.08"
                     app:HeightPercent="0.55"/>

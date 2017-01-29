@@ -19,5 +19,5 @@
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:dividerHeight="@dimen/sleep_record_list_divider_height" />
+        style="@style/sleep_records_list_view" />
 </RelativeLayout>

@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="@dimen/sleep_record_list_item_height">
@@ -12,18 +13,16 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:text="Aug"
             android:layout_width="match_parent"
             android:layout_height="@dimen/sleep_record_list_month_height"
             android:id="@+id/monthTextView"
-            android:background="@color/colorAccent"
+            android:background="@color/accent"
             android:fontFamily="sans-serif"
             android:textSize="12sp"
-            android:textColor="@color/colorWhite"
+            android:textColor="@color/icons"
             android:textAlignment="center" />
 
         <TextView
-            android:text="15"
             android:layout_width="match_parent"
             android:layout_height="@dimen/sleep_record_list_date_height"
             android:id="@+id/dateTextView"
@@ -35,20 +34,21 @@
 
     <im.hch.sleeprecord.activities.records.SleepRecordView
         android:id="@+id/sleepRecordView"
-        android:layout_width="@dimen/sleep_record_view_layout_width"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginLeft="@dimen/sleep_record_view_margin_left"
         android:layout_weight="1"
         android:paddingLeft="2dp"
         android:paddingRight="2dp"
         app:hourType="24"
-        app:defaultSleepTimeColor="@color/defaultSleepQualityColor"
-        app:bestSleepTimeColor="@color/bestSleepQualityColor"
-        app:worstSleepTimeColor="@color/worstSleepQualityColor"
-        app:scaleLineColor="@color/scaleLineColor"
-        app:timeLabelColor="@color/timeLabelColor"
+        app:defaultSleepTimeColor="@color/divider"
+        app:bestSleepTimeColor="@color/primary"
+        app:worstSleepTimeColor="@color/primary_light"
+        app:scaleLineColor="@color/primary_dark"
+        app:timeLabelColor="@color/accent"
         app:timeLabelFontSize="8sp"
         app:scaleHeightPercentage="0.4"
-        app:timeScaleHeight="5dp" />
+        app:timeScaleHeight="5dp"
+        tools:ignore="RtlHardcoded" />
 
 </LinearLayout>

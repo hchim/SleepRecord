@@ -1,85 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="@dimen/fragment_bottom_margin"
     android:paddingLeft="@dimen/fragment_horizontal_margin"
     android:paddingRight="@dimen/fragment_horizontal_margin"
     android:paddingTop="@dimen/fragment_top_margin"
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <LinearLayout
+    <TextView
+        android:text="@string/fall_asleep_time_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:textAppearance="@style/TextAppearance.AppCompat.Button" />
 
-        <TextView
-            android:text="@string/fall_asleep_time_label"
-            android:layout_width="match_parent"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:layout_width="0px"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Button" />
+            android:ems="10"
+            android:id="@+id/fall_asleep_date_editText"
+            android:layout_weight="1"
+            android:inputType="date"
+            android:focusable="false"
+            android:selectAllOnFocus="true"
+            android:maxLines="1"
+            tools:ignore="LabelFor" />
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <EditText
-                android:layout_width="0px"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:id="@+id/fall_asleep_date_editText"
-                android:layout_weight="1"
-                android:inputType="date"
-                android:singleLine="true"
-                android:focusable="false"
-                android:selectAllOnFocus="true" />
-
-            <EditText
-                android:layout_width="0px"
-                android:layout_height="wrap_content"
-                android:inputType="time"
-                android:ems="10"
-                android:id="@+id/fall_asleep_time_editText"
-                android:layout_weight="1"
-                android:singleLine="true"
-                android:focusable="false"
-                android:selectAllOnFocus="true" />
-        </LinearLayout>
-
-        <TextView
-            android:text="@string/wakeup_time_label"
-            android:layout_width="match_parent"
+        <EditText
+            android:layout_width="0px"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Button" />
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <EditText
-                android:layout_width="0px"
-                android:layout_height="wrap_content"
-                android:inputType="date"
-                android:ems="10"
-                android:id="@+id/wakeup_date_editText"
-                android:layout_weight="1"
-                android:singleLine="true"
-                android:focusable="false"
-                android:selectAllOnFocus="true" />
-
-            <EditText
-                android:layout_width="0px"
-                android:layout_height="wrap_content"
-                android:inputType="time"
-                android:ems="10"
-                android:id="@+id/wakeup_time_editText"
-                android:layout_weight="1"
-                android:singleLine="true"
-                android:focusable="false"
-                android:selectAllOnFocus="true" />
-        </LinearLayout>
+            android:inputType="time"
+            android:ems="10"
+            android:id="@+id/fall_asleep_time_editText"
+            android:layout_weight="1"
+            android:focusable="false"
+            android:selectAllOnFocus="true"
+            android:maxLines="1"
+            tools:ignore="LabelFor" />
     </LinearLayout>
-</RelativeLayout>
+
+    <TextView
+        android:text="@string/wakeup_time_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:inputType="date"
+            android:ems="10"
+            android:id="@+id/wakeup_date_editText"
+            android:layout_weight="1"
+            android:focusable="false"
+            android:selectAllOnFocus="true"
+            android:maxLines="1"
+            tools:ignore="LabelFor" />
+
+        <EditText
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:inputType="time"
+            android:ems="10"
+            android:id="@+id/wakeup_time_editText"
+            android:layout_weight="1"
+            android:focusable="false"
+            android:selectAllOnFocus="true"
+            android:maxLines="1"
+            tools:ignore="LabelFor" />
+    </LinearLayout>
+</LinearLayout>

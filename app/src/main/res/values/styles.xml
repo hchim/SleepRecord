@@ -3,9 +3,9 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -46,8 +46,31 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginBottom">@dimen/widget_title_margin_bottom</item>
         <item name="android:textAlignment">center</item>
-        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textColor">@color/accent</item>
         <item name="android:textSize">18sp</item>
     </style>
 
+    <style name="button">
+        <item name="android:textColor">@color/icons</item>
+        <item name="android:background">@color/accent</item>
+    </style>
+    <style name="Sign_in_up_button" parent="button">
+        <item name="android:layout_marginLeft">@dimen/sign_in_btn_margin</item>
+        <item name="android:layout_marginRight">@dimen/sign_in_btn_margin</item>
+        <item name="android:layout_marginTop">@dimen/form_item_margin_top</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="login_text_link">
+        <item name="android:textColor">@color/primary_dark</item>
+        <item name="android:layout_marginTop">@dimen/form_item_margin_top</item>
+        android:paddingTop="10dp"
+    </style>
+
+    <style name="sleep_records_list_view">
+        <item name="android:dividerHeight">@dimen/sleep_record_list_divider_height</item>
+        <item name="android:divider">@color/divider</item>
+    </style>
 </resources>

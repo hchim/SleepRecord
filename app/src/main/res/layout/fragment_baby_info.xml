@@ -31,8 +31,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_babyname"
                 android:inputType="textPersonName|textCapWords"
-                android:maxLines="1"
-                android:singleLine="true" />
+                android:maxLines="1" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -48,11 +47,12 @@
                 android:focusable="false"
                 android:id="@+id/baby_birthday"
                 android:hint="@string/prompt_baby_birthday"
-                android:editable="false" />
+                android:editable="false"
+                android:maxLines="1" />
         </android.support.design.widget.TextInputLayout>
 
         <RadioGroup
-            android:paddingTop="@dimen/form_item_padding_top"
+            android:layout_marginTop="@dimen/form_item_margin_top"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >

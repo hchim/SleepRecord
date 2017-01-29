@@ -9,87 +9,62 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="im.hch.sleeprecord.activities.login.LoginActivity">
-
-    <RelativeLayout
-        android:id="@+id/login_form"
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:id="@+id/email_login_form"
+        <AutoCompleteTextView
+            android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:hint="@string/prompt_email"
+            android:inputType="textEmailAddress"
+            android:imeOptions="actionNext"
+            android:maxLines="1" />
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+    </android.support.design.widget.TextInputLayout>
 
-                <AutoCompleteTextView
-                    android:id="@+id/email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_email"
-                    android:inputType="textEmailAddress"
-                    android:imeOptions="actionNext"
-                    android:maxLines="1"
-                    android:singleLine="true" />
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-            </android.support.design.widget.TextInputLayout>
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_password"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
+            android:maxLines="1" />
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+    </android.support.design.widget.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_password"
-                    android:imeOptions="actionDone"
-                    android:inputType="textPassword"
-                    android:maxLines="1"
-                    android:singleLine="true" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/email_sign_in_button"
+            style="@style/Sign_in_up_button"
+            android:text="@string/action_sign_in_short"/>
+    </LinearLayout>
 
-            </android.support.design.widget.TextInputLayout>
+    <TextView
+        android:text="@string/forget_password_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:id="@+id/forgetPswdTextView"
+        tools:ignore="RtlHardcoded"
+        style="@style/login_text_link"/>
 
-            <TextView
-                android:text="@string/forget_password_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:textStyle="italic"
-                android:textColor="@color/colorAccent"
-                android:paddingTop="10dp"
-                android:id="@+id/forgetPswdTextView" />
+    <TextView
+        android:text="@string/register_account_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:id="@+id/registerAccountTextView"
+        tools:ignore="RtlHardcoded"
+        style="@style/login_text_link" />
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <Button
-                    android:id="@+id/email_sign_in_button"
-                    style="?android:textAppearanceSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sign_in_button_margin_top"
-                    android:text="@string/action_sign_in_short"
-                    android:textStyle="bold"
-                    android:layout_weight="1" />
-
-                <Button
-                    android:id="@+id/email_register_button"
-                    style="?android:textAppearanceSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/register_button_margin_top"
-                    android:text="@string/action_register_short"
-                    android:textStyle="bold"
-                    android:layout_weight="1" />
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </RelativeLayout>
 </LinearLayout>

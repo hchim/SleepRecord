@@ -31,7 +31,8 @@
     <string name="error_invalid_security_code">Invalid security code.</string>
     <string name="reset_btn">Reset</string>
     <string name="send_email_btn">Send Email</string>
-    <string name="forget_password_title">Forget password?</string>
+    <string name="forget_password_title">Forgot Password</string>
+    <string name="register_account_title">Sign Up with Email</string>
 
     <!-- Toolbar menu title -->
     <string name="menu_add_sleep_record">Add</string>
@@ -96,7 +97,7 @@
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_repead_password">Repeat Password</string>
-    <string name="prompt_username">Nick Name</string>
+    <string name="prompt_username">User Name</string>
     <string name="prompt_babyname">Baby Name</string>
     <string name="prompt_baby_birthday">Baby Birthday</string>
 
