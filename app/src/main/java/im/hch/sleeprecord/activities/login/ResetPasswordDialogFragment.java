@@ -1,15 +1,17 @@
 package im.hch.sleeprecord.activities.login;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,13 +45,10 @@ public class ResetPasswordDialogFragment extends DialogFragment {
     @BindView(R.id.securityCode) EditText securityCodeEditText;
     @BindView(R.id.newPassword) EditText newPasswordEditText;
     @BindView(R.id.repeatPassword) EditText repeatPasswordEditText;
-    @BindView(R.id.send_email_btn) Button sendEmailButton;
-    @BindView(R.id.password_reset_btn) Button resetPasswordButton;
     @BindView(R.id.securityCodeView) View securityCodeView;
     @BindView(R.id.newPswdView) View newPswdView;
     @BindView(R.id.repeatPSWDView) View repeatPswdView;
 
-    @BindString(R.string.reset_password_title) String title;
     @BindString(R.string.progress_message_send) String progressMessageSend;
     @BindString(R.string.progress_message_reset) String progressMessageReset;
     @BindString(R.string.error_failed_to_connect) String failedToConnectError;
@@ -61,6 +60,7 @@ public class ResetPasswordDialogFragment extends DialogFragment {
     @BindString(R.string.error_account_does_not_exist) String accountDoesNotExist;
     @BindString(R.string.error_invalid_password) String invalidPassordError;
     @BindString(R.string.error_wrong_security_code) String wrongSecurityCodeError;
+    @BindString(R.string.reset_btn) String resetBtnText;
 
     public static ResetPasswordDialogFragment newInstance() {
         ResetPasswordDialogFragment fragment = new ResetPasswordDialogFragment();
@@ -73,32 +73,46 @@ public class ResetPasswordDialogFragment extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_reset_password, container, false);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.fragment_reset_password, null, false);
         ButterKnife.bind(this, view);
+        init(getActivity());
 
-        Context context = this.getActivity();
+        builder.setView(view)
+                .setTitle(R.string.reset_password_title)
+                // Add action buttons
+                .setPositiveButton(R.string.send_email_btn, null)
+                .setNegativeButton(R.string.cancel_btn, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        ResetPasswordDialogFragment.this.getDialog().cancel();
+                    }
+                });
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                final Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (newPswdView.getVisibility() != View.VISIBLE) {
+                            attempSendEmail();
+                        } else {
+                            attempResetPassword();
+                        }
+                    }
+                });
+            }
+        });
+        return dialog;
+    }
+
+    private void init(Activity activity) {
         identityServiceClient = new IdentityServiceClient();
-        sessionManager = new SessionManager(context);
-        sharedPreferenceUtil = new SharedPreferenceUtil(context);
-
-        getDialog().setTitle(title);
-
-        sendEmailButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                attempSendEmail();
-            }
-        });
-
-        resetPasswordButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                attempResetPassword();
-            }
-        });
+        sessionManager = new SessionManager(activity);
+        sharedPreferenceUtil = new SharedPreferenceUtil(activity);
 
         repeatPasswordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -110,8 +124,6 @@ public class ResetPasswordDialogFragment extends DialogFragment {
                 return false;
             }
         });
-
-        return view;
     }
 
     private void attempSendEmail() {
@@ -199,8 +211,9 @@ public class ResetPasswordDialogFragment extends DialogFragment {
         newPswdView.setVisibility(View.VISIBLE);
         repeatPswdView.setVisibility(View.VISIBLE);
         securityCodeView.setVisibility(View.VISIBLE);
-        resetPasswordButton.setVisibility(View.VISIBLE);
-        sendEmailButton.setVisibility(View.GONE);
+        securityCodeEditText.requestFocus();
+        AlertDialog dialog = (AlertDialog) getDialog();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setText(resetBtnText);
     }
 
     /**

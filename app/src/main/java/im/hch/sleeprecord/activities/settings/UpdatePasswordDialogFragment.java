@@ -1,15 +1,17 @@
 package im.hch.sleeprecord.activities.settings;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,9 +43,7 @@ public class UpdatePasswordDialogFragment extends DialogFragment {
     @BindView(R.id.currentPassword) EditText currentPasswordEditText;
     @BindView(R.id.newPassword) EditText newPasswordEditText;
     @BindView(R.id.repeatPassword) EditText repeatPasswordEditText;
-    @BindView(R.id.password_save_btn) Button saveButton;
 
-    @BindString(R.string.pref_title_update_password) String title;
     @BindString(R.string.progress_message_save) String progressMessageSave;
     @BindString(R.string.error_failed_to_connect) String failedToConnectError;
     @BindString(R.string.error_internal_server) String internalServerError;
@@ -64,25 +64,42 @@ public class UpdatePasswordDialogFragment extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_update_password, container, false);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.fragment_update_password, null, false);
         ButterKnife.bind(this, view);
+        init(getActivity());
 
-        Context context = this.getActivity();
-        identityServiceClient = new IdentityServiceClient();
-        sessionManager = new SessionManager(context);
-        sharedPreferenceUtil = new SharedPreferenceUtil(context);
-
-        getDialog().setTitle(title);
-
-        saveButton.setOnClickListener(new View.OnClickListener() {
+        builder.setView(view)
+                .setTitle(R.string.pref_title_update_password)
+                // Add action buttons
+                .setPositiveButton(R.string.button_Save, null)
+                .setNegativeButton(R.string.cancel_btn, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        UpdatePasswordDialogFragment.this.getDialog().cancel();
+                    }
+                });
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
-            public void onClick(View v) {
-                attempSavePassword();
+            public void onShow(DialogInterface dialogInterface) {
+                Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        attempSavePassword();
+                    }
+                });
             }
         });
+        return dialog;
+    }
+
+    private void init(Activity activity) {
+        identityServiceClient = new IdentityServiceClient();
+        sessionManager = new SessionManager(activity);
+        sharedPreferenceUtil = new SharedPreferenceUtil(activity);
 
         repeatPasswordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -94,8 +111,6 @@ public class UpdatePasswordDialogFragment extends DialogFragment {
                 return false;
             }
         });
-
-        return view;
     }
 
     private void attempSavePassword() {
