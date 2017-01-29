@@ -1,17 +1,18 @@
 package im.hch.sleeprecord.activities.main;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -23,7 +24,6 @@ import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
 import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
-import im.hch.sleeprecord.serviceclients.exceptions.WrongPasswordException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongVerifyCodeException;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
@@ -38,9 +38,7 @@ public class VerifyEmailDialogFragment extends DialogFragment {
     private OnEmailVerifiedListener listener;
 
     @BindView(R.id.verifyCode) EditText verifyCodeTextView;
-    @BindView(R.id.verifyBtn) Button verifyButton;
 
-    @BindString(R.string.email_verify_dialog_title) String title;
     @BindString(R.string.progress_message_verify) String progressMessageVerify;
     @BindString(R.string.error_failed_to_connect) String failedToConnectError;
     @BindString(R.string.error_internal_server) String internalServerError;
@@ -59,28 +57,36 @@ public class VerifyEmailDialogFragment extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_verify_email, container, false);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.fragment_verify_email, null, false);
         ButterKnife.bind(this, view);
+        init(getActivity());
 
-        Context context = this.getActivity();
+        builder.setView(view)
+                .setTitle(R.string.email_verify_dialog_title)
+                // Add action buttons
+                .setPositiveButton(R.string.button_Save, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        attempVerifyEmail();
+                    }
+                })
+                .setNegativeButton(R.string.cancel_btn, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        VerifyEmailDialogFragment.this.getDialog().cancel();
+                    }
+                });
+        return builder.create();
+    }
+
+    private void init(Activity activity) {
         identityServiceClient = new IdentityServiceClient();
-        sessionManager = new SessionManager(context);
-
-        getDialog().setTitle(title);
-
-        if (context instanceof OnEmailVerifiedListener) {
-            listener = (OnEmailVerifiedListener) context;
+        sessionManager = new SessionManager(activity);
+        if (activity instanceof OnEmailVerifiedListener) {
+            listener = (OnEmailVerifiedListener) activity;
         }
-
-        verifyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                attempVerifyEmail();
-            }
-        });
 
         verifyCodeTextView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -92,8 +98,6 @@ public class VerifyEmailDialogFragment extends DialogFragment {
                 return false;
             }
         });
-
-        return view;
     }
 
     private void attempVerifyEmail() {

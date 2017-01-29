@@ -1,9 +1,12 @@
 package im.hch.sleeprecord.activities.main;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -11,8 +14,6 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -29,7 +30,6 @@ import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
-import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DateUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.MetricHelper;
@@ -63,7 +63,6 @@ public class BabyInfoDialogFragment extends DialogFragment {
 
     @BindView(R.id.progressBar) ProgressBar mProgressBar;
     @BindView(R.id.babyinfo_form) View mBabyInfoView;
-    @BindView(R.id.babyinfo_save_btn) Button mBabyInfoSaveButton;
     @BindView(R.id.babyname) EditText mBabyNameView;
     @BindView(R.id.baby_birthday) EditText mBabyBirthdayView;
     @BindView(R.id.boyRadioButton) RadioButton boyRadioButton;
@@ -71,7 +70,6 @@ public class BabyInfoDialogFragment extends DialogFragment {
 
     @BindString(R.string.error_field_required) String requiredFieldError;
     @BindString(R.string.error_gender_required) String invalidGenderError;
-    @BindString(R.string.babyinfo_fragment_title) String title;
     @BindString(R.string.progress_message_save) String progressMessageSave;
     @BindString(R.string.error_failed_to_connect) String failedToConnectError;
     @BindString(R.string.error_internal_server) String internalServerError;
@@ -109,23 +107,40 @@ public class BabyInfoDialogFragment extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_baby_info, container, false);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.fragment_baby_info, null, false);
         ButterKnife.bind(this, view);
+        init(getActivity());
 
-        Context context = this.getActivity();
-        sessionManager = new SessionManager(context);
-        sharedPreferenceUtil = new SharedPreferenceUtil(context);
+        builder.setView(view)
+                .setTitle(R.string.babyinfo_fragment_title)
+                // Add action buttons
+                .setPositiveButton(R.string.button_Save, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        attemptSaveInfo();
+                    }
+                })
+                .setNegativeButton(R.string.cancel_btn, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        BabyInfoDialogFragment.this.getDialog().cancel();
+                    }
+                });
+        return builder.create();
+    }
+
+    private void init(Activity activity) {
+        sessionManager = new SessionManager(activity);
+        sharedPreferenceUtil = new SharedPreferenceUtil(activity);
         sleepServiceClient = new SleepServiceClient();
-        metricHelper = new MetricHelper(context);
+        metricHelper = new MetricHelper(activity);
 
-        if (context instanceof BabyInfoDialogFragmentListener) {
-            mListener = (BabyInfoDialogFragmentListener) context;
+        if (activity instanceof BabyInfoDialogFragmentListener) {
+            mListener = (BabyInfoDialogFragmentListener) activity;
         }
 
-        getDialog().setTitle(title);
         mBabyNameView.setText(babyName);
         mBabyBirthdayView.setText(babyBirthday);
         if (babyGender == BabyInfo.Gender.Boy) {
@@ -139,12 +154,6 @@ public class BabyInfoDialogFragment extends DialogFragment {
             girlRadioButton.setChecked(false);
         }
 
-        mBabyInfoSaveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                attemptSaveInfo();
-            }
-        });
         mBabyBirthdayView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,8 +169,6 @@ public class BabyInfoDialogFragment extends DialogFragment {
                 });
             }
         });
-
-        return view;
     }
 
     private int getBabyGender() {
@@ -269,7 +276,7 @@ public class BabyInfoDialogFragment extends DialogFragment {
                 BabyInfoDialogFragment.this.dismiss();
             } else {
                 mBabyNameView.requestFocus();
-                Snackbar.make(mBabyInfoSaveButton, errorMessage, Snackbar.LENGTH_LONG)
+                Snackbar.make(girlRadioButton, errorMessage, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
             }

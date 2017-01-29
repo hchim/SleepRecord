@@ -79,7 +79,7 @@ public class AddRecordDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.content_add_record, null, false);
+        View view = inflater.inflate(R.layout.fragment_add_record, null, false);
         ButterKnife.bind(this, view);
         init(getActivity());
 
