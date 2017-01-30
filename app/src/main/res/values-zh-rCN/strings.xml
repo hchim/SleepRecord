@@ -1,0 +1,151 @@
+<resources>
+    <string name="app_name">SleepyAiden</string>
+    <string name="title_activity_settings">设置</string>
+    <string name="widget_title_sleep_records">最近的睡眠记录</string>
+    <!-- Strings related to Settings -->
+
+    <!-- User Settings -->
+    <string name="pref_header_user">用户资料</string>
+    <string name="pref_title_nickname">用户名</string>
+
+    <!-- Update password settings-->
+    <string name="pref_title_update_password">修改密码</string>
+    <string name="pref_title_current_password">当前密码</string>
+    <string name="pref_title_new_password">新密码</string>
+    <string name="pref_title_repeat_password">重复新密码</string>
+
+    <!-- Baby settings-->
+    <string name="pref_title_baby">宝宝资料</string>
+    <string name="pref_title_baby_information">修改宝宝信息</string>
+
+    <!-- Others-->
+    <string name="pref_title_suggestion">用户反馈</string>
+    <string name="suggestion_thanks_message">感谢您的宝贵意见!</string>
+    <string name="pref_title_about">关于</string>
+
+    <string name="navigation_drawer_open">打开导航栏</string>
+    <string name="navigation_drawer_close">关闭导航栏</string>
+
+    <!-- LoginActivity -->
+    <string name="security_code_title">安全码</string>
+    <string name="reset_password_title">重设密码</string>
+    <string name="error_invalid_security_code">安全码错误</string>
+    <string name="reset_btn">重设</string>
+    <string name="send_email_btn">发送邮件</string>
+    <string name="forget_password_title">忘记密码</string>
+    <string name="register_account_title">用邮箱注册</string>
+
+    <!-- Toolbar menu title -->
+    <string name="menu_add_sleep_record">添加</string>
+
+    <!-- Main Activity-->
+    <string name="email_verify_title">验证邮箱</string>
+    <string name="verify_code">验证码</string>
+    <string name="verify_btn">验证</string>
+    <string name="email_verify_dialog_title">验证邮箱</string>
+    <string name="sleep_trend_widget_title">睡眠趋势</string>
+    <!-- Add Record Activity -->
+    <string name="title_activity_add_record">添加睡眠记录</string>
+    <string name="fall_asleep_time_label">入睡时间</string>
+    <string name="wakeup_time_label">睡醒时间</string>
+    <string name="cancel_btn">取消</string>
+
+    <!-- Add Record Failure Message-->
+    <string name="failed_to_parse_fallasleep_time">入睡时间格式错误</string>
+    <string name="failed_to_parse_wakeup_time">睡醒时间格式错误</string>
+    <string name="wakeup_time_before_fallasleep_time">输入错误，睡醒时间在入睡时间之前</string>
+    <string name="wakeup_time_after_current_time">输入错误，睡醒时间在当前时间之后</string>
+    <string name="time_between_too_long">输入错误，睡眠时间超过24小时</string>
+
+    <!-- Nav Menu -->
+    <string name="nav_menu_sleep_records">睡眠记录</string>
+    <string name="nav_menu_tools">工具</string>
+    <string name="nav_menu_sleep_training">睡眠训练</string>
+    <string name="nav_menu_settings">设置</string>
+    <string name="nav_menu_communicate">通讯</string>
+    <string name="nav_menu_share">分享</string>
+    <string name="nav_logout">注销</string>
+
+    <!-- Sleep Records Activity -->
+    <string name="title_activity_sleep_records">睡眠记录</string>
+
+    <!-- Month short -->
+    <string-array name="month_short">
+        <item>1月</item>
+        <item>2月</item>
+        <item>3月</item>
+        <item>4月</item>
+        <item>5月</item>
+        <item>6月</item>
+        <item>7月</item>
+        <item>8月</item>
+        <item>9月</item>
+        <item>10月</item>
+        <item>11月</item>
+        <item>12月</item>
+    </string-array>
+    <string name="age_years_singlular">年</string>
+    <string name="age_months_singlular">月</string>
+    <string name="age_days_singlular">天</string>
+    <string name="age_years_plural">年</string>
+    <string name="age_months_plural">月</string>
+    <string name="age_days_plural">天</string>
+
+    <string name="title_activity_login">登录</string>
+    <string name="title_activity_register">注册</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">邮箱</string>
+    <string name="prompt_password">密码</string>
+    <string name="prompt_repead_password">重复密码</string>
+    <string name="prompt_username">用户名</string>
+    <string name="prompt_babyname">宝宝名字</string>
+    <string name="prompt_baby_birthday">宝宝生日</string>
+
+    <!-- Progress dialog messages -->
+    <string name="progress_message_sign_in">登录ing ...</string>
+    <string name="progress_message_register">注册ing ...</string>
+    <string name="progress_message_save">保存ing ...</string>
+    <string name="progress_message_load">加载ing ...</string>
+    <string name="progress_message_verify">验证ing ...</string>
+    <string name="progress_message_send">发送ing ...</string>
+    <string name="progress_message_reset">重设ing ...</string>
+
+    <string name="action_sign_in_short">登录</string>
+    <string name="action_register_short">注册</string>
+    <string name="error_invalid_email">邮箱格式错误</string>
+    <string name="error_invalid_password">密码格式错误</string>
+    <string name="error_incorrect_password">账号不存在或密码错误</string>
+    <string name="error_internal_server">出错了，请稍后再试.</string>
+    <string name="error_unmatch_password">密码不匹配</string>
+    <string name="error_field_required">该字段是必须的</string>
+    <string name="error_gender_required">请选择宝宝性别</string>
+    <string name="permission_rationale">使用联系人邮箱需要电话簿权限</string>
+
+    <string name="error_failed_to_register">创建账号失败, 请稍后再试.</string>
+    <string name="error_email_used">该邮箱已经被注册了</string>
+    <string name="error_failed_to_connect">连接不上服务器，请稍后再试</string>
+    <string name="error_sleep_record_overlap">新的睡眠记录时间和别的记录重叠了</string>
+    <string name="error_account_does_not_exist">该账号不存在</string>
+    <string name="error_wrong_password">密码错误</string>
+    <string name="error_wrong_verify_code">验证码错误</string>
+    <string name="error_wrong_security_code">安全码错误</string>
+
+    <string name="button_Save">保存</string>
+    <string name="button_boy">男宝</string>
+    <string name="button_girl">女宝</string>
+    
+    <string name="babyinfo_fragment_title">修改宝宝信息</string>
+    <string name="permission_not_granted">取消ing, 需要的权限没有被授权</string>
+    <!-- Choose photo -->
+    <string-array name="choose_photo_options">
+        <item>拍一张照片</item>
+        <item>从照片库选择</item>
+        <item>取消</item>
+    </string-array>
+    <string name="choose_photo_title">选择照片</string>
+    <string name="crop_image_menu_crop">裁剪</string>
+
+    <!-- Admob IDs-->
+    <string name="admob_id_main_activity">ca-app-pub-4044463930410370/2133723199</string>
+</resources>
