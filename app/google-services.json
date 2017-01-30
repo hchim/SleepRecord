@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "650072071981",
+    "firebase_url": "https://sleepyaiden-fb863.firebaseio.com",
+    "project_id": "sleepyaiden-fb863",
+    "storage_bucket": "sleepyaiden-fb863.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:650072071981:android:049198ba527ce1d3",
+        "android_client_info": {
+          "package_name": "im.hch.sleeprecord"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "650072071981-l2jj7dl5vusk55k1uii7kj69ush9f9hd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVNan8KiioYZZZ0ECP4iILHEjRj3z9f7w"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

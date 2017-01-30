@@ -23,11 +23,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.NativeExpressAdView;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -91,6 +94,8 @@ public class MainActivity extends AppCompatActivity implements
     @BindView(R.id.verify_email_layout) View verifyEmailView;
     @BindView(R.id.verifyEmailTextView) TextView verifyEmailTextView;
     @BindView(R.id.sleepQualityTrend) SleepQualityTrendView sleepQualityTrendView;
+    @BindView(R.id.adWidget) LinearLayout adWidgetView;
+    @BindView(R.id.adView) NativeExpressAdView adView;
 
     @BindString(R.string.age_years_singlular) String AGE_YEARS_S;
     @BindString(R.string.age_months_singlular) String AGE_MONTHS_S;
@@ -171,8 +176,13 @@ public class MainActivity extends AppCompatActivity implements
             calendar.add(Calendar.DATE, 1);
         }
         sleepQualityTrendView.setSleepQualities(sleepQualities);
+
+        AdRequest.Builder builder = new AdRequest.Builder();
+        adView.loadAd(builder.build());
+
         loadRemoteData();
     }
+
 
     @Override
     protected void onResume() {

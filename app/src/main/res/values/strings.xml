@@ -149,4 +149,7 @@
     </string-array>
     <string name="choose_photo_title">Select a Photo</string>
     <string name="crop_image_menu_crop">Crop</string>
+
+    <!-- Admob IDs-->
+    <string name="admob_id_main_activity">ca-app-pub-4044463930410370/2133723199</string>
 </resources>
