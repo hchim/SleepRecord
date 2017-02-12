@@ -9,8 +9,5 @@
         <attr name="timeLabelColor" format="color" />
         <attr name="timeLabelFontSize" format="dimension" />
         <attr name="hourType" format="integer" />
-        <attr name="defaultSleepTimeColor" format="color"/>
-        <attr name="bestSleepTimeColor" format="color"/>
-        <attr name="worstSleepTimeColor" format="color"/>
     </declare-styleable>
 </resources>

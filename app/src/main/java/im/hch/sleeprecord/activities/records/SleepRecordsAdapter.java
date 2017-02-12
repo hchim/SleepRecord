@@ -18,17 +18,20 @@ import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.models.SleepRecord;
 import im.hch.sleeprecord.utils.DateUtils;
+import im.hch.sleeprecord.utils.SleepRecordUtils;
 
 public class SleepRecordsAdapter extends BaseAdapter {
 
     private Context mContext;
     private LayoutInflater mInflater;
     private List<SleepRecord> mDataSource;
+    private int[] qualityLevelColors;
 
     public SleepRecordsAdapter(Context context, List<SleepRecord> items) {
         mContext = context;
         mDataSource = items;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        qualityLevelColors = mContext.getResources().getIntArray(R.array.quality_level);
     }
 
     @Override
@@ -135,6 +138,9 @@ public class SleepRecordsAdapter extends BaseAdapter {
             dateTextView.setText(String.valueOf(sleepRecord.getDate()));
             sleepRecordView.setSleepQuality(sleepRecord.getSleepQuality());
             sleepRecordView.setSleepTimePairs(sleepRecord.getSleepTimePairs());
+
+            int color = SleepRecordUtils.getQualityColor(qualityLevelColors, sleepRecord.getSleepQuality());
+            sleepRecordView.setSleepQualityColor(color);
             //force to update sleep record view
             sleepRecordView.invalidate();
         }

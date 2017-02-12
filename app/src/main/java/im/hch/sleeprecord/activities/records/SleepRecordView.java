@@ -5,7 +5,6 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Pair;
@@ -33,14 +32,12 @@ public class SleepRecordView extends View {
     private float mTimeLabelFontSize = 5;
     // the height of time scale
     private float mTimeScaleHeight = 5;
-    private int mDefaultSleepTimeColor = Color.BLACK;
-    private int mBestSleepTimeColor = Color.GREEN;
-    private int mWorstSleepTimeColor = Color.RED;
 
     private String[] hourLabels;
 
     private List<Pair<Date, Date>> mSleepTimePairs;
     private double mSleepQuality = 0;
+    private int sleepQualityColor = 0;
 
     public SleepRecordView(Context context) {
         super(context);
@@ -67,9 +64,6 @@ public class SleepRecordView extends View {
         mHourType = a.getInt(R.styleable.SleepRecordView_hourType, mHourType);
         mTimeLabelFontSize = a.getDimension(R.styleable.SleepRecordView_timeLabelFontSize, mTimeLabelFontSize);
         mTimeScaleHeight = a.getDimension(R.styleable.SleepRecordView_timeScaleHeight, mTimeScaleHeight);
-        mDefaultSleepTimeColor = a.getColor(R.styleable.SleepRecordView_defaultSleepTimeColor, mDefaultSleepTimeColor);
-        mBestSleepTimeColor = a.getColor(R.styleable.SleepRecordView_bestSleepTimeColor, mBestSleepTimeColor);
-        mWorstSleepTimeColor = a.getColor(R.styleable.SleepRecordView_worstSleepTimeColor, mWorstSleepTimeColor);
         mTimeLabelColor = a.getColor(R.styleable.SleepRecordView_timeLabelColor, mTimeLabelColor);
 
         a.recycle();
@@ -92,6 +86,11 @@ public class SleepRecordView extends View {
 
     public void setSleepQuality(double mSleepQuality) {
         this.mSleepQuality = mSleepQuality;
+    }
+
+    public void setSleepQualityColor(int sleepQualityColor) {
+        this.sleepQualityColor = sleepQualityColor;
+        sleepTimePaint.setColor(sleepQualityColor);
     }
 
     private int paddingLeft = 0;
@@ -181,21 +180,11 @@ public class SleepRecordView extends View {
             return;
         }
 
-        updateSleepTimePaintColor(sleepTimePaint);
-
         for (Pair<Date, Date> pair : mSleepTimePairs) {
             float beginPos = calculateTimePosition(pair.first);
             float endPos = calculateTimePosition(pair.second);
             canvas.drawRect(beginPos, 0, endPos, scaleLinePosition, sleepTimePaint);
         }
-    }
-
-    private void updateSleepTimePaintColor(Paint paint) {
-        if (mSleepQuality == 0) {
-            paint.setColor(mDefaultSleepTimeColor);
-        }
-
-        //TODO update color based on sleep quality
     }
 
     private float calculateTimePosition(Date date) {

@@ -21,6 +21,7 @@ import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.models.SleepQuality;
 import im.hch.sleeprecord.utils.DateUtils;
+import im.hch.sleeprecord.utils.SleepRecordUtils;
 import lombok.Setter;
 
 public class SleepQualityTrendView extends View {
@@ -48,6 +49,7 @@ public class SleepQualityTrendView extends View {
     private List<SleepQuality> sleepQualities = new ArrayList<>();
 
     @BindArray(R.array.month_short) String[] monthsShort;
+    @BindArray(R.array.quality_level) int[] qualityLevelColors;
 
     private Paint scaleLinePaint;
     private Paint gridLinePaint;
@@ -221,6 +223,7 @@ public class SleepQualityTrendView extends View {
                 canvas.drawPath(path, trendLinePaint);
             }
 
+            pointPaint.setColor(SleepRecordUtils.getQualityColor(qualityLevelColors, sq.getSleepQuality()));
             canvas.drawPoint(x, y, pointPaint);
             lastx = x;
             lasty = y;

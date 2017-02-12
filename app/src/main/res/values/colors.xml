@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="level_X">#A7B0A7</color>
+    <color name="level_0">#B70000</color>
+    <color name="level_1">#ED0000</color>
+    <color name="level_2">#FF1B1B</color>
+    <color name="level_3">#FF5656</color>
+    <color name="level_4">#FF9191</color>
+    <color name="level_5">#71E571</color>
+    <color name="level_6">#41DB41</color>
+    <color name="level_7">#17D517</color>
+    <color name="level_8">#00BB00</color>
+    <color name="level_9">#008F00</color>
+
+    <array name="quality_level">
+        <item>@color/level_X</item>
+        <item>@color/level_0</item>
+        <item>@color/level_1</item>
+        <item>@color/level_2</item>
+        <item>@color/level_3</item>
+        <item>@color/level_4</item>
+        <item>@color/level_5</item>
+        <item>@color/level_6</item>
+        <item>@color/level_7</item>
+        <item>@color/level_8</item>
+        <item>@color/level_9</item>
+    </array>
+
     <color name="primary">#009688</color>
     <color name="primary_dark">#00796B</color>
     <color name="primary_light">#B2DFDB</color>

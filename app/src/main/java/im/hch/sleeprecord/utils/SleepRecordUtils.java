@@ -40,4 +40,22 @@ public class SleepRecordUtils {
 
         return list;
     }
+
+    /**
+     * Get the corresponding color of the sleep quality.
+     * @param qualityLevelColors
+     * @param sleepQuality
+     * @return
+     */
+    public static int getQualityColor(int[] qualityLevelColors, double sleepQuality) {
+        int roundValue = (int) Math.ceil(sleepQuality);
+        if (roundValue < 0) {
+            roundValue = 0;
+        }
+        if (roundValue > 10) {
+            roundValue = 10;
+        }
+
+        return qualityLevelColors[roundValue];
+    }
 }
