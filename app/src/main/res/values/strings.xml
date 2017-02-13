@@ -136,7 +136,7 @@
     <string name="button_Save">Save</string>
     <string name="button_boy">Boy</string>
     <string name="button_girl">Girl</string>
-    
+
     <string name="babyinfo_fragment_title">Edit Baby Information</string>
     <string name="permission_not_granted">Cancelling, required permissions are not granted.</string>
     <!-- Choose photo -->
@@ -150,4 +150,24 @@
 
     <!-- Admob IDs-->
     <string name="admob_id_main_activity">ca-app-pub-4044463930410370/2133723199</string>
+
+    <!-- Sleep Training-->
+    <string name="sleep_training_checklist_title">Sleep Training Checklist</string>
+    <string name="sleep_training_plan_title">Sleep Training Plan</string>
+    <string name="sleep_training_title">Sleep Training</string>
+    <string name="menu_next">Next</string>
+
+    <string-array name="sleep_training_checklist">
+        <item>"Your baby is more than 4 months old"</item>
+        <item>"Your baby doesn't have a medical condition"</item>
+        <item>"Your baby has a bedtime routine"</item>
+        <item>"Your baby has a consistent bedtime"</item>
+    </string-array>
+
+    <string-array name="sleep_training_checklist_description">
+        <item>"By about 4 months, babies have typically started to develop a regular sleep-wake cycle and dropped most of their night feedings. These are signs they may be ready to start sleep training."</item>
+        <item>"An underlying condition, such as sleep apnea, needs to be addressed by your baby's doctor before you consider a sleep training program."</item>
+        <item>"A routine can include a warm bath, a book, and a lullaby before putting her to bed."</item>
+        <item>"Experts recommend a bedtime between 7 and 8 o'clock, so your baby isn't overtired and fighting sleep."</item>
+    </string-array>
 </resources>

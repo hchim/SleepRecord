@@ -260,7 +260,6 @@ public class MainActivity extends AppCompatActivity implements
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         switch (id) {
@@ -268,7 +267,12 @@ public class MainActivity extends AppCompatActivity implements
                 ActivityUtils.navigateToSleepRecordsActivity(this);
                 break;
             case R.id.nav_sleep_training:
-                //TODO add sleep training activity
+                String startDate = sharedPreferenceUtil.retrieveSleepTrainingStartDate();
+                if (startDate == null) {
+                    ActivityUtils.navigateToChecklistActivity(this);
+                } else {
+                    ActivityUtils.navigateToSleepTrainingActivity(this, false);
+                }
                 break;
             case R.id.nav_share:
                 break;

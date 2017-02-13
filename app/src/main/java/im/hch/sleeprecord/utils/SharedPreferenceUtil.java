@@ -247,6 +247,18 @@ public class SharedPreferenceUtil {
         return records;
     }
 
+    /* Sleep Training */
+
+    public static final String SLEEP_TRAINING_START_DATE = "TrainingStartDate";
+
+    public String retrieveSleepTrainingStartDate() {
+        return getString(SLEEP_TRAINING_START_DATE, null);
+    }
+
+    private void removeSleepTraining() {
+        removeValue(SLEEP_TRAINING_START_DATE);
+    }
+
     public void removeAllData() {
         removeBabyInfo();
         removeUserProfile();
