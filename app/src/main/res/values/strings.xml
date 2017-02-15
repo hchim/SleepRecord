@@ -156,6 +156,7 @@
     <string name="sleep_training_plan_title">Sleep Training Plan</string>
     <string name="sleep_training_title">Sleep Training</string>
     <string name="menu_next">Next</string>
+    <string name="menu_start">Start</string>
 
     <string-array name="sleep_training_checklist">
         <item>"Your baby is more than 4 months old"</item>
@@ -170,4 +171,15 @@
         <item>"A routine can include a warm bath, a book, and a lullaby before putting her to bed."</item>
         <item>"Experts recommend a bedtime between 7 and 8 o'clock, so your baby isn't overtired and fighting sleep."</item>
     </string-array>
+
+    <!-- Planning -->
+    <string name="first_week">First Week</string>
+    <string name="second_week">Second Week</string>
+    <string name="following_week">The Following Weeks</string>
+
+    <string name="first_cried_out">First Cried Out Time</string>
+    <string name="second_cried_out">Second Cried Out Time</string>
+    <string name="following_cried_out">Following Cried Out Time</string>
+    <string name="soothe_time">Soothe Time</string>
+    <string name="minute_short">" m"</string>
 </resources>

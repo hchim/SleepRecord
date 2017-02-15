@@ -52,6 +52,7 @@ import im.hch.sleeprecord.activities.records.SleepRecordsAdapter;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.SleepQuality;
 import im.hch.sleeprecord.models.SleepRecord;
+import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
@@ -267,8 +268,8 @@ public class MainActivity extends AppCompatActivity implements
                 ActivityUtils.navigateToSleepRecordsActivity(this);
                 break;
             case R.id.nav_sleep_training:
-                String startDate = sharedPreferenceUtil.retrieveSleepTrainingStartDate();
-                if (startDate == null) {
+                SleepTrainingPlan plan = sharedPreferenceUtil.retrieveSleepTrainingPlan();
+                if (plan == null) {
                     ActivityUtils.navigateToChecklistActivity(this);
                 } else {
                     ActivityUtils.navigateToSleepTrainingActivity(this, false);

@@ -85,4 +85,40 @@
         <item name="android:textColor">@color/secondary_text</item>
         <item name="android:textSize">14sp</item>
     </style>
+
+    <style name="planning_title">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="planning_linearlayout_item">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginTop">@dimen/planning_item_margin_top</item>
+        <item name="android:layout_marginBottom">@dimen/planning_item_margin_bottom</item>
+    </style>
+
+    <style name="planning_title_label">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">3</item>
+    </style>
+
+    <style name="planning_seekbar" parent="@style/Widget.AppCompat.SeekBar.Discrete">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">5</item>
+    </style>
+    <style name="planning_time_label">
+        <item name="android:textAlignment">center</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+    </style>
 </resources>

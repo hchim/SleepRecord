@@ -13,10 +13,12 @@ import java.util.List;
 
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.SleepRecord;
+import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.serviceclients.exceptions.BabyNotExistsException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.serviceclients.exceptions.TimeOverlapException;
+import im.hch.sleeprecord.serviceclients.exceptions.TrainingPlanNotExistException;
 import im.hch.sleeprecord.utils.DateUtils;
 import im.hch.sleeprecord.utils.SleepRecordUtils;
 
@@ -25,9 +27,11 @@ public class SleepServiceClient extends BaseServiceClient {
 
     public static final String BABYINFO_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "babyinfos/";
     public static final String SLEEP_RECORDS_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "sleeprecs/";
+    public static final String SLEEP_TRAINING_PLAN_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "plan/";
 
     public static final String ERROR_CODE_BABY_NOT_EXISTS = "BABY_NOT_EXISTS";
     public static final String ERROR_CODE_TIME_OVERLAP = "TIME_OVERLAP";
+    public static final String SLEEP_TRAINING_PLAN_NOT_EXISTS = "SLEEP_TRAINING_PLAN_NOT_EXISTS";
     public static final String QUERY_DATE_FORMAT = "yyyy-MM-dd";
 
     /**
@@ -176,6 +180,60 @@ public class SleepServiceClient extends BaseServiceClient {
             list = SleepRecordUtils.fillSleepRecords(list, from, to);
 
             return list;
+        } catch (JSONException e) {
+            Log.e(TAG, "JSON format error");
+            throw new InternalServerException();
+        }
+    }
+
+    /**
+     * Save the sleep training plan.
+     * @param plan
+     */
+    public void saveSleepTrainingPlan(String userId, SleepTrainingPlan plan)
+            throws ConnectionFailureException, InternalServerException {
+        String url = String.format(SLEEP_TRAINING_PLAN_URL + "%s", userId);
+
+        try {
+            JSONObject object = plan.toJson();
+
+            JSONObject result = post(url, object);
+            if (result.has(ERROR_CODE_KEY)) {
+                if (result.has(ERROR_MESSAGE_KEY)) {
+                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
+                }
+
+                throw new InternalServerException();
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "JSON format error");
+            throw new InternalServerException();
+        }
+    }
+
+    /**
+     * Get sleep training plan of the user.
+     * @param userId
+     * @return
+     */
+    public SleepTrainingPlan getSleepTrainingPlan(String userId)
+            throws ConnectionFailureException, InternalServerException, TrainingPlanNotExistException {
+        String url = String.format(SLEEP_TRAINING_PLAN_URL + "%s", userId);
+        try {
+            JSONObject result = get(url);
+            if (result.has(ERROR_CODE_KEY)) {
+                if (result.has(ERROR_MESSAGE_KEY)) {
+                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
+                }
+
+                String errorCode = result.getString(ERROR_CODE_KEY);
+                if (errorCode.equals(SLEEP_TRAINING_PLAN_NOT_EXISTS)) {
+                    throw new TrainingPlanNotExistException();
+                }
+                throw new InternalServerException();
+            }
+
+            return new SleepTrainingPlan(result);
         } catch (JSONException e) {
             Log.e(TAG, "JSON format error");
             throw new InternalServerException();

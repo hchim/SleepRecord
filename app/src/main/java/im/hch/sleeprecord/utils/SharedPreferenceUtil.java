@@ -15,6 +15,7 @@ import java.util.Set;
 
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.SleepRecord;
+import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.models.UserProfile;
 
 public class SharedPreferenceUtil {
@@ -48,6 +49,12 @@ public class SharedPreferenceUtil {
                 strDate = DateUtils.dateToStr((Date) value, DATE_FORMAT);
             }
             editor.putString(key, strDate);
+        } else if (value instanceof JSONObject) {
+            String jsonString = null;
+            if (value != null) {
+                jsonString = ((JSONObject) value).toString();
+            }
+            editor.putString(key, jsonString);
         }
 
         editor.commit();
@@ -84,6 +91,19 @@ public class SharedPreferenceUtil {
 
     public Long getLong(String key, long defaultValue) {
         return mSharedPreference.getLong(key, defaultValue);
+    }
+
+    public JSONObject getJSONObject(String key, JSONObject defaultValue) {
+        String str = mSharedPreference.getString(key, null);
+        if (str == null) {
+            return defaultValue;
+        } else {
+            try {
+                return new JSONObject(str);
+            } catch (JSONException e) {
+                return null;
+            }
+        }
     }
 
     public void removeValue(String key) {
@@ -249,19 +269,29 @@ public class SharedPreferenceUtil {
 
     /* Sleep Training */
 
-    public static final String SLEEP_TRAINING_START_DATE = "TrainingStartDate";
+    public static final String SLEEP_TRAINING_PLAN = "TrainingPlan";
 
-    public String retrieveSleepTrainingStartDate() {
-        return getString(SLEEP_TRAINING_START_DATE, null);
+    public void storeSleepTrainingPlan(SleepTrainingPlan plan) {
+        setValue(SLEEP_TRAINING_PLAN, plan.toJson());
     }
 
-    private void removeSleepTraining() {
-        removeValue(SLEEP_TRAINING_START_DATE);
+    public SleepTrainingPlan retrieveSleepTrainingPlan() {
+        JSONObject jsonObject = getJSONObject(SLEEP_TRAINING_PLAN, null);
+        if (jsonObject == null) {
+            return null;
+        }
+
+        return new SleepTrainingPlan(jsonObject);
+    }
+
+    private void removeSleepTrainingPlan() {
+        removeValue(SLEEP_TRAINING_PLAN);
     }
 
     public void removeAllData() {
         removeBabyInfo();
         removeUserProfile();
         removeSleepRecords();
+        removeSleepTrainingPlan();
     }
 }
