@@ -14,10 +14,9 @@ import android.view.inputmethod.InputMethodManager;
 import java.io.File;
 import java.io.IOException;
 
+import im.hch.sleeprecord.activities.RegisterActivity;
 import im.hch.sleeprecord.activities.login.LoginActivity;
 import im.hch.sleeprecord.activities.main.MainActivity;
-import im.hch.sleeprecord.activities.RegisterActivity;
-import im.hch.sleeprecord.activities.records.SleepRecordsActivity;
 import im.hch.sleeprecord.activities.settings.SettingsActivity;
 import im.hch.sleeprecord.activities.training.ChecklistActivity;
 import im.hch.sleeprecord.activities.training.PlanningActivity;
@@ -39,10 +38,6 @@ public class ActivityUtils {
 
     public static void navigateToSettingsActivity(Activity currentActivity) {
         navigateTo(currentActivity, SettingsActivity.class, false, null);
-    }
-
-    public static void navigateToSleepRecordsActivity(Activity currentActivity) {
-        navigateTo(currentActivity, SleepRecordsActivity.class, false, null);
     }
 
     public static void navigateToChecklistActivity(Activity currentActivity) {

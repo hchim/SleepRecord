@@ -59,7 +59,6 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
     private SleepRecordsAdapter sleepRecordsAdapter;
     private SleepServiceClient sleepServiceClient;
     private IdentityServiceClient identityServiceClient;
-    private MainActivity mainActivity;
 
     public HomeFragment() {
         sleepServiceClient = new SleepServiceClient();
@@ -90,8 +89,6 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         ButterKnife.bind(this, view);
-
-        mainActivity = (MainActivity) getActivity();
 
         verifyEmailTextView.setOnClickListener(new View.OnClickListener() {
             @Override

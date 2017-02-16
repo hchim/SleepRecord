@@ -4,11 +4,10 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
@@ -22,6 +21,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.R;
+import im.hch.sleeprecord.activities.BaseFragment;
 import im.hch.sleeprecord.activities.main.AddRecordDialogFragment;
 import im.hch.sleeprecord.activities.main.MainActivity;
 import im.hch.sleeprecord.models.SleepRecord;
@@ -29,11 +29,9 @@ import im.hch.sleeprecord.serviceclients.SleepServiceClient;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.DialogUtils;
-import im.hch.sleeprecord.utils.MetricHelper;
-import im.hch.sleeprecord.utils.SessionManager;
 
-public class SleepRecordsActivity extends AppCompatActivity implements AddRecordDialogFragment.AddRecordDialogListener {
-    public static final String TAG = "SleepRecordsActivity";
+public class SleepRecordsFragment extends BaseFragment implements AddRecordDialogFragment.AddRecordDialogListener {
+    public static final String TAG = "SleepRecordsFragment";
     /**
      * The number of sleep records to show in the sleep records widget.
      */
@@ -41,33 +39,37 @@ public class SleepRecordsActivity extends AppCompatActivity implements AddRecord
     public static final int THRESHOLD = 1;
 
     private SleepRecordsAdapter sleepRecordsAdapter;
-    private SessionManager sessionManager;
     private SleepServiceClient sleepServiceClient;
-    private MetricHelper metricHelper;
 
     private int page = 0;
 
-    @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.list_view) ListView listView;
 
     @BindString(R.string.progress_message_load) String loadingMessage;
     @BindString(R.string.error_failed_to_connect) String failedToConnectError;
     @BindString(R.string.error_internal_server) String internalServerError;
+    @BindString(R.string.title_activity_sleep_records) String title;
+
+    public static SleepRecordsFragment newInstance() {
+        SleepRecordsFragment fragment = new SleepRecordsFragment();
+        return fragment;
+    }
+
+    public SleepRecordsFragment() {
+        sleepServiceClient = new SleepServiceClient();
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sleep_records);
-        ButterKnife.bind(this);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
 
-        sessionManager = new SessionManager(this);
-        sleepServiceClient = new SleepServiceClient();
-        metricHelper = new MetricHelper(this);
+        View view = inflater.inflate(R.layout.fragment_sleep_records, container, false);
+        ButterKnife.bind(this, view);
 
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mainActivity.setTitle(title);
 
-        sleepRecordsAdapter = new SleepRecordsAdapter(this, new ArrayList<SleepRecord>());
+        sleepRecordsAdapter = new SleepRecordsAdapter(getActivity(), new ArrayList<SleepRecord>());
         listView.setAdapter(sleepRecordsAdapter);
         new LoadRemoteDataTask().execute(page);
 
@@ -88,41 +90,8 @@ public class SleepRecordsActivity extends AppCompatActivity implements AddRecord
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
         });
-    }
 
-    @Override
-    protected void onPause() {
-        metricHelper.startTimeMetric(Metrics.SLEEP_RECORD_ACTIVITY_USAGE_TIME_METRIC);
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        metricHelper.startTimeMetric(Metrics.SLEEP_RECORD_ACTIVITY_USAGE_TIME_METRIC);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_new_sleep_record) {
-            DialogUtils.showAddRecordDialog(getFragmentManager());
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        return view;
     }
 
     @Override
@@ -139,7 +108,7 @@ public class SleepRecordsActivity extends AppCompatActivity implements AddRecord
 
         @Override
         protected void onPreExecute() {
-            progressDialog = DialogUtils.showProgressDialog(SleepRecordsActivity.this, loadingMessage);
+            progressDialog = DialogUtils.showProgressDialog(SleepRecordsFragment.this.getActivity(), loadingMessage);
         }
 
         @Override

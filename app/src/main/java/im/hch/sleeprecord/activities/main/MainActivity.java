@@ -39,6 +39,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.home.HomeFragment;
+import im.hch.sleeprecord.activities.records.SleepRecordsFragment;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.models.UserProfile;
@@ -184,8 +185,11 @@ public class MainActivity extends AppCompatActivity implements
         int id = item.getItemId();
 
         switch (id) {
+            case R.id.nav_home:
+                loadFragment(HomeFragment.newInstance(), null);
+                break;
             case R.id.nav_records:
-                ActivityUtils.navigateToSleepRecordsActivity(this);
+                loadFragment(SleepRecordsFragment.newInstance(), null);
                 break;
             case R.id.nav_sleep_training:
                 SleepTrainingPlan plan = sharedPreferenceUtil.retrieveSleepTrainingPlan();

@@ -37,16 +37,6 @@
                 android:value="im.hch.sleeprecord.activities.main.MainActivity" />
         </activity>
         <activity
-            android:name=".activities.records.SleepRecordsActivity"
-            android:label="@string/title_activity_sleep_records"
-            android:parentActivityName=".activities.main.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="im.hch.sleeprecord.activities.main.MainActivity" />
-        </activity>
-        <activity
             android:name=".activities.login.LoginActivity"
             android:label="@string/title_activity_login"
             android:screenOrientation="portrait" />

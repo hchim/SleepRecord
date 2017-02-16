@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import im.hch.sleeprecord.activities.main.MainActivity;
 import im.hch.sleeprecord.utils.MetricHelper;
 import im.hch.sleeprecord.utils.SessionManager;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
@@ -19,6 +20,7 @@ public class BaseFragment extends Fragment {
     protected SessionManager sessionManager;
     protected SharedPreferenceUtil sharedPreferenceUtil;
     protected MetricHelper metricHelper;
+    protected MainActivity mainActivity;
 
     public BaseFragment() {
         // Required empty public constructor
@@ -35,7 +37,7 @@ public class BaseFragment extends Fragment {
         sessionManager = new SessionManager(getActivity());
         sharedPreferenceUtil = new SharedPreferenceUtil(getActivity());
         metricHelper = new MetricHelper(getActivity());
-
+        mainActivity = (MainActivity) getActivity();
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 }
