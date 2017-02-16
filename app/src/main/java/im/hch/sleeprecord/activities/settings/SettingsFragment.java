@@ -9,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 
 import im.hch.sleeprecord.R;
+import im.hch.sleeprecord.activities.main.MainActivity;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.AppInfoServiceClient;
@@ -29,6 +30,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     private IdentityServiceClient identityServiceClient;
     private UserProfile userProfile;
     private AppInfoServiceClient appInfoServiceClient;
+    private MainActivity mainActivity;
 
     private EditTextPreference suggestionPreference;
 
@@ -48,6 +50,9 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         sessionManager = new SessionManager(getActivity());
         userProfile = sharedPreferenceUtil.retrieveUserProfile();
         appInfoServiceClient = new AppInfoServiceClient();
+        mainActivity = (MainActivity) getActivity();
+        String title = getResources().getString(R.string.title_activity_settings);
+        mainActivity.setTitle(title);
 
         EditTextPreference nicknamePref = (EditTextPreference) findPreference(PREFERENCE_KEY_NICKNAME);
         nicknamePref.setOnPreferenceChangeListener(this);
@@ -141,9 +146,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         protected void onPostExecute(Boolean aBoolean) {
             if (aBoolean) {
                 suggestionPreference.setText("");
-                String thanksMessage = SettingsFragment.this
-                        .getResources()
-                        .getString(R.string.suggestion_thanks_message);
+                String thanksMessage = SettingsFragment.this.getResources().getString(R.string.suggestion_thanks_message);
                 Snackbar.make(SettingsFragment.this.getView(), thanksMessage, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
