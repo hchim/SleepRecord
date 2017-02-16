@@ -41,6 +41,7 @@ import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.home.HomeFragment;
 import im.hch.sleeprecord.activities.records.SleepRecordsFragment;
 import im.hch.sleeprecord.activities.settings.SettingsFragment;
+import im.hch.sleeprecord.activities.training.SleepTrainingFragment;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.models.UserProfile;
@@ -197,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements
                 if (plan == null) {
                     ActivityUtils.navigateToChecklistActivity(this);
                 } else {
-                    ActivityUtils.navigateToSleepTrainingActivity(this, false);
+                    loadFragment(SleepTrainingFragment.newInstance(), null);
                 }
                 break;
             case R.id.nav_share:

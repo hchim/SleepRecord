@@ -19,7 +19,6 @@ import im.hch.sleeprecord.activities.login.LoginActivity;
 import im.hch.sleeprecord.activities.main.MainActivity;
 import im.hch.sleeprecord.activities.training.ChecklistActivity;
 import im.hch.sleeprecord.activities.training.PlanningActivity;
-import im.hch.sleeprecord.activities.training.SleepTrainingActivity;
 
 public class ActivityUtils {
 
@@ -41,10 +40,6 @@ public class ActivityUtils {
 
     public static void navigateToPlanningActivity(Activity currentActivity) {
         navigateTo(currentActivity, PlanningActivity.class, false, null);
-    }
-
-    public static void navigateToSleepTrainingActivity(Activity currentActivity, boolean clearTop) {
-        navigateTo(currentActivity, SleepTrainingActivity.class, clearTop, null);
     }
 
     /**

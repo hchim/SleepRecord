@@ -83,10 +83,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="im.hch.sleeprecord.activities.training.ChecklistActivity" />
         </activity>
-        <activity
-            android:name=".activities.training.SleepTrainingActivity"
-            android:label="@string/sleep_training_title"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

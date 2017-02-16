@@ -20,7 +20,6 @@ import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
-import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.SessionManager;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 
@@ -224,7 +223,7 @@ public class PlanningActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             if (aBoolean) {
-                ActivityUtils.navigateToSleepTrainingActivity(PlanningActivity.this, true);
+//                ActivityUtils.navigateToSleepTrainingActivity(PlanningActivity.this, true);
             } else {
                 Snackbar.make(toolbar, errorMessage, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();

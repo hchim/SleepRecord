@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.hch.sleeprecord.Metrics;
@@ -55,6 +56,8 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
     @BindView(R.id.sleepQualityTrend) SleepQualityTrendView sleepQualityTrendView;
     @BindView(R.id.adWidget) LinearLayout adWidgetView;
     @BindView(R.id.adView) NativeExpressAdView adView;
+
+    @BindString(R.string.app_name) String title;
 
     private SleepRecordsAdapter sleepRecordsAdapter;
     private SleepServiceClient sleepServiceClient;
@@ -89,6 +92,8 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         ButterKnife.bind(this, view);
+
+        mainActivity.setTitle(title);
 
         verifyEmailTextView.setOnClickListener(new View.OnClickListener() {
             @Override
