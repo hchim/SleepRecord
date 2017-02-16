@@ -28,15 +28,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.settings.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName=".activities.main.MainActivity"
-            android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="im.hch.sleeprecord.activities.main.MainActivity" />
-        </activity>
-        <activity
             android:name=".activities.login.LoginActivity"
             android:label="@string/title_activity_login"
             android:screenOrientation="portrait" />

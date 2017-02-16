@@ -40,6 +40,7 @@ import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.home.HomeFragment;
 import im.hch.sleeprecord.activities.records.SleepRecordsFragment;
+import im.hch.sleeprecord.activities.settings.SettingsFragment;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.models.UserProfile;
@@ -202,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.nav_share:
                 break;
             case R.id.nav_settings:
-                ActivityUtils.navigateToSettingsActivity(this);
+                loadFragment(SettingsFragment.newInstance(), null);
                 break;
             case R.id.nav_logout:
                 sessionManager.clearSession();

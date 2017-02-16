@@ -1,6 +1,5 @@
 package im.hch.sleeprecord.activities.settings;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -8,7 +7,6 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
-import android.view.MenuItem;
 
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.models.BabyInfo;
@@ -33,6 +31,11 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     private AppInfoServiceClient appInfoServiceClient;
 
     private EditTextPreference suggestionPreference;
+
+    public static SettingsFragment newInstance() {
+        SettingsFragment fragment = new SettingsFragment();
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,16 +74,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
         suggestionPreference = (EditTextPreference)findPreference(PREFERENCE_KEY_SUGGESTION);
         suggestionPreference.setOnPreferenceChangeListener(this);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            startActivity(new Intent(getActivity(), SettingsActivity.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

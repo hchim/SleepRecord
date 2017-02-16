@@ -17,7 +17,6 @@ import java.io.IOException;
 import im.hch.sleeprecord.activities.RegisterActivity;
 import im.hch.sleeprecord.activities.login.LoginActivity;
 import im.hch.sleeprecord.activities.main.MainActivity;
-import im.hch.sleeprecord.activities.settings.SettingsActivity;
 import im.hch.sleeprecord.activities.training.ChecklistActivity;
 import im.hch.sleeprecord.activities.training.PlanningActivity;
 import im.hch.sleeprecord.activities.training.SleepTrainingActivity;
@@ -34,10 +33,6 @@ public class ActivityUtils {
 
     public static void navigateToLoginActivity(Activity currentActivity) {
         navigateTo(currentActivity, LoginActivity.class, true, null);
-    }
-
-    public static void navigateToSettingsActivity(Activity currentActivity) {
-        navigateTo(currentActivity, SettingsActivity.class, false, null);
     }
 
     public static void navigateToChecklistActivity(Activity currentActivity) {
