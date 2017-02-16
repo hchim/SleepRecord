@@ -2,12 +2,13 @@ package im.hch.sleeprecord.activities.main;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -22,25 +23,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.NativeExpressAdView;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
 
 import butterknife.BindString;
 import butterknife.BindView;
@@ -48,15 +38,12 @@ import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.R;
-import im.hch.sleeprecord.activities.records.SleepRecordsAdapter;
+import im.hch.sleeprecord.activities.home.HomeFragment;
 import im.hch.sleeprecord.models.BabyInfo;
-import im.hch.sleeprecord.models.SleepQuality;
-import im.hch.sleeprecord.models.SleepRecord;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
-import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DateUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
@@ -64,25 +51,20 @@ import im.hch.sleeprecord.utils.ImageUtils;
 import im.hch.sleeprecord.utils.MetricHelper;
 import im.hch.sleeprecord.utils.SessionManager;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
-import im.hch.sleeprecord.utils.SleepRecordUtils;
+import lombok.Getter;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
-        BabyInfoDialogFragment.BabyInfoDialogFragmentListener,
-        AddRecordDialogFragment.AddRecordDialogListener,
-        VerifyEmailDialogFragment.OnEmailVerifiedListener {
+        BabyInfoDialogFragment.BabyInfoDialogFragmentListener {
     public static final String TAG = "MainActivity";
-    /**
-     * The number of sleep records to show in the sleep records widget.
-     */
-    public static final int SHOW_SLEEP_RECORDS_NUM = 5;
+
     public static final int CROP_WIN_SIZE = 1024;
 
-    private SleepRecordsAdapter sleepRecordsAdapter;
     private SessionManager sessionManager;
     private SharedPreferenceUtil sharedPreferenceUtil;
     private SleepServiceClient sleepServiceClient;
     private IdentityServiceClient identityServiceClient;
+    @Getter
     private HeaderViewHolder headerViewHolder;
     private Uri mCropImageUri;
     private MetricHelper metricHelper;
@@ -90,13 +72,6 @@ public class MainActivity extends AppCompatActivity implements
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.drawer_layout) DrawerLayout drawer;
     @BindView(R.id.nav_view) NavigationView navigationView;
-    @BindView(R.id.list_view) ListView sleepRecordListView;
-    @BindView(R.id.progressBar) ProgressBar progressBar;
-    @BindView(R.id.verify_email_layout) View verifyEmailView;
-    @BindView(R.id.verifyEmailTextView) TextView verifyEmailTextView;
-    @BindView(R.id.sleepQualityTrend) SleepQualityTrendView sleepQualityTrendView;
-    @BindView(R.id.adWidget) LinearLayout adWidgetView;
-    @BindView(R.id.adView) NativeExpressAdView adView;
 
     @BindString(R.string.age_years_singlular) String AGE_YEARS_S;
     @BindString(R.string.age_months_singlular) String AGE_MONTHS_S;
@@ -140,8 +115,6 @@ public class MainActivity extends AppCompatActivity implements
             updateBabyInfo(babyInfo);
         }
 
-        initSleepRecords();
-
         headerViewHolder.babyNameTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,32 +131,8 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
-        verifyEmailTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogUtils.showVerifyEmailDialog(MainActivity.this.getFragmentManager());
-            }
-        });
-
-        // Disallow the touch request for parent scroll on touch of child view
-        sleepRecordListView.setClickable(false);
-
-        ArrayList<SleepQuality> sleepQualities = new ArrayList<>();
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, -30);
-        Random random = new Random(System.currentTimeMillis());
-        for (int i = 0; i < 30; i++) {
-            sleepQualities.add(new SleepQuality(calendar.getTime(), 10 - random.nextInt(4)));
-            calendar.add(Calendar.DATE, 1);
-        }
-        sleepQualityTrendView.setSleepQualities(sleepQualities);
-
-        AdRequest.Builder builder = new AdRequest.Builder();
-        adView.loadAd(builder.build());
-
-        loadRemoteData();
+        loadFragment(HomeFragment.newInstance(), null);
     }
-
 
     @Override
     protected void onResume() {
@@ -195,35 +144,6 @@ public class MainActivity extends AppCompatActivity implements
     protected void onPause() {
         metricHelper.stopTimeMetric(Metrics.MAIN_ACTIVITY_USAGE_TIME_METRIC);
         super.onPause();
-    }
-
-    /**
-     * Method for Setting the Height of the ListView dynamically. Hack to fix the issue of
-     * not showing all the items of the ListView when placed inside a ScrollView.
-     * @param listView
-     */
-    public static void setListViewHeightBasedOnChildren(ListView listView) {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null)
-            return;
-
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        int totalHeight = 0;
-        View view = null;
-        for (int i = 0; i < listAdapter.getCount(); i++) {
-            view = listAdapter.getView(i, view, listView);
-            if (i == 0) {
-                view.setLayoutParams(
-                        new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
-                );
-            }
-            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
-        }
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-        listView.setLayoutParams(params);
     }
 
     @Override
@@ -355,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements
                 .start(this);
     }
 
-    private void updateUserInfo(UserProfile userProfile) {
+    public void updateUserInfo(UserProfile userProfile) {
         if (userProfile != null) {
             headerViewHolder.nameTextView.setText(userProfile.getUsername());
             if (userProfile.getHeaderIconPath() != null) {
@@ -366,40 +286,10 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void updateBabyInfo(BabyInfo babyInfo) {
+    public void updateBabyInfo(BabyInfo babyInfo) {
         if (babyInfo != null) {
             headerViewHolder.babyNameTextView.setText(getBabyInfoDisplayString(babyInfo));
         }
-    }
-
-    /**
-     * Load sleep records from shared preference.
-     */
-    private void initSleepRecords() {
-        List<SleepRecord> records = sharedPreferenceUtil.retrieveSleepRecords();
-        if (records == null) {
-            records = new ArrayList<>();
-        }
-
-        Calendar to = Calendar.getInstance();
-        Calendar from = Calendar.getInstance();
-        from.add(Calendar.DATE, SHOW_SLEEP_RECORDS_NUM * -1);
-
-        sleepRecordsAdapter = new SleepRecordsAdapter(this,
-                SleepRecordUtils.fillSleepRecords(records, from.getTime(), to.getTime()));
-        sleepRecordListView.setAdapter(sleepRecordsAdapter);
-        setListViewHeightBasedOnChildren(sleepRecordListView);
-    }
-
-    /**
-     * Load the remote data.
-     * 1. Baby Info.
-     * 2. Sleep Record.
-     */
-    private void loadRemoteData() {
-        progressBar.setVisibility(View.VISIBLE);
-        progressBar.setProgress(0);
-        new LoadRemoteDataTask().execute();
     }
 
     private String getBabyInfoDisplayString(BabyInfo babyInfo) {
@@ -443,185 +333,25 @@ public class MainActivity extends AppCompatActivity implements
         return str;
     }
 
-    static class HeaderViewHolder {
-        @BindView(R.id.headerImageView) CircleImageView headerImage;
+    private void loadFragment(Fragment fragment, Bundle args) {
+        if (args != null) {
+            fragment.setArguments(args);
+        }
+        // Insert the fragment by replacing any existing fragment
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
+        drawer.closeDrawer(GravityCompat.START);
+    }
+
+    public static class HeaderViewHolder {
+        public @BindView(R.id.headerImageView) CircleImageView headerImage;
         @BindView(R.id.usernameTextView) TextView nameTextView;
         @BindView(R.id.babyNameTextView) TextView babyNameTextView;
 
         public HeaderViewHolder(View root) {
             ButterKnife.bind(this, root);
-        }
-    }
-
-    @Override
-    public void onSleepRecordSaved(Date from, Date to) {
-        new LoadSleepRecordTask().execute();
-    }
-
-    @Override
-    public void onEmailVerified() {
-        verifyEmailView.setVisibility(View.GONE);
-    }
-
-    /**
-     * Update baby info task.
-     */
-    private class LoadRemoteDataTask extends AsyncTask<Void, Integer, Boolean> {
-
-        BabyInfo babyInfo;
-        UserProfile userProfile;
-        List<SleepRecord> sleepRecords;
-        boolean reloadHeaderImage = false;
-
-        public static final int BABY_INFO_UPDATED = 30;
-        public static final int USER_INFO_UPDATED = 60;
-        public static final int SLEEP_RECORDS_UPDATED = 100;
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            String userId = sessionManager.getUserId();
-            if (userId == null) {
-                Log.wtf(MainActivity.TAG, "User id is null.");
-                return false;
-            }
-
-            //update baby info
-            try {
-                babyInfo = sleepServiceClient.getBabyInfo(userId);
-                sharedPreferenceUtil.storeBabyInfo(babyInfo);
-            } catch (Exception e) {
-                Log.w(MainActivity.TAG, e);
-                if (e instanceof InternalServerException) {
-                    metricHelper.errorMetric(Metrics.GET_BABY_INFO_ERROR_METRIC, e);
-                }
-            }
-            publishProgress(BABY_INFO_UPDATED);
-
-            try {
-                userProfile = identityServiceClient.getUser(userId);
-
-                String currentHeaderUrl = sharedPreferenceUtil.retrieveHeaderImageUrl();
-                String headerImagePath = sharedPreferenceUtil.retrieveHeaderImage();
-                sharedPreferenceUtil.storeUserProfile(userProfile);
-                //download header image the url of the header
-                if (userProfile.getHeaderIconUrl() != null) {
-                    if (headerImagePath == null
-                            || !userProfile.getHeaderIconUrl().equals(currentHeaderUrl)) {
-                        String imagePath = ImageUtils.downloadImage(MainActivity.this, userProfile.getHeaderIconUrl());
-                        if (imagePath != null) {
-                            userProfile.setHeaderIconPath(imagePath);
-                            sharedPreferenceUtil.storeHeaderImage(imagePath);
-                            reloadHeaderImage = true;
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                Log.w(MainActivity.TAG, e);
-                if (e instanceof InternalServerException) {
-                    metricHelper.errorMetric(Metrics.GET_USER_ERROR_METRIC, e);
-                }
-            }
-            publishProgress(USER_INFO_UPDATED);
-
-            //update sleep records
-            Calendar to = Calendar.getInstance();
-            Calendar from = Calendar.getInstance();
-            from.add(Calendar.DATE, SHOW_SLEEP_RECORDS_NUM * -1);
-
-            try {
-                sleepRecords = sleepServiceClient.getSleepRecords(userId, from.getTime(), to.getTime());
-                sharedPreferenceUtil.storeSleepRecords(sleepRecords, userId);
-            } catch (Exception e) {
-                Log.w(MainActivity.TAG, e);
-                if (e instanceof InternalServerException) {
-                    metricHelper.errorMetric(Metrics.GET_SLEEP_RECORDS_ERROR_METRIC, e);
-                }
-            }
-            publishProgress(SLEEP_RECORDS_UPDATED);
-
-            return Boolean.TRUE;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            switch (values[0]) {
-                case BABY_INFO_UPDATED:
-                    updateBabyInfo(babyInfo);
-                    if (babyInfo == null) {
-                        DialogUtils.showEditBabyInfoDialog(getFragmentManager(), babyInfo);
-                    }
-                    break;
-                case USER_INFO_UPDATED:
-                    updateUserInfo(userProfile);
-                    //show email verify widget
-                    if (!userProfile.isEmailVerified()) {
-                        verifyEmailView.setVisibility(View.VISIBLE);
-                    }
-
-                    if (reloadHeaderImage) {
-                        Picasso.with(MainActivity.this)
-                                .load(new File(userProfile.getHeaderIconPath()))
-                                .into(headerViewHolder.headerImage);
-                    }
-                    break;
-                case SLEEP_RECORDS_UPDATED:
-                    sleepRecordsAdapter.updateSleepRecords(sleepRecords);
-                    break;
-            }
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                progressBar.setProgress(values[0]);
-            } else {
-                progressBar.setProgress(values[0], true);
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            progressBar.setVisibility(View.GONE);
-            metricHelper.stopTimeMetric(Metrics.MAIN_ACTIVITY_LOADING_TIME_METRIC);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            metricHelper.startTimeMetric(Metrics.MAIN_ACTIVITY_LOADING_TIME_METRIC);
-        }
-    }
-
-    private class LoadSleepRecordTask extends AsyncTask<Void, Integer, Boolean> {
-        List<SleepRecord> sleepRecords;
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            String userId = sessionManager.getUserId();
-            if (userId == null) {
-                Log.wtf(MainActivity.TAG, "User id is null.");
-                return false;
-            }
-
-            //update sleep records
-            Calendar to = Calendar.getInstance();
-            Calendar from = Calendar.getInstance();
-            from.add(Calendar.DATE, SHOW_SLEEP_RECORDS_NUM * -1);
-
-            try {
-                sleepRecords = sleepServiceClient.getSleepRecords(userId, from.getTime(), to.getTime());
-                sharedPreferenceUtil.storeSleepRecords(sleepRecords, userId);
-            } catch (Exception e) {
-                Log.w(MainActivity.TAG, e);
-                if (e instanceof InternalServerException) {
-                    metricHelper.errorMetric(Metrics.GET_SLEEP_RECORDS_ERROR_METRIC, e);
-                }
-            }
-
-            return Boolean.TRUE;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            if (aBoolean) {
-                sleepRecordsAdapter.updateSleepRecords(sleepRecords);
-            }
         }
     }
 
