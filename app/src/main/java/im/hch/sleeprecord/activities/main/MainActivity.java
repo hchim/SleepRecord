@@ -20,7 +20,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -41,6 +40,7 @@ import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.home.HomeFragment;
 import im.hch.sleeprecord.activities.records.SleepRecordsFragment;
 import im.hch.sleeprecord.activities.settings.SettingsFragment;
+import im.hch.sleeprecord.activities.training.ChecklistFragment;
 import im.hch.sleeprecord.activities.training.SleepTrainingFragment;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements
     private Uri mCropImageUri;
     private MetricHelper metricHelper;
 
+    @Getter
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.drawer_layout) DrawerLayout drawer;
     @BindView(R.id.nav_view) NavigationView navigationView;
@@ -159,30 +160,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_new_sleep_record) {
-            DialogUtils.showAddRecordDialog(getFragmentManager());
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
 
@@ -196,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.nav_sleep_training:
                 SleepTrainingPlan plan = sharedPreferenceUtil.retrieveSleepTrainingPlan();
                 if (plan == null) {
-                    ActivityUtils.navigateToChecklistActivity(this);
+                    loadFragment(ChecklistFragment.newInstance(), null);
                 } else {
                     loadFragment(SleepTrainingFragment.newInstance(), null);
                 }
@@ -339,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements
         return str;
     }
 
-    private void loadFragment(Fragment fragment, Bundle args) {
+    public void loadFragment(Fragment fragment, Bundle args) {
         if (args != null) {
             fragment.setArguments(args);
         }

@@ -1,11 +1,9 @@
 package im.hch.sleeprecord.activities.training;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,56 +14,64 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import butterknife.BindArray;
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
-import im.hch.sleeprecord.utils.ActivityUtils;
+import im.hch.sleeprecord.activities.BaseFragment;
 
-public class ChecklistActivity extends AppCompatActivity {
+public class ChecklistFragment extends BaseFragment {
 
     private ChecklistAdapter checklistAdapter;
-    private LayoutInflater mInflater;
+    private LayoutInflater layoutInflater;
     private MenuItem menuItem;
     private int checkedNumber = 0;
 
-    @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.checklist) ListView checklistView;
 
+    @BindString(R.string.sleep_training_checklist_title) String title;
     @BindArray(R.array.sleep_training_checklist) String[] checklist;
     @BindArray(R.array.sleep_training_checklist_description) String[] checklistDesc;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_checklist);
-        ButterKnife.bind(this);
-
-        mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        checklistAdapter = new ChecklistAdapter();
-        checklistView.setAdapter(checklistAdapter);
+    public static ChecklistFragment newInstance() {
+        return new ChecklistFragment();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.sleep_training_checklist, menu);
-        menuItem = toolbar.getMenu().getItem(0);
-        menuItem.setEnabled(false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        this.layoutInflater = inflater;
 
-        return true;
+        View view = inflater.inflate(R.layout.fragment_checklist, container, false);
+        ButterKnife.bind(this, view);
+
+        mainActivity.setTitle(title);
+
+        checklistAdapter = new ChecklistAdapter();
+        checklistView.setAdapter(checklistAdapter);
+
+        return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.sleep_training_checklist, menu);
+        menuItem = mainActivity.getToolbar().getMenu().getItem(0);
+        menuItem.setEnabled(false);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_training_next) {
-            ActivityUtils.navigateToPlanningActivity(this);
+            mainActivity.loadFragment(PlanningFragment.newInstance(), null);
             return true;
         }
 
@@ -94,7 +100,7 @@ public class ChecklistActivity extends AppCompatActivity {
             ChecklistViewHolder viewHolder;
 
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.list_item_checklist, parent, false);
+                convertView = layoutInflater.inflate(R.layout.list_item_checklist, parent, false);
                 viewHolder = new ChecklistViewHolder(convertView);
                 convertView.setTag(viewHolder);
             } else {

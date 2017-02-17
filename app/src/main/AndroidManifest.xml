@@ -64,25 +64,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
-        <activity
-            android:name=".activities.training.ChecklistActivity"
-            android:label="@string/sleep_training_checklist_title"
-            android:parentActivityName=".activities.main.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="im.hch.sleeprecord.activities.main.MainActivity" />
-        </activity>
-        <activity
-            android:name=".activities.training.PlanningActivity"
-            android:label="@string/sleep_training_plan_title"
-            android:parentActivityName=".activities.training.ChecklistActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="im.hch.sleeprecord.activities.training.ChecklistActivity" />
-        </activity>
     </application>
 
 </manifest>

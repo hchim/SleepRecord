@@ -38,6 +38,7 @@ public class BaseFragment extends Fragment {
         sharedPreferenceUtil = new SharedPreferenceUtil(getActivity());
         metricHelper = new MetricHelper(getActivity());
         mainActivity = (MainActivity) getActivity();
+        setHasOptionsMenu(true);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 }

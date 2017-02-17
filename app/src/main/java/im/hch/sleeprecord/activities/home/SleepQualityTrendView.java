@@ -1,4 +1,4 @@
-package im.hch.sleeprecord.activities.main;
+package im.hch.sleeprecord.activities.home;
 
 import android.content.Context;
 import android.content.res.TypedArray;

@@ -5,6 +5,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -31,8 +34,6 @@ import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.BaseFragment;
 import im.hch.sleeprecord.activities.main.AddRecordDialogFragment;
 import im.hch.sleeprecord.activities.main.MainActivity;
-import im.hch.sleeprecord.activities.main.SleepQualityTrendView;
-import im.hch.sleeprecord.activities.main.VerifyEmailDialogFragment;
 import im.hch.sleeprecord.activities.records.SleepRecordsAdapter;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.SleepQuality;
@@ -109,7 +110,30 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
         loadCachedSleepQualityTrend();
         loadAd();
         loadRemoteData();
+
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.home, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_new_sleep_record) {
+            DialogUtils.showAddRecordDialog(getFragmentManager());
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /*
@@ -243,7 +267,8 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
                 if (userProfile.getHeaderIconUrl() != null) {
                     if (headerImagePath == null
                             || !userProfile.getHeaderIconUrl().equals(currentHeaderUrl)) {
-                        String imagePath = ImageUtils.downloadImage(getContext(), userProfile.getHeaderIconUrl());
+                        String imagePath = ImageUtils.downloadImage(
+                                HomeFragment.this.getActivity(), userProfile.getHeaderIconUrl());
                         if (imagePath != null) {
                             userProfile.setHeaderIconPath(imagePath);
                             sharedPreferenceUtil.storeHeaderImage(imagePath);
@@ -295,7 +320,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
                     }
 
                     if (reloadHeaderImage && mainActivity != null) {
-                        Picasso.with(getContext())
+                        Picasso.with(HomeFragment.this.getActivity())
                                 .load(new File(userProfile.getHeaderIconPath()))
                                 .into(mainActivity.getHeaderViewHolder().headerImage);
                     }

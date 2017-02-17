@@ -1,4 +1,4 @@
-package im.hch.sleeprecord.activities.main;
+package im.hch.sleeprecord.activities.home;
 
 import android.app.Activity;
 import android.app.AlertDialog;

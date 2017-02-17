@@ -3,10 +3,12 @@ package im.hch.sleeprecord.activities.training;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -16,6 +18,7 @@ import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
+import im.hch.sleeprecord.activities.BaseFragment;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
@@ -23,10 +26,9 @@ import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.SessionManager;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 
-public class PlanningActivity extends AppCompatActivity {
+public class PlanningFragment extends BaseFragment {
     public static final int MIN_PROGRESS = 1;
 
-    @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.seekBar11) SeekBar seekBar11;
     @BindView(R.id.seekBar12) SeekBar seekBar12;
     @BindView(R.id.seekBar13) SeekBar seekBar13;
@@ -56,6 +58,7 @@ public class PlanningActivity extends AppCompatActivity {
     @BindString(R.string.minute_short) String minuteShort;
     @BindString(R.string.error_failed_to_connect) String failedToConnectError;
     @BindString(R.string.error_internal_server) String internalServerError;
+    @BindString(R.string.sleep_training_plan_title) String title;
 
     private SharedPreferenceUtil sharedPreferenceUtil;
     private SessionManager sessionManager;
@@ -64,18 +67,21 @@ public class PlanningActivity extends AppCompatActivity {
     private SeekBar[] seekBars;
     private TextView[] timeLabels;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_planning);
-        ButterKnife.bind(this);
+    public static PlanningFragment newInstance() {
+        return new PlanningFragment();
+    }
 
-        sharedPreferenceUtil = new SharedPreferenceUtil(this);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_planning, container, false);
+        ButterKnife.bind(this, view);
+
+        mainActivity.setTitle(title);
+
+        sharedPreferenceUtil = new SharedPreferenceUtil(getActivity());
         sleepServiceClient = new SleepServiceClient();
-        sessionManager = new SessionManager(this);
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        sessionManager = new SessionManager(getActivity());
 
         seekBars = new SeekBar[] {
                         seekBar11, seekBar12, seekBar13, seekBar14,
@@ -92,13 +98,15 @@ public class PlanningActivity extends AppCompatActivity {
             setOnSeekBarChangeListener(seekBars[i], timeLabels[i]);
             timeLabels[i].setText(seekBars[i].getProgress() + minuteShort);
         }
+
+        return view;
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.sleep_training_planning, menu);
-        return true;
+        inflater.inflate(R.menu.sleep_training_planning, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -223,9 +231,9 @@ public class PlanningActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             if (aBoolean) {
-//                ActivityUtils.navigateToSleepTrainingActivity(PlanningActivity.this, true);
+                mainActivity.loadFragment(SleepTrainingFragment.newInstance(), null);
             } else {
-                Snackbar.make(toolbar, errorMessage, Snackbar.LENGTH_LONG)
+                Snackbar.make(seekBar11, errorMessage, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
             saveTrainingPlanTask = null;

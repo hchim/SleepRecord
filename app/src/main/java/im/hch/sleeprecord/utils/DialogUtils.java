@@ -11,7 +11,7 @@ import java.util.Calendar;
 import im.hch.sleeprecord.activities.login.ResetPasswordDialogFragment;
 import im.hch.sleeprecord.activities.main.AddRecordDialogFragment;
 import im.hch.sleeprecord.activities.main.BabyInfoDialogFragment;
-import im.hch.sleeprecord.activities.main.VerifyEmailDialogFragment;
+import im.hch.sleeprecord.activities.home.VerifyEmailDialogFragment;
 import im.hch.sleeprecord.activities.settings.UpdatePasswordDialogFragment;
 import im.hch.sleeprecord.models.BabyInfo;
 

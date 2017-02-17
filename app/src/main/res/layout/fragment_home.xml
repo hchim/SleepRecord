@@ -83,7 +83,7 @@
                     android:text="@string/sleep_trend_widget_title"
                     style="@style/WidgetTitle"/>
 
-                <im.hch.sleeprecord.activities.main.SleepQualityTrendView
+                <im.hch.sleeprecord.activities.home.SleepQualityTrendView
                     android:id="@+id/sleepQualityTrend"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
