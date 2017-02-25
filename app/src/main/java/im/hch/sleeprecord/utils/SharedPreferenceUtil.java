@@ -284,7 +284,7 @@ public class SharedPreferenceUtil {
         return new SleepTrainingPlan(jsonObject);
     }
 
-    private void removeSleepTrainingPlan() {
+    public void removeSleepTrainingPlan() {
         removeValue(SLEEP_TRAINING_PLAN);
     }
 

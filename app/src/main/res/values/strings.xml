@@ -189,10 +189,13 @@
     <string name="menu_history">Training History</string>
     <string name="menu_report">Training Report</string>
     <string name="menu_reset_plan">Reset Training Plan</string>
+    <string name="alert_btn_OK">OK</string>
+    <string name="alert_btn_cancel">Cancel</string>
 
     <string name="training_crying_desc">My baby starts to cry or is crying.</string>
     <string name="training_soothe_desc">Get into the room and soothe the baby (without picking up) now.</string>
     <string name="training_begin_desc">Put the baby in the crib and leave the room now.</string>
     <string name="training_finish_desc">My baby had fallen asleep.</string>
+    <string name="alert_message_reset_training_plan">Are you sure to reset the sleep training plan? This will remove all the previous training records.</string>
 
 </resources>

@@ -1,5 +1,7 @@
 package im.hch.sleeprecord.activities.training;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -113,10 +115,29 @@ public class SleepTrainingFragment extends BaseFragment {
 //            case R.id.action_training_report:
 //                break;
             case R.id.action_training_reset_plan:
+                resetSleepTrainingPlan();
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void resetSleepTrainingPlan() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(R.string.alert_message_reset_training_plan)
+                .setPositiveButton(R.string.alert_btn_OK, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        sharedPreferenceUtil.removeSleepTrainingPlan();
+                        //TODO reset remotely
+                        mainActivity.loadFragment(ChecklistFragment.newInstance(), null);
+                    }
+                })
+                .setNegativeButton(R.string.alert_btn_cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.show();
     }
 
     /**
