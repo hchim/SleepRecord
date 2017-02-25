@@ -1,25 +1,50 @@
 package im.hch.sleeprecord.activities.training;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import butterknife.BindString;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.BaseFragment;
-import im.hch.sleeprecord.serviceclients.SleepServiceClient;
+import im.hch.sleeprecord.models.SleepTrainingPlan;
+import im.hch.sleeprecord.views.CountDownTextView;
+import im.hch.sleeprecord.views.CountUpTextView;
 
 public class SleepTrainingFragment extends BaseFragment {
+    public static final String TAG = "SleepTrainingFragment";
 
     @BindString(R.string.sleep_training_title) String title;
+    @BindString(R.string.day_x) String dayX;
+    @BindString(R.string.training_begin_desc) String trainingStageStartDesc;
+    @BindString(R.string.training_crying_desc) String traingStageCryingDesc;
+    @BindString(R.string.training_soothe_desc) String traingStageSootheDesc;
+    @BindString(R.string.default_count_time) String defaultCountTime;
 
-    private SleepServiceClient sleepServiceClient;
+    @BindView(R.id.dayXTextView) TextView dayXTextView;
+    @BindView(R.id.totalTimeTextView) CountUpTextView countUpTextView;
+    @BindView(R.id.imageView) ImageView imageView;
+    @BindView(R.id.stageInfoTextView) TextView stageInfoTextView;
+    @BindView(R.id.stageCheckbox) CheckBox stageCheckBox;
+    @BindView(R.id.countDownTextView) CountDownTextView countDownTextView;
+    @BindView(R.id.finishCheckbox) CheckBox finishCheckBox;
 
-    public SleepTrainingFragment() {
-        sleepServiceClient = new SleepServiceClient();
-    }
+    private SleepTrainingPlan sleepTrainingPlan;
+    private SleepTrainingPlan.TrainingPlanTime currentSleepTrainingTime;
+    private TrainingStage currentStage = TrainingStage.START;
+    private int criedOutTimes = 0;
+    private int sootheTimes = 0;
 
     public static SleepTrainingFragment newInstance() {
         SleepTrainingFragment fragment = new SleepTrainingFragment();
@@ -34,9 +59,164 @@ public class SleepTrainingFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_sleep_training, container, false);
         ButterKnife.bind(this, view);
 
-        mainActivity.setTitle(title);
+        sleepTrainingPlan = sharedPreferenceUtil.retrieveSleepTrainingPlan();
+        if (sleepTrainingPlan == null) {
+            Log.wtf(TAG, "Sleep Training plan is null.");
+        }
+        currentSleepTrainingTime = sleepTrainingPlan.currentTrainingPlanTime();
 
+        mainActivity.setTitle(title);
+        dayXTextView.setText(String.format(dayX, sleepTrainingPlan.trainingStartedDays()));
+        countDownTextView.setVisibility(View.GONE);//hide count down text view
+
+        stageCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!isChecked) {
+                    return;
+                }
+                onStageCheckboxChecked();
+            }
+        });
+        finishCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!isChecked) {
+                    return;
+                }
+                switchToStage(TrainingStage.FINISHED);
+                //TODO show report
+            }
+        });
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.sleep_training, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_training_reset:
+                switchToStage(TrainingStage.START);
+                break;
+//            case R.id.action_training_history:
+//                break;
+//            case R.id.action_training_report:
+//                break;
+            case R.id.action_training_reset_plan:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * When the stage checkbox checked.
+     */
+    private void onStageCheckboxChecked() {
+        switch (currentStage) {
+            case START:
+                //start count up timer
+                countUpTextView.start(1000);
+                //change two stage two
+                switchToStage(TrainingStage.CRYING);
+                break;
+            case CRYING:
+                //increase cried out times
+                criedOutTimes += 1;
+                //start the count down timer
+                countDownTextView.start(
+                        currentSleepTrainingTime.getCriedOutTime(criedOutTimes),
+                        new CountDownTextView.OnFinishCallback() {
+                            @Override
+                            public void onFinish() {
+                                switchToStage(TrainingStage.SOOTHE);
+                            }
+                        });
+                //disable checkbox
+                stageCheckBox.setEnabled(false);
+                break;
+            case SOOTHE:
+                //increase soothe times
+                sootheTimes += 1;
+                //start count down timer
+                countDownTextView.start(
+                        currentSleepTrainingTime.getSootheTime(),
+                        new CountDownTextView.OnFinishCallback() {
+                            @Override
+                            public void onFinish() {
+                                switchToStage(TrainingStage.CRYING);
+                            }
+                        }
+                );
+                //disable checkbox
+                stageCheckBox.setEnabled(false);
+                break;
+        }
+    }
+
+    /**
+     * Switch to a stage.
+     * @param stage
+     */
+    private void switchToStage(TrainingStage stage) {
+        switch (stage) {
+            case START:
+                countUpTextView.stop();
+                countUpTextView.setText(defaultCountTime);
+                stageInfoTextView.setText(trainingStageStartDesc);
+                //TODO update image
+                stageCheckBox.setChecked(false);
+                stageCheckBox.setEnabled(true);
+                countDownTextView.stop();
+                countDownTextView.setText(defaultCountTime);
+                countDownTextView.setVisibility(View.GONE);
+                finishCheckBox.setChecked(false);
+                finishCheckBox.setEnabled(true);
+                criedOutTimes = 0;
+                sootheTimes = 0;
+                break;
+            case CRYING:
+                stageInfoTextView.setText(traingStageCryingDesc);
+                countDownTextView.setVisibility(View.VISIBLE);
+                countDownTextView.stop();
+                countDownTextView.setText(defaultCountTime);
+                stageCheckBox.setChecked(false);
+                stageCheckBox.setEnabled(true);
+                //TODO update image
+                break;
+            case SOOTHE:
+                stageInfoTextView.setText(traingStageSootheDesc);
+                countDownTextView.setVisibility(View.VISIBLE);
+                countDownTextView.stop();
+                countDownTextView.setText(defaultCountTime);
+                stageCheckBox.setChecked(false);
+                stageCheckBox.setEnabled(true);
+                //TODO update image
+                break;
+            case FINISHED:
+                countUpTextView.stop();
+                countDownTextView.stop();
+                finishCheckBox.setEnabled(false);
+                stageCheckBox.setEnabled(false);
+                break;
+        }
+        currentStage = stage;
+    }
+
+    private enum TrainingStage {
+        START,   //put the baby in the crib and left the room
+        CRYING,  //The baby started to cry or is crying
+        SOOTHE,  //Soothe the baby without picking up
+        FINISHED
+    }
 }

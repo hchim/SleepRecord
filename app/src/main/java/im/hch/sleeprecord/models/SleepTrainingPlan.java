@@ -5,11 +5,13 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import im.hch.sleeprecord.serviceclients.BaseServiceClient;
 import im.hch.sleeprecord.utils.DateUtils;
 import lombok.Data;
+import lombok.Getter;
 
 /**
  * Created by huiche on 2/14/17.
@@ -73,6 +75,31 @@ public class SleepTrainingPlan {
         followingWeekTime.followingCriedOut = followingCriedOut;
     }
 
+    /**
+     * @return how many days the training had started
+     */
+    public int trainingStartedDays() {
+        Calendar from = Calendar.getInstance();
+        Calendar to = Calendar.getInstance();
+        from.setTime(startDate);
+
+        return DateUtils.daysBetween(from, to) + 1;
+    }
+
+    /**
+     * @return the training plan time of this week
+     */
+    public TrainingPlanTime currentTrainingPlanTime() {
+        int days = trainingStartedDays();
+        if (days <= 7) {
+            return firstWeekTime;
+        } else if (days <= 14) {
+            return secondWeekTime;
+        } else {
+            return followingWeekTime;
+        }
+    }
+
     public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -100,6 +127,7 @@ public class SleepTrainingPlan {
         public static final String SECOND_CRIED_OUT = "secondCriedOut";
         public static final String FOLLOWING_CRIED_OUT = "followingCriedOut";
 
+        @Getter
         private int sootheTime;
         private int firstCriedOut;
         private int secondCriedOut;
@@ -117,6 +145,16 @@ public class SleepTrainingPlan {
                 secondCriedOut = jsonObject.getInt(SECOND_CRIED_OUT);
                 followingCriedOut = jsonObject.getInt(FOLLOWING_CRIED_OUT);
             } catch (JSONException e) {}
+        }
+
+        public int getCriedOutTime(int index) {
+            if (index == 1) {
+                return firstCriedOut;
+            } else if (index == 2) {
+                return secondCriedOut;
+            } else {
+                return followingCriedOut;
+            }
         }
 
         public JSONObject toJSON() {

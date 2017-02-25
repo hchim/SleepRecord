@@ -177,10 +177,22 @@
     <string name="first_week">First Week</string>
     <string name="second_week">Second Week</string>
     <string name="following_week">The Following Weeks</string>
-
     <string name="first_cried_out">First Cried Out Time</string>
     <string name="second_cried_out">Second Cried Out Time</string>
     <string name="following_cried_out">Following Cried Out Time</string>
     <string name="soothe_time">Soothe Time</string>
     <string name="minute_short">" m"</string>
+    <string name="day_x">"Day %s"</string>
+    <string name="time_elapsed">Time Elapsed</string>
+    <string name="default_count_time">00:00</string>
+    <string name="menu_reset">Reset</string>
+    <string name="menu_history">Training History</string>
+    <string name="menu_report">Training Report</string>
+    <string name="menu_reset_plan">Reset Training Plan</string>
+
+    <string name="training_crying_desc">My baby starts to cry or is crying.</string>
+    <string name="training_soothe_desc">Get into the room and soothe the baby (without picking up) now.</string>
+    <string name="training_begin_desc">Put the baby in the crib and leave the room now.</string>
+    <string name="training_finish_desc">My baby had fallen asleep.</string>
+
 </resources>
