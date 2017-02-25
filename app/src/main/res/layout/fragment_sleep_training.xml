@@ -49,8 +49,9 @@
         <ImageView
             android:layout_width="@dimen/training_image_square"
             android:layout_height="@dimen/training_image_square"
-            app:srcCompat="@mipmap/ic_launcher"
+            app:srcCompat="@mipmap/put_baby_to_crib"
             android:layout_centerInParent="true"
+            android:contentDescription="@string/training_begin_desc"
             android:id="@+id/imageView"/>
     </RelativeLayout>
 

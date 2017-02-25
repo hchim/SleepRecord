@@ -1,8 +1,10 @@
 package im.hch.sleeprecord.activities.training;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +28,7 @@ import im.hch.sleeprecord.views.CountUpTextView;
 
 public class SleepTrainingFragment extends BaseFragment {
     public static final String TAG = "SleepTrainingFragment";
+    public static final long VIBRATE_TIME = 1000;
 
     @BindString(R.string.sleep_training_title) String title;
     @BindString(R.string.day_x) String dayX;
@@ -47,6 +50,7 @@ public class SleepTrainingFragment extends BaseFragment {
     private TrainingStage currentStage = TrainingStage.START;
     private int criedOutTimes = 0;
     private int sootheTimes = 0;
+    private Vibrator vibrator;
 
     public static SleepTrainingFragment newInstance() {
         SleepTrainingFragment fragment = new SleepTrainingFragment();
@@ -59,6 +63,8 @@ public class SleepTrainingFragment extends BaseFragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         View view = inflater.inflate(R.layout.fragment_sleep_training, container, false);
+        vibrator = (Vibrator) mainActivity.getSystemService(Context.VIBRATOR_SERVICE);
+
         ButterKnife.bind(this, view);
 
         sleepTrainingPlan = sharedPreferenceUtil.retrieveSleepTrainingPlan();
@@ -160,6 +166,7 @@ public class SleepTrainingFragment extends BaseFragment {
                         new CountDownTextView.OnFinishCallback() {
                             @Override
                             public void onFinish() {
+                                vibrator.vibrate(VIBRATE_TIME);
                                 switchToStage(TrainingStage.SOOTHE);
                             }
                         });
@@ -175,6 +182,7 @@ public class SleepTrainingFragment extends BaseFragment {
                         new CountDownTextView.OnFinishCallback() {
                             @Override
                             public void onFinish() {
+                                vibrator.vibrate(VIBRATE_TIME);
                                 switchToStage(TrainingStage.CRYING);
                             }
                         }
@@ -195,7 +203,7 @@ public class SleepTrainingFragment extends BaseFragment {
                 countUpTextView.stop();
                 countUpTextView.setText(defaultCountTime);
                 stageInfoTextView.setText(trainingStageStartDesc);
-                //TODO update image
+                imageView.setImageResource(R.mipmap.put_baby_to_crib);
                 stageCheckBox.setChecked(false);
                 stageCheckBox.setEnabled(true);
                 countDownTextView.stop();
@@ -213,7 +221,7 @@ public class SleepTrainingFragment extends BaseFragment {
                 countDownTextView.setText(defaultCountTime);
                 stageCheckBox.setChecked(false);
                 stageCheckBox.setEnabled(true);
-                //TODO update image
+                imageView.setImageResource(R.mipmap.crying_in_crib);
                 break;
             case SOOTHE:
                 stageInfoTextView.setText(traingStageSootheDesc);
@@ -222,7 +230,7 @@ public class SleepTrainingFragment extends BaseFragment {
                 countDownTextView.setText(defaultCountTime);
                 stageCheckBox.setChecked(false);
                 stageCheckBox.setEnabled(true);
-                //TODO update image
+                imageView.setImageResource(R.mipmap.soothe_in_crib);
                 break;
             case FINISHED:
                 countUpTextView.stop();
