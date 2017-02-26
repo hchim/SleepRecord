@@ -55,6 +55,7 @@ import im.hch.sleeprecord.utils.MetricHelper;
 import im.hch.sleeprecord.utils.SessionManager;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 import lombok.Getter;
+import lombok.Setter;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -71,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements
     private HeaderViewHolder headerViewHolder;
     private Uri mCropImageUri;
     private MetricHelper metricHelper;
+    @Getter@Setter
+    private boolean remoteDataLoaded = false;
 
     @Getter
     @BindView(R.id.toolbar) Toolbar toolbar;

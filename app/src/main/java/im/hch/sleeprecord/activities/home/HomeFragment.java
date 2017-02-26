@@ -38,6 +38,7 @@ import im.hch.sleeprecord.activities.records.SleepRecordsAdapter;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.SleepQuality;
 import im.hch.sleeprecord.models.SleepRecord;
+import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
@@ -109,7 +110,9 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
         loadCachedSleepRecords();
         loadCachedSleepQualityTrend();
         loadAd();
-        loadRemoteData();
+        if (!mainActivity.isRemoteDataLoaded()) {
+            loadRemoteData();
+        }
 
         return view;
     }
@@ -231,10 +234,12 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
         BabyInfo babyInfo;
         UserProfile userProfile;
         List<SleepRecord> sleepRecords;
+        SleepTrainingPlan sleepTrainingPlan;
         boolean reloadHeaderImage = false;
 
         public static final int BABY_INFO_UPDATED = 30;
         public static final int USER_INFO_UPDATED = 60;
+        public static final int TRAINING_PLAN_UPDATED = 80;
         public static final int SLEEP_RECORDS_UPDATED = 100;
 
         @Override
@@ -283,7 +288,19 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
                 }
             }
             publishProgress(USER_INFO_UPDATED);
-
+            //update sleep training plan
+            try {
+                sleepTrainingPlan = sleepServiceClient.getSleepTrainingPlan(userId);
+                if (sleepTrainingPlan != null) {
+                    sharedPreferenceUtil.storeSleepTrainingPlan(sleepTrainingPlan);
+                }
+            } catch (Exception e) {
+                Log.w(MainActivity.TAG, e);
+                if (e instanceof InternalServerException) {
+                    metricHelper.errorMetric(Metrics.GET_TRAINING_PLAN_ERROR_METRIC, e);
+                }
+            }
+            publishProgress(TRAINING_PLAN_UPDATED);
             //update sleep records
             Calendar to = Calendar.getInstance();
             Calendar from = Calendar.getInstance();
@@ -325,6 +342,9 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
                                 .into(mainActivity.getHeaderViewHolder().headerImage);
                     }
                     break;
+                case TRAINING_PLAN_UPDATED:
+                    //nothing to do
+                    break;
                 case SLEEP_RECORDS_UPDATED:
                     sleepRecordsAdapter.updateSleepRecords(sleepRecords);
                     break;
@@ -339,6 +359,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
 
         @Override
         protected void onPostExecute(Boolean aBoolean) {
+            mainActivity.setRemoteDataLoaded(true);
             progressBar.setVisibility(View.GONE);
             metricHelper.stopTimeMetric(Metrics.MAIN_ACTIVITY_LOADING_TIME_METRIC);
         }
