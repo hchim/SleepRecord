@@ -67,12 +67,7 @@
                 android:visibility="gone"
                 style="@style/MainActivityWidget">
 
-                <!--com.google.android.gms.ads.NativeExpressAdView
-                    android:id="@+id/adView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    ads:adSize="328x80"
-                    ads:adUnitId="@string/admob_id_main_activity"/-->
+                <!-- Ad view will be dynamically added.-->
             </LinearLayout>
 
             <LinearLayout

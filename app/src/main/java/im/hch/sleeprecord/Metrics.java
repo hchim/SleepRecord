@@ -10,6 +10,10 @@ public class Metrics {
 
     public static final String SLEEP_RECORD_ACTIVITY_USAGE_TIME_METRIC = Constants.APP_NAME + ":SleepRecordActivity:Usage:Time";
 
+    //add metrics
+    public static final String HOME_FRAGMENT_AD_LOADED = Constants.APP_NAME + ":HomeFragment:Ad:Loaded";
+    public static final String HOME_FRAGMENT_AD_LOAD_FAILURE = Constants.APP_NAME + ":HomeFragment:Ad:LoadFailure";
+
     //error metrics
     public static final String SAVE_BABY_INFO_ERROR_METRIC = Constants.APP_NAME + ":SleepService:saveBabyInfo:Error";
     public static final String GET_BABY_INFO_ERROR_METRIC = Constants.APP_NAME + ":SleepService:getBabyInfo:Error";

@@ -60,7 +60,6 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
     @BindView(R.id.verifyEmailTextView) TextView verifyEmailTextView;
     @BindView(R.id.sleepQualityTrend) SleepQualityTrendView sleepQualityTrendView;
     @BindView(R.id.adWidget) LinearLayout adWidgetView;
-//    @BindView(R.id.adView)
     NativeExpressAdView adView;
 
     @BindString(R.string.app_name) String title;
@@ -119,13 +118,13 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
         adView.setAdListener(new AdListener() {
             @Override
             public void onAdFailedToLoad(int i) {
-                Log.d(MainActivity.TAG, "Failed to load add.");
+                metricHelper.increaseCounter(Metrics.HOME_FRAGMENT_AD_LOAD_FAILURE);
             }
 
             @Override
             public void onAdLoaded() {
                 adWidgetView.setVisibility(View.VISIBLE);
-                Log.d(MainActivity.TAG, "Ad loaded.");
+                metricHelper.increaseCounter(Metrics.HOME_FRAGMENT_AD_LOADED);
             }
         });
 
