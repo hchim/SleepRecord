@@ -3,6 +3,7 @@ package im.hch.sleeprecord.activities.home;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,7 +16,9 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.squareup.picasso.Picasso;
 
@@ -57,9 +60,11 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
     @BindView(R.id.verifyEmailTextView) TextView verifyEmailTextView;
     @BindView(R.id.sleepQualityTrend) SleepQualityTrendView sleepQualityTrendView;
     @BindView(R.id.adWidget) LinearLayout adWidgetView;
-    @BindView(R.id.adView) NativeExpressAdView adView;
+//    @BindView(R.id.adView)
+    NativeExpressAdView adView;
 
     @BindString(R.string.app_name) String title;
+    @BindString(R.string.admob_id_main_activity) String adId;
 
     private SleepRecordsAdapter sleepRecordsAdapter;
     private SleepServiceClient sleepServiceClient;
@@ -92,7 +97,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        final View view = inflater.inflate(R.layout.fragment_home, container, false);
         ButterKnife.bind(this, view);
 
         mainActivity.setTitle(title);
@@ -107,13 +112,41 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
         // Disallow the touch request for parent scroll on touch of child view
         sleepRecordListView.setClickable(false);
 
+        //setup adview
+        adView = new NativeExpressAdView(mainActivity);
+        adView.setAdUnitId(adId);
+        adWidgetView.addView(adView);
+        adView.setAdListener(new AdListener() {
+            @Override
+            public void onAdFailedToLoad(int i) {
+                Log.d(MainActivity.TAG, "Failed to load add.");
+            }
+
+            @Override
+            public void onAdLoaded() {
+                adWidgetView.setVisibility(View.VISIBLE);
+                Log.d(MainActivity.TAG, "Ad loaded.");
+            }
+        });
+
         loadCachedSleepRecords();
         loadCachedSleepQualityTrend();
-        loadAd();
         if (!mainActivity.isRemoteDataLoaded()) {
             loadRemoteData();
         }
 
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                DisplayMetrics metrics = getResources().getDisplayMetrics();
+                float density = ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+                int adMarginDP = (int) (getResources().getDimension(R.dimen.activity_horizontal_margin) * 2 / density);
+                int adWidthDP = (int) (view.getWidth() / density) - adMarginDP;
+                int adHeightDP = (int) (adWidthDP / 4.0); // the width and height of the native ad defines 4.0
+                adView.setAdSize(new AdSize(adWidthDP, adHeightDP));
+                loadAd();
+            }
+        });
         return view;
     }
 
