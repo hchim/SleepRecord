@@ -7,13 +7,15 @@ import android.util.AttributeSet;
 import android.widget.TextView;
 
 import im.hch.sleeprecord.utils.CountUpTimer;
+import lombok.Getter;
 
 public class CountUpTextView extends TextView {
 
     public static final String FORMAT = "%02d:%02d";
 
     private CountUpTimer mCountUpTimer = null;
-    private long mCountedTime = 0;
+    @Getter
+    private long countedTime = 0;
 
     public CountUpTextView(Context context) {
         super(context);
@@ -44,7 +46,7 @@ public class CountUpTextView extends TextView {
         mCountUpTimer = new CountUpTimer(1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                mCountedTime = millisUntilFinished;
+                countedTime = millisUntilFinished;
                 int seconds = (int) (millisUntilFinished / 1000);
                 CountUpTextView.this.setText(String.format(FORMAT, seconds / 60, seconds % 60));
             }

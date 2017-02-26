@@ -23,6 +23,7 @@ import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.BaseFragment;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
+import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.views.CountDownTextView;
 import im.hch.sleeprecord.views.CountUpTextView;
 
@@ -93,7 +94,9 @@ public class SleepTrainingFragment extends BaseFragment {
                     return;
                 }
                 switchToStage(TrainingStage.FINISHED);
-                //TODO show report
+                OneTimeReportFragment fragment = OneTimeReportFragment.newInstance(
+                        countUpTextView.getCountedTime(), criedOutTimes, sootheTimes);
+                fragment.show(getFragmentManager(), DialogUtils.DIALOG_TAG);
             }
         });
         return view;

@@ -183,7 +183,7 @@
     <string name="soothe_time">Soothe Time</string>
     <string name="minute_short">" m"</string>
     <string name="day_x">"Day %s"</string>
-    <string name="time_elapsed">Time Elapsed</string>
+    <string name="time_elapsed">Elapsed Time</string>
     <string name="default_count_time">00:00</string>
     <string name="menu_reset">Reset</string>
     <string name="menu_history">Training History</string>
@@ -198,4 +198,8 @@
     <string name="training_finish_desc">My baby had fallen asleep.</string>
     <string name="alert_message_reset_training_plan">Are you sure to reset the sleep training plan? This will remove all the previous training records.</string>
 
+    <string name="training_result_title">Sleep Training Result</string>
+    <string name="total_time_elapsed_label">Total Elapsed Time</string>
+    <string name="cried_out_times_label">Cried Out Times</string>
+    <string name="soothe_times_label">Soothe Times</string>
 </resources>
