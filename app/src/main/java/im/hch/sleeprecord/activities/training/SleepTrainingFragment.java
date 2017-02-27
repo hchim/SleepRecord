@@ -105,6 +105,9 @@ public class SleepTrainingFragment extends BaseFragment {
                     return;
                 }
                 switchToStage(TrainingStage.FINISHED);
+                new AddTrainingRecordTask(sleepTrainingPlan.getPlanId(),
+                        countUpTextView.getCountedTime(), criedOutTimes, sootheTimes)
+                        .execute();
                 OneTimeReportFragment fragment = OneTimeReportFragment.newInstance(
                         countUpTextView.getCountedTime(), criedOutTimes, sootheTimes);
                 fragment.show(getFragmentManager(), DialogUtils.DIALOG_TAG);
@@ -304,6 +307,34 @@ public class SleepTrainingFragment extends BaseFragment {
                         .setAction("Action", null).show();
             }
             resetTrainingPlanTask = null;
+        }
+    }
+
+    private class AddTrainingRecordTask extends AsyncTask<Void, Void, Void> {
+
+        String planId;
+        long elapsedTime;
+        int criedOutTimes;
+        int sootheTimes;
+
+        AddTrainingRecordTask(String planId, long elapsedTime, int criedOutTimes, int sootheTimes) {
+            this.planId = planId;
+            this.elapsedTime = elapsedTime;
+            this.criedOutTimes = criedOutTimes;
+            this.sootheTimes = sootheTimes;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                mainActivity.sleepServiceClient.addTrainingRecord(planId, elapsedTime, criedOutTimes, sootheTimes);
+            } catch (ConnectionFailureException e) {
+                Log.d(TAG, "Failed to connect to server.");
+            } catch (InternalServerException e) {
+                Log.d(TAG, "Internal server error, cannot add training record.");
+                metricHelper.errorMetric(Metrics.ADD_TRAINING_RECORD_ERROR_METRIC, e);
+            }
+            return null;
         }
     }
 }

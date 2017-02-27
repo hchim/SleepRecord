@@ -21,6 +21,7 @@ public class Metrics {
     public static final String GET_SLEEP_RECORDS_ERROR_METRIC = Constants.APP_NAME + ":SleepService:getSleepRecords:Error";
     public static final String GET_TRAINING_PLAN_ERROR_METRIC = Constants.APP_NAME + ":SleepService:getSleepTrainingPlan:Error";
     public static final String RESET_TRAINING_PLAN_ERROR_METRIC = Constants.APP_NAME + ":SleepService:resetSleepTrainingPlan:Error";
+    public static final String ADD_TRAINING_RECORD_ERROR_METRIC = Constants.APP_NAME + ":SleepService:addTrainingRecord:Error";
 
     public static final String GET_USER_ERROR_METRIC = Constants.APP_NAME + ":IdentityService:getUser:Error";
     public static final String LOGIN_ERROR_METRIC = Constants.APP_NAME + ":IdentityService:login:Error";

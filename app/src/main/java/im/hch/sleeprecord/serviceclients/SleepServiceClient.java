@@ -28,6 +28,7 @@ public class SleepServiceClient extends BaseServiceClient {
     public static final String BABYINFO_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "babyinfos/";
     public static final String SLEEP_RECORDS_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "sleeprecs/";
     public static final String SLEEP_TRAINING_PLAN_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "plan/";
+    public static final String TRAINING_RECORDS_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "trainrecs/";
 
     public static final String RESET_SLEEP_TRAINING_PLAN_URL = SLEEP_TRAINING_PLAN_URL + "%s/reset";
 
@@ -254,6 +255,39 @@ public class SleepServiceClient extends BaseServiceClient {
         String url = String.format(RESET_SLEEP_TRAINING_PLAN_URL, userId);
         try {
             JSONObject result = get(url);
+            if (result.has(ERROR_CODE_KEY)) {
+                if (result.has(ERROR_MESSAGE_KEY)) {
+                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
+                }
+
+                throw new InternalServerException();
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "JSON format error");
+            throw new InternalServerException();
+        }
+    }
+
+    /**
+     * Add a sleep Training record.
+     * @param planId
+     * @param elapsedTime
+     * @param criedOutTimes
+     * @param sootheTimes
+     * @throws ConnectionFailureException
+     * @throws InternalServerException
+     */
+    public void addTrainingRecord(String planId, long elapsedTime, int criedOutTimes, int sootheTimes)
+            throws ConnectionFailureException, InternalServerException {
+        String url = TRAINING_RECORDS_URL;
+        try {
+            JSONObject object = new JSONObject();
+            object.put("planId", planId);
+            object.put("elapsedTime", elapsedTime);
+            object.put("criedOutTimes", criedOutTimes);
+            object.put("sootheTimes", sootheTimes);
+
+            JSONObject result = post(url, object);
             if (result.has(ERROR_CODE_KEY)) {
                 if (result.has(ERROR_MESSAGE_KEY)) {
                     Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
