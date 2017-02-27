@@ -19,11 +19,13 @@ import lombok.Getter;
 @Data
 public class SleepTrainingPlan {
     public static final String TAG = "SleepTrainingPlan";
+    public static final String ID = "_id";
     public static final String START_DATE = "startDate";
     public static final String FIRST_WEEK_TIME = "firstWeekTime";
     public static final String SECOND_WEEK_TIME = "secondWeekTime";
     public static final String FOLLOWING_WEEK_TIME = "followingWeekTime";
 
+    private String planId;
     private Date startDate;
     private TrainingPlanTime firstWeekTime;
     private TrainingPlanTime secondWeekTime;
@@ -42,6 +44,7 @@ public class SleepTrainingPlan {
         }
 
         try {
+            this.planId = jsonObject.getString(ID);
             this.startDate = DateUtils.strToDate(jsonObject.getString(START_DATE), BaseServiceClient.DATE_FORMAT);
             this.firstWeekTime = new TrainingPlanTime(jsonObject.getJSONObject(FIRST_WEEK_TIME));
             this.secondWeekTime = new TrainingPlanTime(jsonObject.getJSONObject(SECOND_WEEK_TIME));
@@ -103,6 +106,10 @@ public class SleepTrainingPlan {
     public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();
         try {
+            if (planId != null) {
+                jsonObject.put(ID, planId);
+            }
+
             if (startDate != null) {
                 jsonObject.put(START_DATE, DateUtils.dateToStr(startDate, BaseServiceClient.DATE_FORMAT));
             }

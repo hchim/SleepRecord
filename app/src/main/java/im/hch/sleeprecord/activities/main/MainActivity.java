@@ -64,14 +64,14 @@ public class MainActivity extends AppCompatActivity implements
 
     public static final int CROP_WIN_SIZE = 1024;
 
-    private SessionManager sessionManager;
-    private SharedPreferenceUtil sharedPreferenceUtil;
-    private SleepServiceClient sleepServiceClient;
-    private IdentityServiceClient identityServiceClient;
+    public SessionManager sessionManager;
+    public SharedPreferenceUtil sharedPreferenceUtil;
+    public SleepServiceClient sleepServiceClient;
+    public IdentityServiceClient identityServiceClient;
     @Getter
     private HeaderViewHolder headerViewHolder;
     private Uri mCropImageUri;
-    private MetricHelper metricHelper;
+    public MetricHelper metricHelper;
     @Getter@Setter
     private boolean remoteDataLoaded = false;
 
@@ -111,12 +111,7 @@ public class MainActivity extends AppCompatActivity implements
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        if (!sessionManager.isLoggedIn()) {
-            ActivityUtils.navigateToLoginActivity(this);
-        } else {
-            updateUserInfo(sharedPreferenceUtil.retrieveUserProfile());
-        }
-
+        updateUserInfo(sharedPreferenceUtil.retrieveUserProfile());
         BabyInfo babyInfo = sharedPreferenceUtil.retrieveBabyInfo();
         if (babyInfo != null) {
             updateBabyInfo(babyInfo);

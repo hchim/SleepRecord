@@ -1,10 +1,13 @@
 package im.hch.sleeprecord.activities.training;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,9 +23,12 @@ import android.widget.TextView;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.BaseFragment;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
+import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
+import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.views.CountDownTextView;
 import im.hch.sleeprecord.views.CountUpTextView;
@@ -37,6 +43,9 @@ public class SleepTrainingFragment extends BaseFragment {
     @BindString(R.string.training_crying_desc) String traingStageCryingDesc;
     @BindString(R.string.training_soothe_desc) String traingStageSootheDesc;
     @BindString(R.string.default_count_time) String defaultCountTime;
+    @BindString(R.string.error_failed_to_connect) String failedToConnectError;
+    @BindString(R.string.error_internal_server) String internalServerError;
+    @BindString(R.string.progress_message_reset) String progressMessageReset;
 
     @BindView(R.id.dayXTextView) TextView dayXTextView;
     @BindView(R.id.totalTimeTextView) CountUpTextView countUpTextView;
@@ -52,6 +61,8 @@ public class SleepTrainingFragment extends BaseFragment {
     private int criedOutTimes = 0;
     private int sootheTimes = 0;
     private Vibrator vibrator;
+    private ResetTrainingPlanTask resetTrainingPlanTask;
+    private ProgressDialog progressDialog;
 
     public static SleepTrainingFragment newInstance() {
         SleepTrainingFragment fragment = new SleepTrainingFragment();
@@ -136,9 +147,11 @@ public class SleepTrainingFragment extends BaseFragment {
         builder.setMessage(R.string.alert_message_reset_training_plan)
                 .setPositiveButton(R.string.alert_btn_OK, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        sharedPreferenceUtil.removeSleepTrainingPlan();
-                        //TODO reset remotely
-                        mainActivity.loadFragment(ChecklistFragment.newInstance(), null);
+                        if (resetTrainingPlanTask != null) {
+                            return;
+                        }
+                        resetTrainingPlanTask = new ResetTrainingPlanTask();
+                        resetTrainingPlanTask.execute();
                     }
                 })
                 .setNegativeButton(R.string.alert_btn_cancel, new DialogInterface.OnClickListener() {
@@ -250,5 +263,47 @@ public class SleepTrainingFragment extends BaseFragment {
         CRYING,  //The baby started to cry or is crying
         SOOTHE,  //Soothe the baby without picking up
         FINISHED
+    }
+
+    //-------------------------Async Tasks ---------------------------------
+    private class ResetTrainingPlanTask extends AsyncTask<Void, Void, Boolean> {
+        String errorMessage;
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            String userId = mainActivity.sessionManager.getUserId();
+            if (userId != null) {
+                try {
+                    mainActivity.sleepServiceClient.resetSleepTrainingPlan(userId);
+                    return true;
+                } catch (ConnectionFailureException e) {
+                    errorMessage = failedToConnectError;
+                } catch (InternalServerException e) {
+                    errorMessage = internalServerError;
+                    metricHelper.errorMetric(Metrics.RESET_TRAINING_PLAN_ERROR_METRIC, e);
+                }
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = DialogUtils.showProgressDialog(SleepTrainingFragment.this.getActivity(), progressMessageReset);
+            progressDialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            progressDialog.dismiss();
+            if (result) {
+                sharedPreferenceUtil.removeSleepTrainingPlan();
+                mainActivity.loadFragment(ChecklistFragment.newInstance(), null);
+            } else {
+                Snackbar.make(finishCheckBox, errorMessage, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+            resetTrainingPlanTask = null;
+        }
     }
 }

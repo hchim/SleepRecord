@@ -1,24 +1,14 @@
 package im.hch.sleeprecord.activities;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageView;
+import android.support.v7.app.AppCompatActivity;
 
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import im.hch.sleeprecord.R;
-import im.hch.sleeprecord.services.AppConfigUpdateService;
 import im.hch.sleeprecord.utils.ActivityUtils;
-import im.hch.sleeprecord.utils.SharedPreferenceUtil;
+import im.hch.sleeprecord.utils.SessionManager;
 
 /**
  * SplashActivity. Currently not used.
@@ -26,12 +16,14 @@ import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 public class SplashActivity extends AppCompatActivity {
     private static final int DELAY_MILLIS = 1000;
 
+    private SessionManager sessionManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ButterKnife.bind(this);
+        sessionManager = new SessionManager(this);
 
-//        ButterKnife.bind(this);
-//
 //        SharedPreferenceUtil sharedPreferenceUtil = new SharedPreferenceUtil(this);
 //        String splashImage = sharedPreferenceUtil.getString(AppConfigUpdateService.SPLASH_IMAGE_Location, null);
 //
@@ -55,7 +47,11 @@ public class SplashActivity extends AppCompatActivity {
 
                 @Override
                 public void run() {
-                    ActivityUtils.navigateToMainActivity(SplashActivity.this);
+                    if (!sessionManager.isLoggedIn()) {
+                        ActivityUtils.navigateToLoginActivity(SplashActivity.this);
+                    } else {
+                        ActivityUtils.navigateToMainActivity(SplashActivity.this);
+                    }
                 }
             }, DELAY_MILLIS);
         } catch (Exception e) {

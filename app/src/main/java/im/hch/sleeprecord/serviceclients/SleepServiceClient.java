@@ -29,6 +29,8 @@ public class SleepServiceClient extends BaseServiceClient {
     public static final String SLEEP_RECORDS_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "sleeprecs/";
     public static final String SLEEP_TRAINING_PLAN_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "plan/";
 
+    public static final String RESET_SLEEP_TRAINING_PLAN_URL = SLEEP_TRAINING_PLAN_URL + "%s/reset";
+
     public static final String ERROR_CODE_BABY_NOT_EXISTS = "BABY_NOT_EXISTS";
     public static final String ERROR_CODE_TIME_OVERLAP = "TIME_OVERLAP";
     public static final String SLEEP_TRAINING_PLAN_NOT_EXISTS = "SLEEP_TRAINING_PLAN_NOT_EXISTS";
@@ -205,6 +207,7 @@ public class SleepServiceClient extends BaseServiceClient {
 
                 throw new InternalServerException();
             }
+            plan.setPlanId(result.getString(SleepTrainingPlan.ID));
         } catch (JSONException e) {
             Log.e(TAG, "JSON format error");
             throw new InternalServerException();
@@ -234,6 +237,30 @@ public class SleepServiceClient extends BaseServiceClient {
             }
 
             return new SleepTrainingPlan(result);
+        } catch (JSONException e) {
+            Log.e(TAG, "JSON format error");
+            throw new InternalServerException();
+        }
+    }
+
+    /**
+     * Reset sleep training plan.
+     * @param userId
+     * @throws ConnectionFailureException
+     * @throws InternalServerException
+     */
+    public void resetSleepTrainingPlan(String userId)
+            throws ConnectionFailureException, InternalServerException {
+        String url = String.format(RESET_SLEEP_TRAINING_PLAN_URL, userId);
+        try {
+            JSONObject result = get(url);
+            if (result.has(ERROR_CODE_KEY)) {
+                if (result.has(ERROR_MESSAGE_KEY)) {
+                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
+                }
+
+                throw new InternalServerException();
+            }
         } catch (JSONException e) {
             Log.e(TAG, "JSON format error");
             throw new InternalServerException();
