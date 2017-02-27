@@ -99,8 +99,13 @@ public class MainActivity extends AppCompatActivity implements
 
         sessionManager = new SessionManager(this);
         sharedPreferenceUtil = new SharedPreferenceUtil(this);
+
+        String accessToken = sessionManager.getAccessToken();
         sleepServiceClient = new SleepServiceClient();
+        sleepServiceClient.setAccessToken(accessToken);
+
         identityServiceClient = new IdentityServiceClient();
+        identityServiceClient.setAccessToken(accessToken);
         metricHelper = new MetricHelper(this);
 
         setSupportActionBar(toolbar);

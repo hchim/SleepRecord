@@ -9,7 +9,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.SleepRecord;
@@ -37,6 +39,18 @@ public class SleepServiceClient extends BaseServiceClient {
     public static final String SLEEP_TRAINING_PLAN_NOT_EXISTS = "SLEEP_TRAINING_PLAN_NOT_EXISTS";
     public static final String QUERY_DATE_FORMAT = "yyyy-MM-dd";
 
+
+    private Map<String, String> aaaHeaders;
+
+    public SleepServiceClient() {
+        aaaHeaders = new HashMap<>();
+    }
+
+    public void setAccessToken(String accessToken) {
+        aaaHeaders.put(BaseServiceClient.ACCESS_TOKEN, accessToken);
+
+    }
+
     /**
      * Save or update the baby information.
      * @param babyInfo
@@ -54,7 +68,7 @@ public class SleepServiceClient extends BaseServiceClient {
             object.put("birthday", DateUtils.dateToStr(babyInfo.getBabyBirthday(), QUERY_DATE_FORMAT));
             object.put("gender", babyInfo.getBabyGender().getValue());
 
-            JSONObject result = post(url, object);
+            JSONObject result = post(url, object, aaaHeaders);
             if (result.has(ERROR_CODE_KEY)) {
                 if (result.has(ERROR_MESSAGE_KEY)) {
                     Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
@@ -80,7 +94,7 @@ public class SleepServiceClient extends BaseServiceClient {
         String url = BABYINFO_URL + userId;
 
         try {
-            JSONObject result = get(url);
+            JSONObject result = get(url, aaaHeaders);
             if (result.has(ERROR_CODE_KEY)) {
                 if (result.has(ERROR_MESSAGE_KEY)) {
                     Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
@@ -123,7 +137,7 @@ public class SleepServiceClient extends BaseServiceClient {
             object.put("wakeupTime", to);
             object.put("timezone", DateUtils.getLocalTimezone(false));
 
-            JSONObject result = post(url, object);
+            JSONObject result = post(url, object, aaaHeaders);
             if (result.has(ERROR_CODE_KEY)) {
                 if (result.has(ERROR_MESSAGE_KEY)) {
                     Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
@@ -158,7 +172,7 @@ public class SleepServiceClient extends BaseServiceClient {
                 DateUtils.getLocalTimezone(true));
 
         try {
-            JSONObject result = get(url);
+            JSONObject result = get(url, aaaHeaders);
             if (result.has(ERROR_CODE_KEY)) {
                 if (result.has(ERROR_MESSAGE_KEY)) {
                     Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
@@ -200,7 +214,7 @@ public class SleepServiceClient extends BaseServiceClient {
         try {
             JSONObject object = plan.toJson();
 
-            JSONObject result = post(url, object);
+            JSONObject result = post(url, object, aaaHeaders);
             if (result.has(ERROR_CODE_KEY)) {
                 if (result.has(ERROR_MESSAGE_KEY)) {
                     Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
@@ -224,7 +238,7 @@ public class SleepServiceClient extends BaseServiceClient {
             throws ConnectionFailureException, InternalServerException, TrainingPlanNotExistException {
         String url = String.format(SLEEP_TRAINING_PLAN_URL + "%s", userId);
         try {
-            JSONObject result = get(url);
+            JSONObject result = get(url, aaaHeaders);
             if (result.has(ERROR_CODE_KEY)) {
                 if (result.has(ERROR_MESSAGE_KEY)) {
                     Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
@@ -254,7 +268,7 @@ public class SleepServiceClient extends BaseServiceClient {
             throws ConnectionFailureException, InternalServerException {
         String url = String.format(RESET_SLEEP_TRAINING_PLAN_URL, userId);
         try {
-            JSONObject result = get(url);
+            JSONObject result = get(url, aaaHeaders);
             if (result.has(ERROR_CODE_KEY)) {
                 if (result.has(ERROR_MESSAGE_KEY)) {
                     Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
@@ -287,7 +301,7 @@ public class SleepServiceClient extends BaseServiceClient {
             object.put("criedOutTimes", criedOutTimes);
             object.put("sootheTimes", sootheTimes);
 
-            JSONObject result = post(url, object);
+            JSONObject result = post(url, object, aaaHeaders);
             if (result.has(ERROR_CODE_KEY)) {
                 if (result.has(ERROR_MESSAGE_KEY)) {
                     Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));

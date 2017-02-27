@@ -13,7 +13,6 @@ import im.hch.sleeprecord.activities.main.MainActivity;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.AppInfoServiceClient;
-import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.SessionManager;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
@@ -27,7 +26,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
     private SharedPreferenceUtil sharedPreferenceUtil;
     private SessionManager sessionManager;
-    private IdentityServiceClient identityServiceClient;
     private UserProfile userProfile;
     private AppInfoServiceClient appInfoServiceClient;
     private MainActivity mainActivity;
@@ -46,7 +44,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         setHasOptionsMenu(true);
 
         sharedPreferenceUtil = new SharedPreferenceUtil(this.getActivity());
-        identityServiceClient = new IdentityServiceClient();
         sessionManager = new SessionManager(getActivity());
         userProfile = sharedPreferenceUtil.retrieveUserProfile();
         appInfoServiceClient = new AppInfoServiceClient();
@@ -108,7 +105,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                identityServiceClient.updateUserName(userName, sessionManager.getUserId());
+                mainActivity.identityServiceClient.updateUserName(userName, sessionManager.getUserId());
                 return Boolean.TRUE;
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage(), e);

@@ -28,7 +28,6 @@ import im.hch.sleeprecord.activities.BaseFragment;
 import im.hch.sleeprecord.activities.main.AddRecordDialogFragment;
 import im.hch.sleeprecord.activities.main.MainActivity;
 import im.hch.sleeprecord.models.SleepRecord;
-import im.hch.sleeprecord.serviceclients.SleepServiceClient;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.DialogUtils;
@@ -42,7 +41,6 @@ public class SleepRecordsFragment extends BaseFragment implements AddRecordDialo
     public static final int THRESHOLD = 1;
 
     private SleepRecordsAdapter sleepRecordsAdapter;
-    private SleepServiceClient sleepServiceClient;
 
     private int page = 0;
 
@@ -59,7 +57,6 @@ public class SleepRecordsFragment extends BaseFragment implements AddRecordDialo
     }
 
     public SleepRecordsFragment() {
-        sleepServiceClient = new SleepServiceClient();
     }
 
     @Override
@@ -152,7 +149,7 @@ public class SleepRecordsFragment extends BaseFragment implements AddRecordDialo
             from.add(Calendar.DATE, SHOW_SLEEP_RECORDS_NUM * -1 * (page + 1));
 
             try {
-                sleepRecords = sleepServiceClient.getSleepRecords(userId, from.getTime(), to.getTime());
+                sleepRecords = mainActivity.sleepServiceClient.getSleepRecords(userId, from.getTime(), to.getTime());
                 return true;
             } catch (ConnectionFailureException e) {
                 errorMessage = failedToConnectError;

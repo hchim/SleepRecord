@@ -97,9 +97,11 @@ public class UpdatePasswordDialogFragment extends DialogFragment {
     }
 
     private void init(Activity activity) {
-        identityServiceClient = new IdentityServiceClient();
         sessionManager = new SessionManager(activity);
         sharedPreferenceUtil = new SharedPreferenceUtil(activity);
+
+        identityServiceClient = new IdentityServiceClient();
+        identityServiceClient.setAccessToken(sessionManager.getAccessToken());
 
         repeatPasswordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

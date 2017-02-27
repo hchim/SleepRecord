@@ -43,8 +43,6 @@ import im.hch.sleeprecord.models.SleepQuality;
 import im.hch.sleeprecord.models.SleepRecord;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.models.UserProfile;
-import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
-import im.hch.sleeprecord.serviceclients.SleepServiceClient;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.ImageUtils;
@@ -66,12 +64,8 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
     @BindString(R.string.admob_id_main_activity) String adId;
 
     private SleepRecordsAdapter sleepRecordsAdapter;
-    private SleepServiceClient sleepServiceClient;
-    private IdentityServiceClient identityServiceClient;
 
     public HomeFragment() {
-        sleepServiceClient = new SleepServiceClient();
-        identityServiceClient = new IdentityServiceClient();
     }
 
     /**
@@ -284,7 +278,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
 
             //update baby info
             try {
-                babyInfo = sleepServiceClient.getBabyInfo(userId);
+                babyInfo = mainActivity.sleepServiceClient.getBabyInfo(userId);
                 sharedPreferenceUtil.storeBabyInfo(babyInfo);
             } catch (Exception e) {
                 Log.w(MainActivity.TAG, e);
@@ -295,7 +289,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
             publishProgress(BABY_INFO_UPDATED);
 
             try {
-                userProfile = identityServiceClient.getUser(userId);
+                userProfile = mainActivity.identityServiceClient.getUser(userId);
 
                 String currentHeaderUrl = sharedPreferenceUtil.retrieveHeaderImageUrl();
                 String headerImagePath = sharedPreferenceUtil.retrieveHeaderImage();
@@ -322,7 +316,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
             publishProgress(USER_INFO_UPDATED);
             //update sleep training plan
             try {
-                sleepTrainingPlan = sleepServiceClient.getSleepTrainingPlan(userId);
+                sleepTrainingPlan = mainActivity.sleepServiceClient.getSleepTrainingPlan(userId);
                 if (sleepTrainingPlan != null) {
                     sharedPreferenceUtil.storeSleepTrainingPlan(sleepTrainingPlan);
                 }
@@ -339,7 +333,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
             from.add(Calendar.DATE, SHOW_SLEEP_RECORDS_NUM * -1);
 
             try {
-                sleepRecords = sleepServiceClient.getSleepRecords(userId, from.getTime(), to.getTime());
+                sleepRecords = mainActivity.sleepServiceClient.getSleepRecords(userId, from.getTime(), to.getTime());
                 sharedPreferenceUtil.storeSleepRecords(sleepRecords, userId);
             } catch (Exception e) {
                 Log.w(MainActivity.TAG, e);
@@ -419,7 +413,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
             from.add(Calendar.DATE, SHOW_SLEEP_RECORDS_NUM * -1);
 
             try {
-                sleepRecords = sleepServiceClient.getSleepRecords(userId, from.getTime(), to.getTime());
+                sleepRecords = mainActivity.sleepServiceClient.getSleepRecords(userId, from.getTime(), to.getTime());
                 sharedPreferenceUtil.storeSleepRecords(sleepRecords, userId);
             } catch (Exception e) {
                 Log.w(MainActivity.TAG, e);

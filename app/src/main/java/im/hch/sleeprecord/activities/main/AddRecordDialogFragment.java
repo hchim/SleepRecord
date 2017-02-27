@@ -110,8 +110,9 @@ public class AddRecordDialogFragment extends DialogFragment {
     }
 
     private void init(Activity activity) {
-        sleepServiceClient = new SleepServiceClient();
         sessionManager = new SessionManager(activity);
+        sleepServiceClient = new SleepServiceClient();
+        sleepServiceClient.setAccessToken(sessionManager.getAccessToken());
         metricHelper = new MetricHelper(activity);
 
         if (activity instanceof AddRecordDialogListener) {

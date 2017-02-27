@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
@@ -26,6 +27,7 @@ public class BaseServiceClient {
     public static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    public static final String ACCESS_TOKEN = "x-auth-token";
 
     protected OkHttpClient httpClient;
 
@@ -65,12 +67,16 @@ public class BaseServiceClient {
      */
     public JSONObject delete(String url)
             throws InternalServerException, ConnectionFailureException {
-        Request request = new Request.Builder()
-                .url(url)
-                .delete()
-                .build();
+        return delete(url, null);
+    }
 
-        return sendRequest(request);
+    public JSONObject delete(String url, Map<String, String> headers)
+            throws InternalServerException, ConnectionFailureException {
+        Request.Builder builder = new Request.Builder()
+                .url(url)
+                .delete();
+        addHeaders(builder, headers);
+        return sendRequest(builder.build());
     }
 
     /**
@@ -82,12 +88,43 @@ public class BaseServiceClient {
      */
     public JSONObject get(String url)
             throws InternalServerException, ConnectionFailureException {
-        Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .build();
+        return get(url, null);
+    }
 
-        return sendRequest(request);
+    /**
+     * Submit a get request
+     * @param url
+     * @param headers
+     * @return
+     * @throws InternalServerException
+     * @throws ConnectionFailureException
+     */
+    public JSONObject get(String url, Map<String, String> headers)
+            throws InternalServerException, ConnectionFailureException {
+        Request.Builder builder = new Request.Builder()
+                .url(url)
+                .get();
+        addHeaders(builder, headers);
+        return sendRequest(builder.build());
+    }
+
+    /**
+     * Submit a post request.
+     * @param url
+     * @param object
+     * @param headers
+     * @return
+     * @throws InternalServerException response has a wrong format.
+     * @throws ConnectionFailureException when failed to connect to the server.
+     */
+    public JSONObject post(String url, JSONObject object, Map<String, String> headers)
+            throws InternalServerException, ConnectionFailureException {
+        RequestBody body = RequestBody.create(JSON, object.toString());
+        Request.Builder builder = new Request.Builder()
+                .url(url)
+                .post(body);
+        addHeaders(builder, headers);
+        return sendRequest(builder.build());
     }
 
     /**
@@ -95,18 +132,31 @@ public class BaseServiceClient {
      * @param url
      * @param object
      * @return
-     * @throws InternalServerException response has a wrong format.
-     * @throws ConnectionFailureException when failed to connect to the server.
+     * @throws InternalServerException
+     * @throws ConnectionFailureException
      */
     public JSONObject post(String url, JSONObject object)
             throws InternalServerException, ConnectionFailureException {
-        RequestBody body = RequestBody.create(JSON, object.toString());
-        Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .build();
+        return post(url, object, null);
+    }
 
-        return sendRequest(request);
+    /**
+     * Submit a put request.
+     * @param url
+     * @param object
+     * @param headers
+     * @return
+     * @throws InternalServerException
+     * @throws ConnectionFailureException
+     */
+    public JSONObject put(String url, JSONObject object, Map<String, String> headers)
+            throws InternalServerException, ConnectionFailureException {
+        RequestBody body = RequestBody.create(JSON, object.toString());
+        Request.Builder builder = new Request.Builder()
+                .url(url)
+                .put(body);
+        addHeaders(builder, headers);
+        return sendRequest(builder.build());
     }
 
     /**
@@ -119,13 +169,7 @@ public class BaseServiceClient {
      */
     public JSONObject put(String url, JSONObject object)
             throws InternalServerException, ConnectionFailureException {
-        RequestBody body = RequestBody.create(JSON, object.toString());
-        Request request = new Request.Builder()
-                .url(url)
-                .put(body)
-                .build();
-
-        return sendRequest(request);
+        return put(url, object, null);
     }
 
     /**
@@ -136,7 +180,7 @@ public class BaseServiceClient {
      * @throws InternalServerException
      * @throws ConnectionFailureException
      */
-    public JSONObject uploadImage(String url, String imagePath)
+    public JSONObject uploadImage(String url, String imagePath, Map<String, String> headers)
             throws InternalServerException, ConnectionFailureException {
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
@@ -144,12 +188,25 @@ public class BaseServiceClient {
                         RequestBody.create(MEDIA_TYPE_PNG, new File(imagePath)))
                 .build();
 
-        Request request = new Request.Builder()
+        Request.Builder builder = new Request.Builder()
                 .url(url)
-                .post(requestBody)
-                .build();
-
-        return sendRequest(request);
+                .post(requestBody);
+        addHeaders(builder, headers);
+        return sendRequest(builder.build());
     }
 
+    /**
+     * add headers to the request builder
+     * @param builder
+     * @param headers
+     */
+    private void addHeaders(Request.Builder builder, Map<String, String> headers) {
+        if (headers == null)  {
+            return;
+        }
+
+        for (String key: headers.keySet()) {
+            builder.header(key, headers.get(key));
+        }
+    }
 }

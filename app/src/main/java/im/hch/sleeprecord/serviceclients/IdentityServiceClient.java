@@ -5,6 +5,9 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
@@ -35,8 +38,16 @@ public class IdentityServiceClient extends BaseServiceClient {
     public static final String ERROR_CODE_WRONG_VERIFY_CODE = "WRONG_VERIFY_CODE";
     public static final String ERROR_CODE_WRONG_SECURITY_CODE = "WRONG_SECURITY_CODE";
 
+    private Map<String, String> aaaHeaders;
+
     public IdentityServiceClient() {
         super();
+        aaaHeaders = new HashMap<>();
+    }
+
+    public void setAccessToken(String accessToken) {
+        aaaHeaders.put(BaseServiceClient.ACCESS_TOKEN, accessToken);
+
     }
 
     /**
@@ -52,7 +63,7 @@ public class IdentityServiceClient extends BaseServiceClient {
         String url = USERS_URL + userId;
 
         try {
-            JSONObject result = get(url);
+            JSONObject result = get(url, aaaHeaders);
             if (result.has(ERROR_CODE_KEY)) {
                 if (result.has(ERROR_MESSAGE_KEY)) {
                     Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
@@ -113,6 +124,7 @@ public class IdentityServiceClient extends BaseServiceClient {
             userProfile.setId(result.getString("userId"));
             userProfile.setUsername(result.getString("nickName"));
             userProfile.setHeaderIconUrl(result.getString("headerImageUrl"));
+            userProfile.setAccessToken(result.getString("accessToken"));
             return userProfile;
         } catch (JSONException ex) {
             Log.e(TAG, "JSON format error");
@@ -155,6 +167,7 @@ public class IdentityServiceClient extends BaseServiceClient {
             userProfile.setUsername(nickName);
             userProfile.setEmail(email);
             userProfile.setId(result.getString("userId"));
+            userProfile.setAccessToken(result.getString("accessToken"));
 
             return userProfile;
         } catch (JSONException ex) {
@@ -177,7 +190,7 @@ public class IdentityServiceClient extends BaseServiceClient {
         JSONObject object = new JSONObject();
         try {
             object.put("nickName", userName);
-            JSONObject result = put(url, object);
+            JSONObject result = put(url, object, aaaHeaders);
 
             if (result.has(ERROR_CODE_KEY)) {
                 if (result.has(ERROR_MESSAGE_KEY)) {
@@ -207,7 +220,7 @@ public class IdentityServiceClient extends BaseServiceClient {
     public String uploadHeaderIcon(String imagePath, String userId)
             throws ConnectionFailureException, InternalServerException {
         String url = String.format(UPDATE_HEADER_URL, userId);
-        JSONObject result = uploadImage(url, imagePath);
+        JSONObject result = uploadImage(url, imagePath, aaaHeaders);
         try {
             if (result.has(ERROR_CODE_KEY)) {
                 if (result.has(ERROR_MESSAGE_KEY)) {
@@ -240,7 +253,7 @@ public class IdentityServiceClient extends BaseServiceClient {
         try {
             object.put("oldPassword", oldPassword);
             object.put("newPassword", newPassword);
-            JSONObject result = put(url, object);
+            JSONObject result = put(url, object, aaaHeaders);
 
             if (result.has(ERROR_CODE_KEY)) {
                 if (result.has(ERROR_MESSAGE_KEY)) {

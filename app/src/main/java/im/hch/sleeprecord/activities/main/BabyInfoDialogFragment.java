@@ -144,6 +144,7 @@ public class BabyInfoDialogFragment extends DialogFragment {
         sessionManager = new SessionManager(activity);
         sharedPreferenceUtil = new SharedPreferenceUtil(activity);
         sleepServiceClient = new SleepServiceClient();
+        sleepServiceClient.setAccessToken(sessionManager.getAccessToken());
         metricHelper = new MetricHelper(activity);
 
         if (activity instanceof BabyInfoDialogFragmentListener) {

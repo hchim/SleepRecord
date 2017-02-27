@@ -82,6 +82,7 @@ public class PlanningFragment extends BaseFragment {
         sharedPreferenceUtil = new SharedPreferenceUtil(getActivity());
         sleepServiceClient = new SleepServiceClient();
         sessionManager = new SessionManager(getActivity());
+        sleepServiceClient.setAccessToken(sessionManager.getAccessToken());
 
         seekBars = new SeekBar[] {
                         seekBar11, seekBar12, seekBar13, seekBar14,
