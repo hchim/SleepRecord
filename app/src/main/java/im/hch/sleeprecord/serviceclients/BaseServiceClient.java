@@ -24,6 +24,9 @@ public class BaseServiceClient {
     public static final String ERROR_MESSAGE_KEY = "message";
     public static final String ERROR_CODE_KEY = "errorCode";
     public static final String ERROR_CODE_INTERNAL_FAILURE = "INTERNAL_FAILURE";
+    public static final String ERROR_AUTH_FAILURE = "AUTH_FAILURE";
+    public static final String ERROR_UNKNOWN_USER = "UNKNOWN_USER";
+
     public static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";

@@ -358,9 +358,8 @@ public class MainActivity extends AppCompatActivity implements
             //store header path to shared preference
             sharedPreferenceUtil.storeHeaderImage(imagePath);
             //upload header image
-            String userId = sessionManager.getUserId();
             try {
-                String url = identityServiceClient.uploadHeaderIcon(imagePath, userId);
+                String url = identityServiceClient.uploadHeaderIcon(imagePath);
                 sharedPreferenceUtil.storeHeaderImageUrl(url);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage(), e);

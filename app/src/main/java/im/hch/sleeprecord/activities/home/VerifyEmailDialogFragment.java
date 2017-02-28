@@ -23,6 +23,7 @@ import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
 import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
+import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongVerifyCodeException;
@@ -46,6 +47,7 @@ public class VerifyEmailDialogFragment extends DialogFragment {
     @BindString(R.string.error_field_required) String requiredFieldError;
     @BindString(R.string.error_account_does_not_exist) String accountDoesNotExist;
     @BindString(R.string.error_wrong_verify_code) String wrongVerifyCode;
+    @BindString(R.string.error_auth_failure) String authError;
 
     public static VerifyEmailDialogFragment newInstance() {
         VerifyEmailDialogFragment fragment = new VerifyEmailDialogFragment();
@@ -150,9 +152,8 @@ public class VerifyEmailDialogFragment extends DialogFragment {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            String userid = sessionManager.getUserId();
             try {
-                identityServiceClient.verifyEmail(verifyCode, userid);
+                identityServiceClient.verifyEmail(verifyCode);
                 return true;
             } catch (ConnectionFailureException e) {
                 errorMessage = failedToConnectError;
@@ -162,6 +163,8 @@ public class VerifyEmailDialogFragment extends DialogFragment {
                 errorMessage = accountDoesNotExist;
             } catch (WrongVerifyCodeException e) {
                 errorMessage = wrongVerifyCode;
+            } catch (AuthFailureException e) {
+                errorMessage = authError;
             }
 
             return false;
@@ -184,10 +187,13 @@ public class VerifyEmailDialogFragment extends DialogFragment {
                 VerifyEmailDialogFragment.this.dismiss();
                 listener.onEmailVerified();
             } else {
-                verifyCodeTextView.requestFocus();
-                Snackbar.make(verifyCodeTextView, errorMessage, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
+                if (errorMessage == authError) {
+                    ActivityUtils.navigateToLoginActivity(VerifyEmailDialogFragment.this.getActivity());
+                } else {
+                    verifyCodeTextView.requestFocus();
+                    Snackbar.make(verifyCodeTextView, errorMessage, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
             }
         }
 

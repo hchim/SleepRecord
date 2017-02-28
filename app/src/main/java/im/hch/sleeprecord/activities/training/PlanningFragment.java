@@ -21,8 +21,10 @@ import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.BaseFragment;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
+import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
+import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.SessionManager;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 
@@ -59,6 +61,7 @@ public class PlanningFragment extends BaseFragment {
     @BindString(R.string.error_failed_to_connect) String failedToConnectError;
     @BindString(R.string.error_internal_server) String internalServerError;
     @BindString(R.string.sleep_training_plan_title) String title;
+    @BindString(R.string.error_auth_failure) String authError;
 
     private SharedPreferenceUtil sharedPreferenceUtil;
     private SessionManager sessionManager;
@@ -217,13 +220,15 @@ public class PlanningFragment extends BaseFragment {
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                sleepServiceClient.saveSleepTrainingPlan(sessionManager.getUserId(), plan);
+                sleepServiceClient.saveSleepTrainingPlan(plan);
                 sharedPreferenceUtil.storeSleepTrainingPlan(plan);
                 return true;
             } catch (ConnectionFailureException e) {
                 errorMessage = failedToConnectError;
             } catch (InternalServerException e) {
                 errorMessage = internalServerError;
+            } catch (AuthFailureException e) {
+                errorMessage = authError;
             }
 
             return false;
@@ -234,8 +239,12 @@ public class PlanningFragment extends BaseFragment {
             if (aBoolean) {
                 mainActivity.loadFragment(SleepTrainingFragment.newInstance(), null);
             } else {
-                Snackbar.make(seekBar11, errorMessage, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if (errorMessage == authError) {
+                    ActivityUtils.navigateToLoginActivity(mainActivity);
+                } else {
+                    Snackbar.make(seekBar11, errorMessage, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
             }
             saveTrainingPlanTask = null;
         }

@@ -30,12 +30,15 @@ import butterknife.ButterKnife;
 import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
+import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.serviceclients.exceptions.TimeOverlapException;
+import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.MetricHelper;
 import im.hch.sleeprecord.utils.SessionManager;
+import lombok.Setter;
 
 public class AddRecordDialogFragment extends DialogFragment {
     public static final String TAG = AddRecordDialogFragment.class.getSimpleName();
@@ -56,6 +59,7 @@ public class AddRecordDialogFragment extends DialogFragment {
     @BindString(R.string.error_failed_to_connect) String failedToConnectError;
     @BindString(R.string.error_internal_server) String internalServerError;
     @BindString(R.string.error_sleep_record_overlap) String sleepRecordOverlapError;
+    @BindString(R.string.error_auth_failure) String authError;
 
     private static DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT);
     private static DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
@@ -63,6 +67,7 @@ public class AddRecordDialogFragment extends DialogFragment {
     private SaveSleepRecordTask saveSleepRecordTask;
     private SleepServiceClient sleepServiceClient;
     private SessionManager sessionManager;
+    @Setter
     private AddRecordDialogListener mListener;
     private MetricHelper metricHelper;
 
@@ -114,10 +119,6 @@ public class AddRecordDialogFragment extends DialogFragment {
         sleepServiceClient = new SleepServiceClient();
         sleepServiceClient.setAccessToken(sessionManager.getAccessToken());
         metricHelper = new MetricHelper(activity);
-
-        if (activity instanceof AddRecordDialogListener) {
-            mListener = (AddRecordDialogListener) activity;
-        }
 
         resetDatetime();
 
@@ -300,7 +301,11 @@ public class AddRecordDialogFragment extends DialogFragment {
                 }
                 AddRecordDialogFragment.this.dismiss();
             } else {
-                handleSaveFailure(errorMessage);
+                if (errorMessage == authError) {
+                    ActivityUtils.navigateToLoginActivity(AddRecordDialogFragment.this.getActivity());
+                } else {
+                    handleSaveFailure(errorMessage);
+                }
             }
         }
 
@@ -313,7 +318,7 @@ public class AddRecordDialogFragment extends DialogFragment {
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                sleepServiceClient.addSleepRecord(from, to, sessionManager.getUserId());
+                sleepServiceClient.addSleepRecord(from, to);
                 return true;
             } catch (ConnectionFailureException e) {
                 errorMessage = failedToConnectError;
@@ -322,6 +327,8 @@ public class AddRecordDialogFragment extends DialogFragment {
                 metricHelper.errorMetric(Metrics.ADD_SLEEP_RECORD_ERROR_METRIC, e);
             } catch (TimeOverlapException e) {
                 errorMessage = sleepRecordOverlapError;
+            } catch (AuthFailureException e) {
+                errorMessage = authError;
             }
             return false;
         }

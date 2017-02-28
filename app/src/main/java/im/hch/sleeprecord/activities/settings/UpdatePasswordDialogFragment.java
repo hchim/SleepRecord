@@ -23,6 +23,7 @@ import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
 import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
+import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongPasswordException;
@@ -52,6 +53,7 @@ public class UpdatePasswordDialogFragment extends DialogFragment {
     @BindString(R.string.error_field_required) String requiredFieldError;
     @BindString(R.string.error_wrong_password) String wrongPasswordError;
     @BindString(R.string.error_account_does_not_exist) String accountDoesNotExist;
+    @BindString(R.string.error_auth_failure) String authError;
 
     public static UpdatePasswordDialogFragment newInstance() {
         UpdatePasswordDialogFragment fragment = new UpdatePasswordDialogFragment();
@@ -170,9 +172,8 @@ public class UpdatePasswordDialogFragment extends DialogFragment {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            String userid = sessionManager.getUserId();
             try {
-                identityServiceClient.updateUserPassword(oldPassword, newPassword, userid);
+                identityServiceClient.updateUserPassword(oldPassword, newPassword);
                 return true;
             } catch (ConnectionFailureException e) {
                 errorMessage = failedToConnectError;
@@ -182,6 +183,8 @@ public class UpdatePasswordDialogFragment extends DialogFragment {
                 errorMessage = accountDoesNotExist;
             } catch (WrongPasswordException e) {
                 errorMessage = wrongPasswordError;
+            } catch (AuthFailureException e) {
+                errorMessage = authError;
             }
 
             return false;
@@ -203,10 +206,13 @@ public class UpdatePasswordDialogFragment extends DialogFragment {
             if (success) {
                 UpdatePasswordDialogFragment.this.dismiss();
             } else {
-                currentPasswordEditText.requestFocus();
-                Snackbar.make(currentPasswordEditText, errorMessage, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
+                if (errorMessage == authError) {
+                    ActivityUtils.navigateToLoginActivity(UpdatePasswordDialogFragment.this.getActivity());
+                } else {
+                    currentPasswordEditText.requestFocus();
+                    Snackbar.make(currentPasswordEditText, errorMessage, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
             }
         }
 

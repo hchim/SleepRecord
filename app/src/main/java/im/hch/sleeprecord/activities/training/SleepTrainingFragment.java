@@ -27,8 +27,10 @@ import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.BaseFragment;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
+import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
+import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.views.CountDownTextView;
 import im.hch.sleeprecord.views.CountUpTextView;
@@ -46,6 +48,7 @@ public class SleepTrainingFragment extends BaseFragment {
     @BindString(R.string.error_failed_to_connect) String failedToConnectError;
     @BindString(R.string.error_internal_server) String internalServerError;
     @BindString(R.string.progress_message_reset) String progressMessageReset;
+    @BindString(R.string.error_auth_failure) String authError;
 
     @BindView(R.id.dayXTextView) TextView dayXTextView;
     @BindView(R.id.totalTimeTextView) CountUpTextView countUpTextView;
@@ -274,17 +277,16 @@ public class SleepTrainingFragment extends BaseFragment {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            String userId = mainActivity.sessionManager.getUserId();
-            if (userId != null) {
-                try {
-                    mainActivity.sleepServiceClient.resetSleepTrainingPlan(userId);
-                    return true;
-                } catch (ConnectionFailureException e) {
-                    errorMessage = failedToConnectError;
-                } catch (InternalServerException e) {
-                    errorMessage = internalServerError;
-                    metricHelper.errorMetric(Metrics.RESET_TRAINING_PLAN_ERROR_METRIC, e);
-                }
+            try {
+                mainActivity.sleepServiceClient.resetSleepTrainingPlan();
+                return true;
+            } catch (ConnectionFailureException e) {
+                errorMessage = failedToConnectError;
+            } catch (InternalServerException e) {
+                errorMessage = internalServerError;
+                metricHelper.errorMetric(Metrics.RESET_TRAINING_PLAN_ERROR_METRIC, e);
+            } catch (AuthFailureException e) {
+                errorMessage = authError;
             }
             return false;
         }
@@ -303,8 +305,12 @@ public class SleepTrainingFragment extends BaseFragment {
                 sharedPreferenceUtil.removeSleepTrainingPlan();
                 mainActivity.loadFragment(ChecklistFragment.newInstance(), null);
             } else {
-                Snackbar.make(finishCheckBox, errorMessage, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if (errorMessage == authError) {
+                    ActivityUtils.navigateToLoginActivity(mainActivity);
+                } else {
+                    Snackbar.make(finishCheckBox, errorMessage, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
             }
             resetTrainingPlanTask = null;
         }

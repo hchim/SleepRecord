@@ -133,6 +133,7 @@
     <string name="error_wrong_password">Wrong password.</string>
     <string name="error_wrong_verify_code">The verify code is wrong.</string>
     <string name="error_wrong_security_code">The security code is wrong.</string>
+    <string name="error_auth_failure">Please login.</string>
 
     <string name="button_Save">Save</string>
     <string name="button_boy">Boy</string>

@@ -16,6 +16,7 @@ import java.util.Map;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.SleepRecord;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
+import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.BabyNotExistsException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
@@ -32,7 +33,7 @@ public class SleepServiceClient extends BaseServiceClient {
     public static final String SLEEP_TRAINING_PLAN_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "plan/";
     public static final String TRAINING_RECORDS_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "trainrecs/";
 
-    public static final String RESET_SLEEP_TRAINING_PLAN_URL = SLEEP_TRAINING_PLAN_URL + "%s/reset";
+    public static final String RESET_SLEEP_TRAINING_PLAN_URL = SLEEP_TRAINING_PLAN_URL + "reset";
 
     public static final String ERROR_CODE_BABY_NOT_EXISTS = "BABY_NOT_EXISTS";
     public static final String ERROR_CODE_TIME_OVERLAP = "TIME_OVERLAP";
@@ -54,13 +55,12 @@ public class SleepServiceClient extends BaseServiceClient {
     /**
      * Save or update the baby information.
      * @param babyInfo
-     * @param userId
      * @throws InternalServerException
      * @throws ConnectionFailureException
      */
-    public void saveBabyInfo(BabyInfo babyInfo, String userId)
-            throws InternalServerException, ConnectionFailureException {
-        String url = BABYINFO_URL + userId;
+    public void saveBabyInfo(BabyInfo babyInfo)
+            throws InternalServerException, ConnectionFailureException, AuthFailureException {
+        String url = BABYINFO_URL;
         JSONObject object = new JSONObject();
 
         try {
@@ -73,6 +73,11 @@ public class SleepServiceClient extends BaseServiceClient {
                 if (result.has(ERROR_MESSAGE_KEY)) {
                     Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
                 }
+
+                String errorCode = result.getString(ERROR_CODE_KEY);
+                if (errorCode.equals(ERROR_AUTH_FAILURE) || errorCode.equals(ERROR_UNKNOWN_USER)) {
+                    throw new AuthFailureException();
+                }
                 throw new InternalServerException();
             }
         } catch (JSONException e) {
@@ -83,15 +88,15 @@ public class SleepServiceClient extends BaseServiceClient {
 
     /**
      * Get baby information.
-     * @param userId
      * @return
      * @throws InternalServerException
      * @throws ConnectionFailureException
      * @throws BabyNotExistsException
      */
-    public BabyInfo getBabyInfo(String userId)
-            throws InternalServerException, ConnectionFailureException, BabyNotExistsException {
-        String url = BABYINFO_URL + userId;
+    public BabyInfo getBabyInfo()
+            throws InternalServerException, ConnectionFailureException,
+            BabyNotExistsException, AuthFailureException {
+        String url = BABYINFO_URL;
 
         try {
             JSONObject result = get(url, aaaHeaders);
@@ -103,6 +108,8 @@ public class SleepServiceClient extends BaseServiceClient {
                 String errorCode = result.getString(ERROR_CODE_KEY);
                 if (errorCode.equals(ERROR_CODE_BABY_NOT_EXISTS)) {
                     throw new BabyNotExistsException();
+                } else if (errorCode.equals(ERROR_AUTH_FAILURE) || errorCode.equals(ERROR_UNKNOWN_USER)) {
+                    throw new AuthFailureException();
                 }
                 throw new InternalServerException();
             }
@@ -122,17 +129,16 @@ public class SleepServiceClient extends BaseServiceClient {
      * Add sleep record.
      * @param from
      * @param to
-     * @param userId
      * @throws ConnectionFailureException
      * @throws InternalServerException
      * @throws TimeOverlapException
      */
-    public void addSleepRecord(Date from, Date to, String userId)
-            throws ConnectionFailureException, InternalServerException, TimeOverlapException {
+    public void addSleepRecord(Date from, Date to)
+            throws ConnectionFailureException, InternalServerException,
+            TimeOverlapException, AuthFailureException {
         String url = SLEEP_RECORDS_URL;
         try {
             JSONObject object = new JSONObject();
-            object.put("userId", userId);
             object.put("fallAsleepTime", from);
             object.put("wakeupTime", to);
             object.put("timezone", DateUtils.getLocalTimezone(false));
@@ -146,6 +152,8 @@ public class SleepServiceClient extends BaseServiceClient {
                 String errorCode = result.getString(ERROR_CODE_KEY);
                 if (errorCode.equals(ERROR_CODE_TIME_OVERLAP)) {
                     throw new TimeOverlapException();
+                } else if (errorCode.equals(ERROR_AUTH_FAILURE) || errorCode.equals(ERROR_UNKNOWN_USER)) {
+                    throw new AuthFailureException();
                 }
                 throw new InternalServerException();
             }
@@ -157,16 +165,15 @@ public class SleepServiceClient extends BaseServiceClient {
 
     /**
      * Get the sleep records of userId in the specified time period.
-     * @param userId
      * @param from
      * @param to
      * @return
      * @throws ConnectionFailureException
      * @throws InternalServerException
      */
-    public List<SleepRecord> getSleepRecords(String userId, Date from, Date to)
-            throws ConnectionFailureException, InternalServerException {
-        String url = String.format(SLEEP_RECORDS_URL + "%s/%s/%s/%s", userId,
+    public List<SleepRecord> getSleepRecords(Date from, Date to)
+            throws ConnectionFailureException, InternalServerException, AuthFailureException {
+        String url = String.format(SLEEP_RECORDS_URL + "%s/%s/%s",
                 DateUtils.dateToStr(from, QUERY_DATE_FORMAT),
                 DateUtils.dateToStr(to, QUERY_DATE_FORMAT),
                 DateUtils.getLocalTimezone(true));
@@ -176,6 +183,10 @@ public class SleepServiceClient extends BaseServiceClient {
             if (result.has(ERROR_CODE_KEY)) {
                 if (result.has(ERROR_MESSAGE_KEY)) {
                     Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
+                }
+                String errorCode = result.getString(ERROR_CODE_KEY);
+                if (errorCode.equals(ERROR_AUTH_FAILURE) || errorCode.equals(ERROR_UNKNOWN_USER)) {
+                    throw new AuthFailureException();
                 }
                 throw new InternalServerException();
             }
@@ -207,9 +218,9 @@ public class SleepServiceClient extends BaseServiceClient {
      * Save the sleep training plan.
      * @param plan
      */
-    public void saveSleepTrainingPlan(String userId, SleepTrainingPlan plan)
-            throws ConnectionFailureException, InternalServerException {
-        String url = String.format(SLEEP_TRAINING_PLAN_URL + "%s", userId);
+    public void saveSleepTrainingPlan(SleepTrainingPlan plan)
+            throws ConnectionFailureException, InternalServerException, AuthFailureException {
+        String url = SLEEP_TRAINING_PLAN_URL;
 
         try {
             JSONObject object = plan.toJson();
@@ -219,7 +230,10 @@ public class SleepServiceClient extends BaseServiceClient {
                 if (result.has(ERROR_MESSAGE_KEY)) {
                     Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
                 }
-
+                String errorCode = result.getString(ERROR_CODE_KEY);
+                if (errorCode.equals(ERROR_AUTH_FAILURE) || errorCode.equals(ERROR_UNKNOWN_USER)) {
+                    throw new AuthFailureException();
+                }
                 throw new InternalServerException();
             }
             plan.setPlanId(result.getString(SleepTrainingPlan.ID));
@@ -231,12 +245,12 @@ public class SleepServiceClient extends BaseServiceClient {
 
     /**
      * Get sleep training plan of the user.
-     * @param userId
      * @return
      */
-    public SleepTrainingPlan getSleepTrainingPlan(String userId)
-            throws ConnectionFailureException, InternalServerException, TrainingPlanNotExistException {
-        String url = String.format(SLEEP_TRAINING_PLAN_URL + "%s", userId);
+    public SleepTrainingPlan getSleepTrainingPlan()
+            throws ConnectionFailureException, InternalServerException,
+            TrainingPlanNotExistException, AuthFailureException {
+        String url = SLEEP_TRAINING_PLAN_URL;
         try {
             JSONObject result = get(url, aaaHeaders);
             if (result.has(ERROR_CODE_KEY)) {
@@ -247,7 +261,10 @@ public class SleepServiceClient extends BaseServiceClient {
                 String errorCode = result.getString(ERROR_CODE_KEY);
                 if (errorCode.equals(SLEEP_TRAINING_PLAN_NOT_EXISTS)) {
                     throw new TrainingPlanNotExistException();
+                } else if (errorCode.equals(ERROR_AUTH_FAILURE) || errorCode.equals(ERROR_UNKNOWN_USER)) {
+                    throw new AuthFailureException();
                 }
+
                 throw new InternalServerException();
             }
 
@@ -260,13 +277,12 @@ public class SleepServiceClient extends BaseServiceClient {
 
     /**
      * Reset sleep training plan.
-     * @param userId
      * @throws ConnectionFailureException
      * @throws InternalServerException
      */
-    public void resetSleepTrainingPlan(String userId)
-            throws ConnectionFailureException, InternalServerException {
-        String url = String.format(RESET_SLEEP_TRAINING_PLAN_URL, userId);
+    public void resetSleepTrainingPlan()
+            throws ConnectionFailureException, InternalServerException, AuthFailureException {
+        String url = RESET_SLEEP_TRAINING_PLAN_URL;
         try {
             JSONObject result = get(url, aaaHeaders);
             if (result.has(ERROR_CODE_KEY)) {
@@ -274,6 +290,10 @@ public class SleepServiceClient extends BaseServiceClient {
                     Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
                 }
 
+                String errorCode = result.getString(ERROR_CODE_KEY);
+                if (errorCode.equals(ERROR_AUTH_FAILURE) || errorCode.equals(ERROR_UNKNOWN_USER)) {
+                    throw new AuthFailureException();
+                }
                 throw new InternalServerException();
             }
         } catch (JSONException e) {

@@ -105,7 +105,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                mainActivity.identityServiceClient.updateUserName(userName, sessionManager.getUserId());
+                mainActivity.identityServiceClient.updateUserName(userName);
                 return Boolean.TRUE;
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage(), e);

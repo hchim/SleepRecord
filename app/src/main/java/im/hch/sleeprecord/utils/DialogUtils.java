@@ -50,8 +50,10 @@ public class DialogUtils {
      * @param fragmentManager
      * @return
      */
-    public static AddRecordDialogFragment showAddRecordDialog(FragmentManager fragmentManager) {
+    public static AddRecordDialogFragment showAddRecordDialog(FragmentManager fragmentManager,
+                                                              AddRecordDialogFragment.AddRecordDialogListener callback) {
         AddRecordDialogFragment addRecordDialogFragment = AddRecordDialogFragment.newInstance();
+        addRecordDialogFragment.setMListener(callback);
         addRecordDialogFragment.show(fragmentManager, DIALOG_TAG);
         return addRecordDialogFragment;
     }

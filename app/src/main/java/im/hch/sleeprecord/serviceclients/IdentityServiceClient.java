@@ -10,6 +10,7 @@ import java.util.Map;
 
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
+import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.EmailUsedException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
@@ -25,10 +26,10 @@ public class IdentityServiceClient extends BaseServiceClient {
     public static final String REGISTER_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "register";
     public static final String LOGIN_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "login";
     public static final String USERS_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/";
-    public static final String UPDATE_HEADER_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/%s/update-header";
-    public static final String UPDATE_USER_NAME = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/%s/update-name";
-    public static final String UPDATE_USER_PASSWORD = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/%s/update-pswd";
-    public static final String VERIFY_EMAIL_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/%s/verify-email";
+    public static final String UPDATE_HEADER_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/update-header";
+    public static final String UPDATE_USER_NAME = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/update-name";
+    public static final String UPDATE_USER_PASSWORD = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/update-pswd";
+    public static final String VERIFY_EMAIL_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/verify-email";
     public static final String SEND_PASSWORD_RESET_EMAIL_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "reset-email";
     public static final String PASSWORD_RESET_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "reset-pswd";
 
@@ -52,15 +53,15 @@ public class IdentityServiceClient extends BaseServiceClient {
 
     /**
      * Get user.
-     * @param userId
      * @return
      * @throws AccountNotExistException
      * @throws InternalServerException
      * @throws ConnectionFailureException
      */
-    public UserProfile getUser(String userId)
-            throws AccountNotExistException, InternalServerException, ConnectionFailureException {
-        String url = USERS_URL + userId;
+    public UserProfile getUser()
+            throws AccountNotExistException, InternalServerException,
+            ConnectionFailureException, AuthFailureException {
+        String url = USERS_URL;
 
         try {
             JSONObject result = get(url, aaaHeaders);
@@ -72,6 +73,8 @@ public class IdentityServiceClient extends BaseServiceClient {
                 String errorCode = result.getString(ERROR_CODE_KEY);
                 if (errorCode.equals(ERROR_CODE_ACCOUNT_NOT_EXIST)) {
                     throw new AccountNotExistException();
+                } else if (errorCode.equals(ERROR_AUTH_FAILURE) || errorCode.equals(ERROR_UNKNOWN_USER)) {
+                    throw new AuthFailureException();
                 }
                 throw new InternalServerException();
             }
@@ -179,14 +182,14 @@ public class IdentityServiceClient extends BaseServiceClient {
     /**
      * Update the user name.
      * @param userName
-     * @param userId
      * @throws ConnectionFailureException
      * @throws InternalServerException
      * @throws AccountNotExistException
      */
-    public void updateUserName(String userName, String userId)
-            throws ConnectionFailureException, InternalServerException, AccountNotExistException {
-        String url = String.format(UPDATE_USER_NAME, userId);
+    public void updateUserName(String userName)
+            throws ConnectionFailureException, InternalServerException,
+            AccountNotExistException, AuthFailureException {
+        String url = UPDATE_USER_NAME;
         JSONObject object = new JSONObject();
         try {
             object.put("nickName", userName);
@@ -200,6 +203,8 @@ public class IdentityServiceClient extends BaseServiceClient {
                 String errorCode = result.getString(ERROR_CODE_KEY);
                 if (errorCode.equals(ERROR_CODE_ACCOUNT_NOT_EXIST)) {
                     throw new AccountNotExistException();
+                } else if (errorCode.equals(ERROR_AUTH_FAILURE) || errorCode.equals(ERROR_UNKNOWN_USER)) {
+                    throw new AuthFailureException();
                 }
                 throw new InternalServerException();
             }
@@ -212,19 +217,23 @@ public class IdentityServiceClient extends BaseServiceClient {
     /**
      * Upload header image.
      * @param imagePath
-     * @param userId
      * @return url of the new header image.
      * @throws ConnectionFailureException
      * @throws InternalServerException
      */
-    public String uploadHeaderIcon(String imagePath, String userId)
-            throws ConnectionFailureException, InternalServerException {
-        String url = String.format(UPDATE_HEADER_URL, userId);
+    public String uploadHeaderIcon(String imagePath)
+            throws ConnectionFailureException, InternalServerException, AuthFailureException {
+        String url = UPDATE_HEADER_URL;
         JSONObject result = uploadImage(url, imagePath, aaaHeaders);
         try {
             if (result.has(ERROR_CODE_KEY)) {
                 if (result.has(ERROR_MESSAGE_KEY)) {
                     Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
+                }
+
+                String errorCode = result.getString(ERROR_CODE_KEY);
+                if (errorCode.equals(ERROR_AUTH_FAILURE) || errorCode.equals(ERROR_UNKNOWN_USER)) {
+                    throw new AuthFailureException();
                 }
 
                 throw new InternalServerException();
@@ -241,14 +250,14 @@ public class IdentityServiceClient extends BaseServiceClient {
      * Update user password.
      * @param oldPassword
      * @param newPassword
-     * @param userId
      * @throws ConnectionFailureException
      * @throws InternalServerException
      * @throws AccountNotExistException
      */
-    public void updateUserPassword(String oldPassword, String newPassword, String userId)
-            throws ConnectionFailureException, InternalServerException, AccountNotExistException, WrongPasswordException {
-        String url = String.format(UPDATE_USER_PASSWORD, userId);
+    public void updateUserPassword(String oldPassword, String newPassword)
+            throws ConnectionFailureException, InternalServerException,
+            AccountNotExistException, WrongPasswordException, AuthFailureException {
+        String url = UPDATE_USER_PASSWORD;
         JSONObject object = new JSONObject();
         try {
             object.put("oldPassword", oldPassword);
@@ -265,6 +274,8 @@ public class IdentityServiceClient extends BaseServiceClient {
                     throw new AccountNotExistException();
                 } else if (errorCode.equals(ERROR_CODE_WRONG_PASSWORD)) {
                     throw new WrongPasswordException();
+                } else if (errorCode.equals(ERROR_AUTH_FAILURE) || errorCode.equals(ERROR_UNKNOWN_USER)) {
+                    throw new AuthFailureException();
                 }
                 throw new InternalServerException();
             }
@@ -277,15 +288,15 @@ public class IdentityServiceClient extends BaseServiceClient {
     /**
      * Verify email.
      * @param verifyCode
-     * @param userId
      * @throws ConnectionFailureException
      * @throws InternalServerException
      * @throws AccountNotExistException
      * @throws WrongVerifyCodeException
      */
-    public void verifyEmail(String verifyCode, String userId)
-            throws ConnectionFailureException, InternalServerException, AccountNotExistException, WrongVerifyCodeException {
-        String url = String.format(VERIFY_EMAIL_URL, userId);
+    public void verifyEmail(String verifyCode)
+            throws ConnectionFailureException, InternalServerException,
+            AccountNotExistException, WrongVerifyCodeException, AuthFailureException {
+        String url = VERIFY_EMAIL_URL;
         JSONObject object = new JSONObject();
         try {
             object.put("verifyCode", verifyCode);
@@ -301,6 +312,8 @@ public class IdentityServiceClient extends BaseServiceClient {
                     throw new AccountNotExistException();
                 } else if (errorCode.equals(ERROR_CODE_WRONG_VERIFY_CODE)) {
                     throw new WrongVerifyCodeException();
+                } else if (errorCode.equals(ERROR_AUTH_FAILURE) || errorCode.equals(ERROR_UNKNOWN_USER)) {
+                    throw new AuthFailureException();
                 }
                 throw new InternalServerException();
             }

@@ -26,10 +26,11 @@ import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.BaseFragment;
 import im.hch.sleeprecord.activities.main.AddRecordDialogFragment;
-import im.hch.sleeprecord.activities.main.MainActivity;
 import im.hch.sleeprecord.models.SleepRecord;
+import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
+import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 
 public class SleepRecordsFragment extends BaseFragment implements AddRecordDialogFragment.AddRecordDialogListener {
@@ -50,6 +51,7 @@ public class SleepRecordsFragment extends BaseFragment implements AddRecordDialo
     @BindString(R.string.error_failed_to_connect) String failedToConnectError;
     @BindString(R.string.error_internal_server) String internalServerError;
     @BindString(R.string.title_activity_sleep_records) String title;
+    @BindString(R.string.error_auth_failure) String authError;
 
     public static SleepRecordsFragment newInstance() {
         SleepRecordsFragment fragment = new SleepRecordsFragment();
@@ -109,7 +111,7 @@ public class SleepRecordsFragment extends BaseFragment implements AddRecordDialo
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_new_sleep_record) {
-            DialogUtils.showAddRecordDialog(getFragmentManager());
+            DialogUtils.showAddRecordDialog(getFragmentManager(), this);
             return true;
         }
 
@@ -135,12 +137,6 @@ public class SleepRecordsFragment extends BaseFragment implements AddRecordDialo
 
         @Override
         protected Boolean doInBackground(Integer... params) {
-            String userId = sessionManager.getUserId();
-            if (userId == null) {
-                Log.wtf(MainActivity.TAG, "User id is null.");
-                return false;
-            }
-
             int page = params[0];
             //update sleep records
             Calendar to = Calendar.getInstance();
@@ -149,13 +145,15 @@ public class SleepRecordsFragment extends BaseFragment implements AddRecordDialo
             from.add(Calendar.DATE, SHOW_SLEEP_RECORDS_NUM * -1 * (page + 1));
 
             try {
-                sleepRecords = mainActivity.sleepServiceClient.getSleepRecords(userId, from.getTime(), to.getTime());
+                sleepRecords = mainActivity.sleepServiceClient.getSleepRecords(from.getTime(), to.getTime());
                 return true;
             } catch (ConnectionFailureException e) {
                 errorMessage = failedToConnectError;
             } catch (InternalServerException e) {
                 errorMessage = internalServerError;
                 metricHelper.errorMetric(Metrics.GET_SLEEP_RECORDS_ERROR_METRIC, e);
+            } catch (AuthFailureException e) {
+                errorMessage = authError;
             }
 
             return false;
@@ -169,8 +167,12 @@ public class SleepRecordsFragment extends BaseFragment implements AddRecordDialo
                 page += 1;
                 sleepRecordsAdapter.addSleepRecords(sleepRecords);
             } else {
-                Snackbar.make(listView, errorMessage, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if (errorMessage == authError) {
+                    ActivityUtils.navigateToLoginActivity(mainActivity);
+                } else {
+                    Snackbar.make(listView, errorMessage, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
             }
         }
     }

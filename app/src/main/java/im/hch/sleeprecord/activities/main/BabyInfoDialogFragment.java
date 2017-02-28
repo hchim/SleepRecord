@@ -29,8 +29,10 @@ import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
+import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
+import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DateUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.MetricHelper;
@@ -74,6 +76,7 @@ public class BabyInfoDialogFragment extends DialogFragment {
     @BindString(R.string.progress_message_save) String progressMessageSave;
     @BindString(R.string.error_failed_to_connect) String failedToConnectError;
     @BindString(R.string.error_internal_server) String internalServerError;
+    @BindString(R.string.error_auth_failure) String authError;
 
     /**
      * Use this factory method to create a new instance of
@@ -250,17 +253,16 @@ public class BabyInfoDialogFragment extends DialogFragment {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            String userid = sessionManager.getUserId();
-            if (userid != null) {
-                try {
-                    sleepServiceClient.saveBabyInfo(this.babyInfo, userid);
-                    return true;
-                } catch (InternalServerException e) {
-                    errorMessage = internalServerError;
-                    metricHelper.errorMetric(Metrics.SAVE_BABY_INFO_ERROR_METRIC, e);
-                } catch (ConnectionFailureException e) {
-                    errorMessage = failedToConnectError;
-                }
+            try {
+                sleepServiceClient.saveBabyInfo(this.babyInfo);
+                return true;
+            } catch (InternalServerException e) {
+                errorMessage = internalServerError;
+                metricHelper.errorMetric(Metrics.SAVE_BABY_INFO_ERROR_METRIC, e);
+            } catch (ConnectionFailureException e) {
+                errorMessage = failedToConnectError;
+            } catch (AuthFailureException e) {
+                errorMessage = authError;
             }
 
             return false;
@@ -285,10 +287,13 @@ public class BabyInfoDialogFragment extends DialogFragment {
                 }
                 BabyInfoDialogFragment.this.dismiss();
             } else {
-                mBabyNameView.requestFocus();
-                Snackbar.make(girlRadioButton, errorMessage, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
+                if (errorMessage == authError) {
+                    ActivityUtils.navigateToLoginActivity(BabyInfoDialogFragment.this.getActivity());
+                } else {
+                    mBabyNameView.requestFocus();
+                    Snackbar.make(girlRadioButton, errorMessage, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
             }
         }
 

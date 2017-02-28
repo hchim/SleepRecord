@@ -43,7 +43,9 @@ import im.hch.sleeprecord.models.SleepQuality;
 import im.hch.sleeprecord.models.SleepRecord;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.models.UserProfile;
+import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
+import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.ImageUtils;
 import im.hch.sleeprecord.utils.SleepRecordUtils;
@@ -158,7 +160,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_new_sleep_record) {
-            DialogUtils.showAddRecordDialog(getFragmentManager());
+            DialogUtils.showAddRecordDialog(getFragmentManager(), this);
             return true;
         }
 
@@ -262,6 +264,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
         List<SleepRecord> sleepRecords;
         SleepTrainingPlan sleepTrainingPlan;
         boolean reloadHeaderImage = false;
+        boolean authFailure = false;
 
         public static final int BABY_INFO_UPDATED = 30;
         public static final int USER_INFO_UPDATED = 60;
@@ -278,8 +281,11 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
 
             //update baby info
             try {
-                babyInfo = mainActivity.sleepServiceClient.getBabyInfo(userId);
+                babyInfo = mainActivity.sleepServiceClient.getBabyInfo();
                 sharedPreferenceUtil.storeBabyInfo(babyInfo);
+            } catch (AuthFailureException e) {
+                authFailure = true;
+                return false;
             } catch (Exception e) {
                 Log.w(MainActivity.TAG, e);
                 if (e instanceof InternalServerException) {
@@ -289,7 +295,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
             publishProgress(BABY_INFO_UPDATED);
 
             try {
-                userProfile = mainActivity.identityServiceClient.getUser(userId);
+                userProfile = mainActivity.identityServiceClient.getUser();
 
                 String currentHeaderUrl = sharedPreferenceUtil.retrieveHeaderImageUrl();
                 String headerImagePath = sharedPreferenceUtil.retrieveHeaderImage();
@@ -307,6 +313,9 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
                         }
                     }
                 }
+            } catch (AuthFailureException e) {
+                authFailure = true;
+                return false;
             } catch (Exception e) {
                 Log.w(MainActivity.TAG, e);
                 if (e instanceof InternalServerException) {
@@ -316,10 +325,13 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
             publishProgress(USER_INFO_UPDATED);
             //update sleep training plan
             try {
-                sleepTrainingPlan = mainActivity.sleepServiceClient.getSleepTrainingPlan(userId);
+                sleepTrainingPlan = mainActivity.sleepServiceClient.getSleepTrainingPlan();
                 if (sleepTrainingPlan != null) {
                     sharedPreferenceUtil.storeSleepTrainingPlan(sleepTrainingPlan);
                 }
+            } catch (AuthFailureException e) {
+                authFailure = true;
+                return false;
             } catch (Exception e) {
                 Log.w(MainActivity.TAG, e);
                 if (e instanceof InternalServerException) {
@@ -333,8 +345,11 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
             from.add(Calendar.DATE, SHOW_SLEEP_RECORDS_NUM * -1);
 
             try {
-                sleepRecords = mainActivity.sleepServiceClient.getSleepRecords(userId, from.getTime(), to.getTime());
+                sleepRecords = mainActivity.sleepServiceClient.getSleepRecords(from.getTime(), to.getTime());
                 sharedPreferenceUtil.storeSleepRecords(sleepRecords, userId);
+            }  catch (AuthFailureException e) {
+                authFailure = true;
+                return false;
             } catch (Exception e) {
                 Log.w(MainActivity.TAG, e);
                 if (e instanceof InternalServerException) {
@@ -385,6 +400,10 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
 
         @Override
         protected void onPostExecute(Boolean aBoolean) {
+            if (authFailure) {
+                ActivityUtils.navigateToLoginActivity(mainActivity);
+                return;
+            }
             mainActivity.setRemoteDataLoaded(true);
             progressBar.setVisibility(View.GONE);
             metricHelper.stopTimeMetric(Metrics.MAIN_ACTIVITY_LOADING_TIME_METRIC);
@@ -398,6 +417,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
 
     private class LoadSleepRecordTask extends AsyncTask<Void, Integer, Boolean> {
         List<SleepRecord> sleepRecords;
+        boolean authFailure = false;
 
         @Override
         protected Boolean doInBackground(Void... params) {
@@ -413,8 +433,11 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
             from.add(Calendar.DATE, SHOW_SLEEP_RECORDS_NUM * -1);
 
             try {
-                sleepRecords = mainActivity.sleepServiceClient.getSleepRecords(userId, from.getTime(), to.getTime());
+                sleepRecords = mainActivity.sleepServiceClient.getSleepRecords(from.getTime(), to.getTime());
                 sharedPreferenceUtil.storeSleepRecords(sleepRecords, userId);
+            } catch (AuthFailureException e) {
+                authFailure = true;
+                return false;
             } catch (Exception e) {
                 Log.w(MainActivity.TAG, e);
                 if (e instanceof InternalServerException) {
@@ -429,6 +452,8 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
         protected void onPostExecute(Boolean aBoolean) {
             if (aBoolean) {
                 sleepRecordsAdapter.updateSleepRecords(sleepRecords);
+            } else if (authFailure) {
+                ActivityUtils.navigateToLoginActivity(mainActivity);
             }
         }
     }
