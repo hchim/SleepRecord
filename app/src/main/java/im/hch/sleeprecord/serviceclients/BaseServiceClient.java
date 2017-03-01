@@ -1,5 +1,6 @@
 package im.hch.sleeprecord.serviceclients;
 
+import android.util.Base64;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -7,10 +8,14 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
+import im.hch.mapikey.messagesigner.MessageSigner;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
+import im.hch.sleeprecord.utils.DateUtils;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -31,11 +36,15 @@ public class BaseServiceClient {
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     public static final String ACCESS_TOKEN = "x-auth-token";
+    public static final String TIME_LABEL = "x-auth-time";
+    public static final String REQUEST_DIGEST = "x-auth-digest";
 
     protected OkHttpClient httpClient;
+    private MessageSigner messageSigner;
 
     public BaseServiceClient() {
         httpClient = new OkHttpClient();
+        messageSigner = MessageSigner.getInstance();
     }
 
     /**
@@ -78,7 +87,13 @@ public class BaseServiceClient {
         Request.Builder builder = new Request.Builder()
                 .url(url)
                 .delete();
-        addHeaders(builder, headers);
+        headers = addHeaders(builder, headers);
+        //sign request
+        String signature = messageSigner.generateSignature("post", url, null, headers);
+        if (signature == null) {
+            Log.wtf(TAG, "Failed to sign message");
+        }
+        builder.header(REQUEST_DIGEST, signature);
         return sendRequest(builder.build());
     }
 
@@ -107,7 +122,13 @@ public class BaseServiceClient {
         Request.Builder builder = new Request.Builder()
                 .url(url)
                 .get();
-        addHeaders(builder, headers);
+        headers = addHeaders(builder, headers);
+        //sign request
+        String signature = messageSigner.generateSignature("get", url, null, headers);
+        if (signature == null) {
+            Log.wtf(TAG, "Failed to sign message");
+        }
+        builder.header(REQUEST_DIGEST, signature);
         return sendRequest(builder.build());
     }
 
@@ -122,11 +143,18 @@ public class BaseServiceClient {
      */
     public JSONObject post(String url, JSONObject object, Map<String, String> headers)
             throws InternalServerException, ConnectionFailureException {
-        RequestBody body = RequestBody.create(JSON, object.toString());
+        String bodyStr = encodingBody(object);
+        RequestBody body = RequestBody.create(JSON, bodyStr);
         Request.Builder builder = new Request.Builder()
                 .url(url)
                 .post(body);
-        addHeaders(builder, headers);
+        headers = addHeaders(builder, headers);
+        //sign request
+        String signature = messageSigner.generateSignature("post", url, bodyStr, headers);
+        if (signature == null) {
+            Log.wtf(TAG, "Failed to sign message");
+        }
+        builder.header(REQUEST_DIGEST, signature);
         return sendRequest(builder.build());
     }
 
@@ -154,11 +182,18 @@ public class BaseServiceClient {
      */
     public JSONObject put(String url, JSONObject object, Map<String, String> headers)
             throws InternalServerException, ConnectionFailureException {
-        RequestBody body = RequestBody.create(JSON, object.toString());
+        String objectStr = encodingBody(object);
+        RequestBody body = RequestBody.create(JSON, objectStr);
         Request.Builder builder = new Request.Builder()
                 .url(url)
                 .put(body);
-        addHeaders(builder, headers);
+        headers = addHeaders(builder, headers);
+        //sign request
+        String signature = messageSigner.generateSignature("put", url, objectStr, headers);
+        if (signature == null) {
+            Log.wtf(TAG, "Failed to sign message");
+        }
+        builder.header(REQUEST_DIGEST, signature);
         return sendRequest(builder.build());
     }
 
@@ -194,7 +229,14 @@ public class BaseServiceClient {
         Request.Builder builder = new Request.Builder()
                 .url(url)
                 .post(requestBody);
-        addHeaders(builder, headers);
+        headers = addHeaders(builder, headers);
+        //sign request
+        String signature = messageSigner.generateSignature("post", url, null, headers);
+        if (signature == null) {
+            Log.wtf(TAG, "Failed to sign message");
+        }
+        builder.header(REQUEST_DIGEST, signature);
+
         return sendRequest(builder.build());
     }
 
@@ -203,13 +245,38 @@ public class BaseServiceClient {
      * @param builder
      * @param headers
      */
-    private void addHeaders(Request.Builder builder, Map<String, String> headers) {
+    private Map<String, String> addHeaders(Request.Builder builder, Map<String, String> headers) {
         if (headers == null)  {
-            return;
+            headers = new HashMap<>();
         }
+        headers.put(TIME_LABEL, DateUtils.dateToStr(new Date(System.currentTimeMillis()), DATE_FORMAT));
 
         for (String key: headers.keySet()) {
             builder.header(key, headers.get(key));
         }
+
+        return headers;
+    }
+
+    /**
+     * Encoding the request body.
+     * @param object
+     * @return
+     */
+    private String encodingBody(JSONObject object) {
+        if (object == null) {
+            return null;
+        }
+
+        JSONObject encodedBody = new JSONObject();
+        String payload = Base64.encodeToString(object.toString().getBytes(), Base64.DEFAULT);
+        //TODO encrypt payload
+        try {
+            encodedBody.put("payload", payload);
+        } catch (JSONException e) {
+            Log.e(TAG, e.getMessage(), e);
+        }
+
+        return encodedBody.toString();
     }
 }

@@ -3,6 +3,14 @@ apply plugin: 'com.jakewharton.butterknife'
 apply plugin: 'com.google.gms.google-services'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'sleeprecord'
+            keyPassword 'HCH_im229'
+            storeFile file('/Users/huiche/Documents/workspace/SleepRecord/app/documents/KeyStore-prod.jks')
+            storePassword 'HCH_im229'
+        }
+    }
     compileSdkVersion 24
     buildToolsVersion "24.0.3"
     defaultConfig {
