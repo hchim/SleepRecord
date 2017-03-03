@@ -1,7 +1,7 @@
 package im.hch.sleeprecord.serviceclients;
 
-import android.util.Base64;
 import android.util.Log;
+import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import im.hch.mapikey.messagesigner.MessageSigner;
+import im.hch.sleeprecord.Constants;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.DateUtils;
@@ -35,9 +36,11 @@ public class BaseServiceClient {
     public static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-    public static final String ACCESS_TOKEN = "x-auth-token";
-    public static final String TIME_LABEL = "x-auth-time";
-    public static final String REQUEST_DIGEST = "x-auth-digest";
+    public static final String REQUEST_HEADER_ACCESS_TOKEN = "x-auth-token";
+    public static final String REQUEST_HEADER_TIME_LABEL = "x-auth-time";
+    public static final String REQUEST_HEADER_DIGEST = "x-auth-digest";
+    public static final String REQUEST_HEADER_APP = "x-auth-app";
+    public static final String REQUEST_HEADER_APP_VERSION = "x-auth-version";
 
     protected OkHttpClient httpClient;
     private MessageSigner messageSigner;
@@ -60,6 +63,10 @@ public class BaseServiceClient {
             Response response = httpClient.newCall(request).execute();
             String resBody = response.body().string();
             JSONObject jsonObj = new JSONObject(resBody);
+            if (jsonObj.has("payload")) {
+                String decodedBody = messageSigner.decodeMessage(jsonObj.getString("payload"));
+                jsonObj = new JSONObject(decodedBody);
+            }
             return jsonObj;
         } catch (IOException e) {
             Log.e(TAG, "Failed to submit the post request.", e);
@@ -93,7 +100,7 @@ public class BaseServiceClient {
         if (signature == null) {
             Log.wtf(TAG, "Failed to sign message");
         }
-        builder.header(REQUEST_DIGEST, signature);
+        builder.header(REQUEST_HEADER_DIGEST, signature);
         return sendRequest(builder.build());
     }
 
@@ -128,7 +135,7 @@ public class BaseServiceClient {
         if (signature == null) {
             Log.wtf(TAG, "Failed to sign message");
         }
-        builder.header(REQUEST_DIGEST, signature);
+        builder.header(REQUEST_HEADER_DIGEST, signature);
         return sendRequest(builder.build());
     }
 
@@ -143,18 +150,18 @@ public class BaseServiceClient {
      */
     public JSONObject post(String url, JSONObject object, Map<String, String> headers)
             throws InternalServerException, ConnectionFailureException {
-        String bodyStr = encodingBody(object);
-        RequestBody body = RequestBody.create(JSON, bodyStr);
+        Pair<String, String> pair = encodingBody(object);
+        RequestBody body = RequestBody.create(JSON, pair.first);
         Request.Builder builder = new Request.Builder()
                 .url(url)
                 .post(body);
         headers = addHeaders(builder, headers);
         //sign request
-        String signature = messageSigner.generateSignature("post", url, bodyStr, headers);
+        String signature = messageSigner.generateSignature("post", url, pair.second, headers);
         if (signature == null) {
             Log.wtf(TAG, "Failed to sign message");
         }
-        builder.header(REQUEST_DIGEST, signature);
+        builder.header(REQUEST_HEADER_DIGEST, signature);
         return sendRequest(builder.build());
     }
 
@@ -182,18 +189,18 @@ public class BaseServiceClient {
      */
     public JSONObject put(String url, JSONObject object, Map<String, String> headers)
             throws InternalServerException, ConnectionFailureException {
-        String objectStr = encodingBody(object);
-        RequestBody body = RequestBody.create(JSON, objectStr);
+        Pair<String, String> pair = encodingBody(object);
+        RequestBody body = RequestBody.create(JSON, pair.first);
         Request.Builder builder = new Request.Builder()
                 .url(url)
                 .put(body);
         headers = addHeaders(builder, headers);
         //sign request
-        String signature = messageSigner.generateSignature("put", url, objectStr, headers);
+        String signature = messageSigner.generateSignature("put", url, pair.second, headers);
         if (signature == null) {
             Log.wtf(TAG, "Failed to sign message");
         }
-        builder.header(REQUEST_DIGEST, signature);
+        builder.header(REQUEST_HEADER_DIGEST, signature);
         return sendRequest(builder.build());
     }
 
@@ -235,7 +242,7 @@ public class BaseServiceClient {
         if (signature == null) {
             Log.wtf(TAG, "Failed to sign message");
         }
-        builder.header(REQUEST_DIGEST, signature);
+        builder.header(REQUEST_HEADER_DIGEST, signature);
 
         return sendRequest(builder.build());
     }
@@ -249,7 +256,11 @@ public class BaseServiceClient {
         if (headers == null)  {
             headers = new HashMap<>();
         }
-        headers.put(TIME_LABEL, DateUtils.dateToStr(new Date(System.currentTimeMillis()), DATE_FORMAT));
+
+        headers.put(REQUEST_HEADER_TIME_LABEL,
+                DateUtils.dateToStr(new Date(System.currentTimeMillis()), DATE_FORMAT, "UTC"));
+        headers.put(REQUEST_HEADER_APP, Constants.APP_NAME);
+        headers.put(REQUEST_HEADER_APP_VERSION, Constants.VERSION);
 
         for (String key: headers.keySet()) {
             builder.header(key, headers.get(key));
@@ -263,20 +274,19 @@ public class BaseServiceClient {
      * @param object
      * @return
      */
-    private String encodingBody(JSONObject object) {
+    private Pair<String, String> encodingBody(JSONObject object) {
         if (object == null) {
             return null;
         }
 
         JSONObject encodedBody = new JSONObject();
-        String payload = Base64.encodeToString(object.toString().getBytes(), Base64.DEFAULT);
-        //TODO encrypt payload
+        String payload = messageSigner.encodeMessage(object.toString());
         try {
             encodedBody.put("payload", payload);
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage(), e);
         }
 
-        return encodedBody.toString();
+        return new Pair(encodedBody.toString(), payload);
     }
 }

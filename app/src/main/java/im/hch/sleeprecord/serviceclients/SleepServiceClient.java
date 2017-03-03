@@ -48,7 +48,7 @@ public class SleepServiceClient extends BaseServiceClient {
     }
 
     public void setAccessToken(String accessToken) {
-        aaaHeaders.put(BaseServiceClient.ACCESS_TOKEN, accessToken);
+        aaaHeaders.put(BaseServiceClient.REQUEST_HEADER_ACCESS_TOKEN, accessToken);
 
     }
 

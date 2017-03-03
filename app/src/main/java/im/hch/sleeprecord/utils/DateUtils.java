@@ -25,7 +25,14 @@ public class DateUtils {
     }
 
     public static String dateToStr(Date date, String format) {
+        return dateToStr(date, format, null);
+    }
+
+    public static String dateToStr(Date date, String format, String timezone) {
         DateFormat dateFormat = new SimpleDateFormat(format);
+        if (timezone != null) {
+            dateFormat.setTimeZone(TimeZone.getTimeZone(timezone));
+        }
         return dateFormat.format(date);
     }
 
