@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SleepyAiden</string>
+    <string name="app_name">SleepAiden</string>
     <string name="title_activity_settings">设置</string>
     <string name="widget_title_sleep_records">最近的睡眠记录</string>
     <!-- Strings related to Settings -->
