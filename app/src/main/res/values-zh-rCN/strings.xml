@@ -58,6 +58,7 @@
     <string name="time_between_too_long">输入错误，睡眠时间超过24小时</string>
 
     <!-- Nav Menu -->
+    <string name="nav_menu_home">首页</string>
     <string name="nav_menu_sleep_records">睡眠记录</string>
     <string name="nav_menu_tools">工具</string>
     <string name="nav_menu_sleep_training">睡眠训练</string>

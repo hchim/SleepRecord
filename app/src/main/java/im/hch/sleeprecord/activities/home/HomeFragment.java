@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import butterknife.BindString;
 import butterknife.BindView;
@@ -177,6 +176,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
      * The number of sleep records to show in the sleep records widget.
      */
     public static final int SHOW_SLEEP_RECORDS_NUM = 5;
+    public static final int TREND_SHOW_SLEEP_RECORDS_NUM = 30;
 
     /**
      * Load sleep records from shared preference.
@@ -185,6 +185,8 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
         List<SleepRecord> records = sharedPreferenceUtil.retrieveSleepRecords();
         if (records == null) {
             records = new ArrayList<>();
+        } else {
+            records = records.subList(0, SHOW_SLEEP_RECORDS_NUM);
         }
 
         Calendar to = Calendar.getInstance();
@@ -201,15 +203,24 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
      * Init sleep quality trend view.
      */
     private void loadCachedSleepQualityTrend() {
-        //TODO init sleep quality trend view
-        ArrayList<SleepQuality> sleepQualities = new ArrayList<>();
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, -30);
-        Random random = new Random(System.currentTimeMillis());
-        for (int i = 0; i < 30; i++) {
-            sleepQualities.add(new SleepQuality(calendar.getTime(), 10 - random.nextInt(4)));
-            calendar.add(Calendar.DATE, 1);
+        List<SleepRecord> records = sharedPreferenceUtil.retrieveSleepRecords();
+        if (records == null) {
+            records = new ArrayList<>();
         }
+
+        ArrayList<SleepQuality> sleepQualities = new ArrayList<>();
+        Calendar to = Calendar.getInstance();
+        Calendar from = Calendar.getInstance();
+        from.add(Calendar.DATE, TREND_SHOW_SLEEP_RECORDS_NUM * -1);
+        records = SleepRecordUtils.fillSleepRecords(records, from.getTime(), to.getTime());
+
+        for (int i = records.size() - 1; i >= 0; i--) {
+            SleepRecord record = records.get(i);
+            Log.d(MainActivity.TAG, "quality: " + record.getSleepQuality());
+            sleepQualities.add(
+                    new SleepQuality(record.getDateTime().getTime(), record.getSleepQuality()));
+        }
+
         sleepQualityTrendView.setSleepQualities(sleepQualities);
     }
 
@@ -342,7 +353,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
             //update sleep records
             Calendar to = Calendar.getInstance();
             Calendar from = Calendar.getInstance();
-            from.add(Calendar.DATE, SHOW_SLEEP_RECORDS_NUM * -1);
+            from.add(Calendar.DATE, TREND_SHOW_SLEEP_RECORDS_NUM * -1);
 
             try {
                 sleepRecords = mainActivity.sleepServiceClient.getSleepRecords(from.getTime(), to.getTime());
@@ -387,7 +398,8 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
                     //nothing to do
                     break;
                 case SLEEP_RECORDS_UPDATED:
-                    sleepRecordsAdapter.updateSleepRecords(sleepRecords);
+                    HomeFragment.this.loadCachedSleepRecords();
+                    HomeFragment.this.loadCachedSleepQualityTrend();
                     break;
             }
 
@@ -430,7 +442,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
             //update sleep records
             Calendar to = Calendar.getInstance();
             Calendar from = Calendar.getInstance();
-            from.add(Calendar.DATE, SHOW_SLEEP_RECORDS_NUM * -1);
+            from.add(Calendar.DATE, TREND_SHOW_SLEEP_RECORDS_NUM * -1);
 
             try {
                 sleepRecords = mainActivity.sleepServiceClient.getSleepRecords(from.getTime(), to.getTime());
@@ -451,7 +463,8 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             if (aBoolean) {
-                sleepRecordsAdapter.updateSleepRecords(sleepRecords);
+                HomeFragment.this.loadCachedSleepRecords();
+                HomeFragment.this.loadCachedSleepQualityTrend();
             } else if (authFailure) {
                 ActivityUtils.navigateToLoginActivity(mainActivity);
             }

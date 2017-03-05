@@ -46,7 +46,7 @@ public class SleepQualityTrendView extends View {
     @Setter
     private int mPointColor = Color.BLACK;
     @Setter
-    private float mPadding = 5;
+    private int mPadding = 5;
 
     @Setter
     private List<SleepQuality> sleepQualities = new ArrayList<>();
@@ -91,7 +91,7 @@ public class SleepQualityTrendView extends View {
         mGridLineNumber = a.getInteger(R.styleable.SleepQualityTrendView_GridLineNumber, mGridLineNumber);
         mPointWidth = a.getDimension(R.styleable.SleepQualityTrendView_PointWidth, mPointWidth);
         mPointColor = a.getColor(R.styleable.SleepQualityTrendView_PointColor, mPointColor);
-        mPadding = a.getDimension(R.styleable.SleepQualityTrendView_android_padding, 0);
+        mPadding = (int) a.getDimension(R.styleable.SleepQualityTrendView_android_padding, 0);
 
         a.recycle();
 
@@ -120,18 +120,22 @@ public class SleepQualityTrendView extends View {
         pointPaint.setColor(mPointColor);
     }
 
+    //the height of the bottom line
     private int bottomLineHeight = 0;
+    //the with of the figure area
     private int contentWidth = 0;
+    //the height of the figure area, not including lables
     private int contentHeight = 0;
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-        contentWidth = getWidth() - (int) mPadding;
-        contentHeight = (int) (contentWidth * mHeightPercent);
-        setMinimumHeight(contentHeight + (int) mPadding * 2);
-        bottomLineHeight = (int) (contentHeight * (1 - mMarginBottomPercent));
+        contentWidth = getWidth() - mPadding;
+        int height = (int) (contentWidth * mHeightPercent);
+        setMinimumHeight(height);
+        bottomLineHeight = (int) (height * (1 - mMarginBottomPercent));
+        contentHeight = bottomLineHeight - mPadding;
     }
 
     @Override
@@ -148,7 +152,7 @@ public class SleepQualityTrendView extends View {
      * @param canvas
      */
     private void drawScalesAndLabels(Canvas canvas) {
-        Rect paintArea = new Rect((int) mPadding, (int) mPadding, contentWidth, bottomLineHeight);
+        Rect paintArea = new Rect((int) mPadding, mPadding, contentWidth + mPadding, bottomLineHeight);
         canvas.drawRect(paintArea, scaleLinePaint);
 
         float margin = contentWidth * 1.0f / (sleepQualities.size() + 1);
@@ -212,7 +216,7 @@ public class SleepQualityTrendView extends View {
         for (int i = 0; i < sleepQualities.size(); i++) {
             SleepQuality sq = sleepQualities.get(i);
             float x = (i + 1) * margin + mPadding;
-            float y = (10.0f - sq.getSleepQuality()) / 10.0f * contentHeight + mPadding;
+            float y = (10.0f - (float) sq.getSleepQuality()) / 10.0f * contentHeight + mPadding;
             if (lastx != -1) {
                 Path path = new Path();
                 path.moveTo(lastx, lasty);
