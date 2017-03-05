@@ -12,6 +12,7 @@ import im.hch.sleeprecord.activities.login.ResetPasswordDialogFragment;
 import im.hch.sleeprecord.activities.main.AddRecordDialogFragment;
 import im.hch.sleeprecord.activities.main.BabyInfoDialogFragment;
 import im.hch.sleeprecord.activities.home.VerifyEmailDialogFragment;
+import im.hch.sleeprecord.activities.main.SuggestionDialogFragment;
 import im.hch.sleeprecord.activities.settings.UpdatePasswordDialogFragment;
 import im.hch.sleeprecord.models.BabyInfo;
 
@@ -102,6 +103,17 @@ public class DialogUtils {
      */
     public static ResetPasswordDialogFragment showResetPasswordDialog(FragmentManager fragmentManager) {
         ResetPasswordDialogFragment fragment = ResetPasswordDialogFragment.newInstance();
+        fragment.show(fragmentManager, DIALOG_TAG);
+        return fragment;
+    }
+
+    /**
+     * Show add suggestion dialog.
+     * @param fragmentManager
+     * @return
+     */
+    public static SuggestionDialogFragment showAddSuggestionDialog(FragmentManager fragmentManager) {
+        SuggestionDialogFragment fragment = SuggestionDialogFragment.newInstance();
         fragment.show(fragmentManager, DIALOG_TAG);
         return fragment;
     }

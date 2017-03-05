@@ -181,7 +181,10 @@ public class MainActivity extends AppCompatActivity implements
                     loadFragment(SleepTrainingFragment.newInstance(), null);
                 }
                 break;
-            case R.id.nav_share:
+//            case R.id.nav_share:
+//                break;
+            case R.id.nav_suggestion:
+                DialogUtils.showAddSuggestionDialog(getFragmentManager());
                 break;
             case R.id.nav_settings:
                 loadFragment(SettingsFragment.newInstance(), null);

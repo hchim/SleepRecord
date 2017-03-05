@@ -9,7 +9,6 @@ import im.hch.sleeprecord.Constants;
 import im.hch.sleeprecord.models.AppConfig;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
-import im.hch.sleeprecord.serviceclients.exceptions.InvalidRequestException;
 
 public class AppInfoServiceClient extends BaseServiceClient {
 
@@ -32,7 +31,7 @@ public class AppInfoServiceClient extends BaseServiceClient {
      * @throws InternalServerException
      */
     public void addSuggestion(String userId, String suggestion)
-            throws ConnectionFailureException, InternalServerException, InvalidRequestException {
+            throws ConnectionFailureException, InternalServerException {
         JSONObject object = Constants.getAppJSON();
         try {
             object.put("userId", userId);

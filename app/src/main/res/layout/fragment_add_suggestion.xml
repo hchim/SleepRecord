@@ -1,0 +1,41 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/fragment_bottom_margin"
+    android:paddingLeft="@dimen/fragment_horizontal_margin"
+    android:paddingRight="@dimen/fragment_horizontal_margin"
+    android:paddingTop="@dimen/fragment_top_margin"
+    tools:context="im.hch.sleeprecord.activities.main.MainActivity">
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:ems="10"
+                android:id="@+id/suggestionTextView"
+                android:inputType="textCapSentences|textMultiLine"
+                android:key="suggestion_text"
+                android:lines="5"
+                android:maxLines="5"
+                android:selectAllOnFocus="false"
+                android:persistent="false"
+                android:gravity="top|start" />
+        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
+</FrameLayout>

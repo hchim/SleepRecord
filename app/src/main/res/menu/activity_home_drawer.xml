@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/home_group">
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home_black_24p"
@@ -12,34 +14,38 @@
             android:title="@string/nav_menu_sleep_records" />
     </group>
 
-    <item android:title="@string/nav_menu_tools">
-        <menu>
-            <item
-                android:id="@+id/nav_sleep_training"
-                android:icon="@drawable/ic_sleep_black_24p"
-                android:title="@string/nav_menu_sleep_training" />
-        </menu>
-    </item>
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/tools_group">
+        <item
+            android:id="@+id/nav_sleep_training"
+            android:icon="@drawable/ic_sleep_black_24p"
+            android:title="@string/nav_menu_sleep_training" />
+    </group>
 
-    <item android:title="@string/nav_menu_communicate">
+    <!--item android:title="@string/nav_menu_communicate">
         <menu>
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
                 android:title="@string/nav_menu_share" />
         </menu>
-    </item>
+    </item-->
 
-    <item android:title="@string/nav_menu_settings">
-        <menu>
-            <item
-                android:id="@+id/nav_settings"
-                android:icon="@drawable/ic_settings_black_24p"
-                android:title="@string/nav_menu_settings" />
-            <item
-                android:id="@+id/nav_logout"
-                android:icon="@drawable/ic_logout_black_24p"
-                android:title="@string/nav_logout" />
-        </menu>
-    </item>
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/others_group">
+        <item
+            android:icon="@drawable/ic_suggestion_black_24p"
+            android:id="@+id/nav_suggestion"
+            android:title="@string/pref_title_suggestion" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings_black_24p"
+            android:title="@string/nav_menu_settings" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_logout_black_24p"
+            android:title="@string/nav_logout" />
+    </group>
 </menu>

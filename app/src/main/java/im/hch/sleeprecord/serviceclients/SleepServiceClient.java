@@ -62,7 +62,7 @@ public class SleepServiceClient extends BaseServiceClient {
      */
     public void saveBabyInfo(BabyInfo babyInfo)
             throws InternalServerException, ConnectionFailureException,
-            AuthFailureException, InvalidRequestException {
+            AuthFailureException {
         String url = BABYINFO_URL;
         JSONObject object = new JSONObject();
 

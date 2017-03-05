@@ -16,7 +16,7 @@ public class MetricServiceClient extends BaseServiceClient {
     public static final String ADD_METRIC_URL = EndPoints.METRIC_SERVICE_ENDPOINT + "metrics";
 
     private void addMetric(String tag, MetricType type, int val, String message, String ip)
-            throws ConnectionFailureException, InternalServerException, InvalidRequestException {
+            throws ConnectionFailureException, InternalServerException {
         JSONObject object = Constants.getAppJSON();
         try {
             object.put("tag", tag);

@@ -185,7 +185,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
         List<SleepRecord> records = sharedPreferenceUtil.retrieveSleepRecords();
         if (records == null) {
             records = new ArrayList<>();
-        } else {
+        } else if (records.size() > 5) {
             records = records.subList(0, SHOW_SLEEP_RECORDS_NUM);
         }
 

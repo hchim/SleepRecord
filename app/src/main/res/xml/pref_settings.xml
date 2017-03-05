@@ -5,7 +5,6 @@
         android:key="pref_user_settings">
 
         <EditTextPreference
-            android:icon="@drawable/ic_profile_black_24p"
             android:capitalize="words"
             android:inputType="textCapWords"
             android:key="nickname_text"
@@ -15,7 +14,6 @@
             android:title="@string/pref_title_nickname" />
 
         <Preference
-            android:icon="@drawable/ic_update_password_black_24p"
             android:key="pref_password_settings"
             android:title="@string/pref_title_update_password"
             android:persistent="false" />
@@ -26,31 +24,21 @@
         android:title="@string/pref_title_baby"
         android:key="pref_baby_settings">
         <PreferenceScreen
-            android:icon="@drawable/ic_baby_black_24p"
             android:key="pref_baby_info"
             android:title="@string/pref_title_baby_information"
             android:persistent="false"/>
     </PreferenceCategory>
 
-    <PreferenceCategory>
-        <EditTextPreference
-            android:icon="@drawable/ic_suggestion_black_24p"
-            android:capitalize="sentences"
-            android:inputType="textCapSentences|textMultiLine"
-            android:key="suggestion_text"
-            android:lines="5"
-            android:maxLines="5"
-            android:selectAllOnFocus="false"
-            android:singleLine="false"
-            android:persistent="false"
-            android:gravity="top|left"
-            android:title="@string/pref_title_suggestion" />
+    <PreferenceCategory
+        android:title="@string/pref_title_others">
+        <PreferenceScreen
+            android:key="pref_about"
+            android:title="@string/pref_title_about" />
 
         <PreferenceScreen
-            android:icon="@drawable/ic_info_black_24dp"
-            android:key="pref_about"
-            android:title="@string/pref_title_about"
-            />
+            android:key="pref_version"
+            android:selectable="false"
+            android:layout="@layout/version_pref" />
     </PreferenceCategory>
 
 </PreferenceScreen>
