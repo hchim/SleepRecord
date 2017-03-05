@@ -1,8 +1,10 @@
 package im.hch.sleeprecord.serviceclients.exceptions;
 
-public class WrongVerifyCodeException extends Exception {
+import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
+
+public class WrongVerifyCodeException extends BaseException {
 
     public WrongVerifyCodeException() {
-        super("Wrong verification code.");
+        super(IdentityServiceClient.ERROR_CODE_WRONG_VERIFY_CODE, "Wrong verification code.");
     }
 }

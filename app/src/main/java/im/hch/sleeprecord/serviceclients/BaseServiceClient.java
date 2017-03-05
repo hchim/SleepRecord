@@ -14,8 +14,11 @@ import java.util.Map;
 
 import im.hch.mapikey.messagesigner.MessageSigner;
 import im.hch.sleeprecord.Constants;
+import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
+import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
+import im.hch.sleeprecord.serviceclients.exceptions.InvalidRequestException;
 import im.hch.sleeprecord.utils.DateUtils;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -29,9 +32,12 @@ public class BaseServiceClient {
 
     public static final String ERROR_MESSAGE_KEY = "message";
     public static final String ERROR_CODE_KEY = "errorCode";
-    public static final String ERROR_CODE_INTERNAL_FAILURE = "INTERNAL_FAILURE";
+    public static final String ERROR_INTERNAL_FAILURE = "INTERNAL_FAILURE";
     public static final String ERROR_AUTH_FAILURE = "AUTH_FAILURE";
     public static final String ERROR_UNKNOWN_USER = "UNKNOWN_USER";
+    public static final String ERROR_INVALID_REQUEST = "INVALID_REQUEST";
+    public static final String ERROR_ACCOUNT_NOT_EXIST = "ACCOUNT_NOT_EXIST";
+    public static final String ERROR_CONNECTION_FAILURE = "CONNECTION_FAILURE";
 
     public static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -288,5 +294,58 @@ public class BaseServiceClient {
         }
 
         return new Pair(encodedBody.toString(), payload);
+    }
+
+    /**
+     * Handle errors.
+     * @param result
+     * @param handleUnknownError Handles unknown errors.
+     *
+     * @throws JSONException
+     * @throws InvalidRequestException
+     * @throws InternalServerException
+     */
+    public void handleGeneralErrors(JSONObject result, boolean handleUnknownError)
+            throws JSONException, InvalidRequestException, InternalServerException {
+        if (result.has(ERROR_CODE_KEY)) {
+            if (result.has(ERROR_MESSAGE_KEY)) {
+                Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
+            }
+
+            String errorCode = result.getString(ERROR_CODE_KEY);
+            if (ERROR_INVALID_REQUEST.equals(errorCode)) {
+                throw new InvalidRequestException();
+            } else if (ERROR_INTERNAL_FAILURE.equals(errorCode)) {
+                throw new InternalServerException();
+            }
+
+            if (handleUnknownError) {
+                throw new InternalServerException("Unknown error");
+            }
+        }
+    }
+
+    /**
+     * Handle authentication errors and authorize errors.
+     * @param result
+     * @throws JSONException
+     * @throws AuthFailureException
+     * @throws AccountNotExistException
+     */
+    public void handleAAAErrors(JSONObject result, boolean handleUnknownError)
+            throws JSONException, AuthFailureException, AccountNotExistException,
+            InternalServerException {
+        if (result.has(ERROR_CODE_KEY)) {
+            String errorCode = result.getString(ERROR_CODE_KEY);
+            if (errorCode.equals(ERROR_AUTH_FAILURE) || errorCode.equals(ERROR_UNKNOWN_USER)) {
+                throw new AuthFailureException();
+            } else if (errorCode.equals(ERROR_ACCOUNT_NOT_EXIST)) {
+                throw new AccountNotExistException();
+            }
+
+            if (handleUnknownError) {
+                throw new InternalServerException("Unknown error");
+            }
+        }
     }
 }

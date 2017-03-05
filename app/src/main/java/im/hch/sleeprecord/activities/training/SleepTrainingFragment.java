@@ -27,9 +27,11 @@ import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.BaseFragment;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
+import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
 import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
+import im.hch.sleeprecord.serviceclients.exceptions.TrainingPlanNotExistException;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.views.CountDownTextView;
@@ -285,7 +287,7 @@ public class SleepTrainingFragment extends BaseFragment {
             } catch (InternalServerException e) {
                 errorMessage = internalServerError;
                 metricHelper.errorMetric(Metrics.RESET_TRAINING_PLAN_ERROR_METRIC, e);
-            } catch (AuthFailureException e) {
+            } catch (AuthFailureException | AccountNotExistException e) {
                 errorMessage = authError;
             }
             return false;
@@ -339,6 +341,10 @@ public class SleepTrainingFragment extends BaseFragment {
             } catch (InternalServerException e) {
                 Log.d(TAG, "Internal server error, cannot add training record.");
                 metricHelper.errorMetric(Metrics.ADD_TRAINING_RECORD_ERROR_METRIC, e);
+            } catch (TrainingPlanNotExistException e) {
+                Log.d(TAG, "Training plan does not exist.");
+            } catch (AuthFailureException | AccountNotExistException e) {
+                Log.d(TAG, e.getMessage());
             }
             return null;
         }

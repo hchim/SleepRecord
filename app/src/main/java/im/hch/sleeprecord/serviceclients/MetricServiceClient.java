@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import im.hch.sleeprecord.Constants;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
+import im.hch.sleeprecord.serviceclients.exceptions.InvalidRequestException;
 import im.hch.sleeprecord.utils.MetricHelper.MetricType;
 
 public class MetricServiceClient extends BaseServiceClient {
@@ -15,7 +16,7 @@ public class MetricServiceClient extends BaseServiceClient {
     public static final String ADD_METRIC_URL = EndPoints.METRIC_SERVICE_ENDPOINT + "metrics";
 
     private void addMetric(String tag, MetricType type, int val, String message, String ip)
-            throws ConnectionFailureException, InternalServerException {
+            throws ConnectionFailureException, InternalServerException, InvalidRequestException {
         JSONObject object = Constants.getAppJSON();
         try {
             object.put("tag", tag);
@@ -34,12 +35,7 @@ public class MetricServiceClient extends BaseServiceClient {
             }
 
             JSONObject result = post(ADD_METRIC_URL, object);
-            if (result.has(ERROR_CODE_KEY)) {
-                if (result.has(ERROR_MESSAGE_KEY)) {
-                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
-                }
-                throw new InternalServerException();
-            }
+            handleGeneralErrors(result, true);
         } catch (JSONException ex) {
             Log.e(TAG, "JSON format error");
             throw new InternalServerException();
@@ -55,7 +51,7 @@ public class MetricServiceClient extends BaseServiceClient {
      * @throws InternalServerException
      */
     public void addCountMetric(String tag, int count, String ip)
-            throws ConnectionFailureException, InternalServerException {
+            throws ConnectionFailureException, InternalServerException, InvalidRequestException {
         addMetric(tag, MetricType.COUNT, count, null, ip);
     }
 
@@ -68,7 +64,7 @@ public class MetricServiceClient extends BaseServiceClient {
      * @throws InternalServerException
      */
     public void addTimeMetric(String tag, int time, String ip)
-            throws ConnectionFailureException, InternalServerException {
+            throws ConnectionFailureException, InternalServerException, InvalidRequestException {
         addMetric(tag, MetricType.TIME, time, null, ip);
     }
 
@@ -81,7 +77,7 @@ public class MetricServiceClient extends BaseServiceClient {
      * @throws InternalServerException
      */
     public void addMessageMetric(String tag, String message, String ip)
-            throws ConnectionFailureException, InternalServerException {
+            throws ConnectionFailureException, InternalServerException, InvalidRequestException {
         addMetric(tag, MetricType.MESSAGE, 0, message, ip);
     }
 
@@ -94,7 +90,7 @@ public class MetricServiceClient extends BaseServiceClient {
      * @throws InternalServerException
      */
     public void addErrorMetric(String tag, String error, String ip)
-            throws ConnectionFailureException, InternalServerException {
+            throws ConnectionFailureException, InternalServerException, InvalidRequestException {
         addMetric(tag, MetricType.ERROR, 0, error, ip);
     }
 }

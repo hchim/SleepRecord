@@ -30,6 +30,7 @@ import butterknife.ButterKnife;
 import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
+import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
 import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
@@ -327,7 +328,7 @@ public class AddRecordDialogFragment extends DialogFragment {
                 metricHelper.errorMetric(Metrics.ADD_SLEEP_RECORD_ERROR_METRIC, e);
             } catch (TimeOverlapException e) {
                 errorMessage = sleepRecordOverlapError;
-            } catch (AuthFailureException e) {
+            } catch (AuthFailureException | AccountNotExistException e) {
                 errorMessage = authError;
             }
             return false;

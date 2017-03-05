@@ -1,8 +1,10 @@
 package im.hch.sleeprecord.serviceclients.exceptions;
 
-public class EmailUsedException extends Exception {
+import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
+
+public class EmailUsedException extends BaseException {
 
     public EmailUsedException() {
-        super("Email was already used.");
+        super(IdentityServiceClient.ERROR_CODE_EMAIL_USED, "Email was already used.");
     }
 }

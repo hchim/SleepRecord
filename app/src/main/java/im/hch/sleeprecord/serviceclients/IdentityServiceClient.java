@@ -14,6 +14,7 @@ import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.EmailUsedException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
+import im.hch.sleeprecord.serviceclients.exceptions.InvalidRequestException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongPasswordException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongSecurityCodeException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongVerifyCodeException;
@@ -35,7 +36,6 @@ public class IdentityServiceClient extends BaseServiceClient {
 
     public static final String ERROR_CODE_EMAIL_USED = "EMAIL_USED";
     public static final String ERROR_CODE_WRONG_PASSWORD = "WRONG_PASSWORD";
-    public static final String ERROR_CODE_ACCOUNT_NOT_EXIST = "ACCOUNT_NOT_EXIST";
     public static final String ERROR_CODE_WRONG_VERIFY_CODE = "WRONG_VERIFY_CODE";
     public static final String ERROR_CODE_WRONG_SECURITY_CODE = "WRONG_SECURITY_CODE";
 
@@ -60,24 +60,13 @@ public class IdentityServiceClient extends BaseServiceClient {
      */
     public UserProfile getUser()
             throws AccountNotExistException, InternalServerException,
-            ConnectionFailureException, AuthFailureException {
+            ConnectionFailureException, AuthFailureException, InvalidRequestException {
         String url = USERS_URL;
 
         try {
             JSONObject result = get(url, aaaHeaders);
-            if (result.has(ERROR_CODE_KEY)) {
-                if (result.has(ERROR_MESSAGE_KEY)) {
-                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
-                }
-
-                String errorCode = result.getString(ERROR_CODE_KEY);
-                if (errorCode.equals(ERROR_CODE_ACCOUNT_NOT_EXIST)) {
-                    throw new AccountNotExistException();
-                } else if (errorCode.equals(ERROR_AUTH_FAILURE) || errorCode.equals(ERROR_UNKNOWN_USER)) {
-                    throw new AuthFailureException();
-                }
-                throw new InternalServerException();
-            }
+            handleGeneralErrors(result, false);
+            handleAAAErrors(result, true);
 
             UserProfile userProfile = new UserProfile();
             userProfile.setId(result.getString("userId"));
@@ -100,7 +89,7 @@ public class IdentityServiceClient extends BaseServiceClient {
      * @return
      */
     public UserProfile login(String email, String password)
-            throws AccountNotExistException, WrongPasswordException, InternalServerException, ConnectionFailureException {
+            throws AccountNotExistException, WrongPasswordException, InternalServerException, ConnectionFailureException, InvalidRequestException {
         JSONObject object = new JSONObject();
 
         try {
@@ -108,13 +97,11 @@ public class IdentityServiceClient extends BaseServiceClient {
             object.put("password", password);
 
             JSONObject result = post(LOGIN_URL, object);
-            if (result.has(ERROR_CODE_KEY)) {
-                if (result.has(ERROR_MESSAGE_KEY)) {
-                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
-                }
 
+            handleGeneralErrors(result, false);
+            if (result.has(ERROR_CODE_KEY)) {
                 String errorCode = result.getString(ERROR_CODE_KEY);
-                if (errorCode.equals(ERROR_CODE_ACCOUNT_NOT_EXIST)) {
+                if (errorCode.equals(ERROR_ACCOUNT_NOT_EXIST)) {
                     throw new AccountNotExistException();
                 } else if (errorCode.equals(ERROR_CODE_WRONG_PASSWORD)) {
                     throw new WrongPasswordException();
@@ -145,7 +132,7 @@ public class IdentityServiceClient extends BaseServiceClient {
      * @throws InternalServerException
      */
     public UserProfile register(String email, String password, String nickName)
-            throws EmailUsedException, InternalServerException, ConnectionFailureException {
+            throws EmailUsedException, InternalServerException, ConnectionFailureException, InvalidRequestException {
         JSONObject object = new JSONObject();
 
         try {
@@ -154,11 +141,9 @@ public class IdentityServiceClient extends BaseServiceClient {
             object.put("nickName", nickName);
 
             JSONObject result = post(REGISTER_URL, object);
-            if (result.has(ERROR_CODE_KEY)) {
-                if (result.has(ERROR_MESSAGE_KEY)) {
-                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
-                }
 
+            handleGeneralErrors(result, false);
+            if (result.has(ERROR_CODE_KEY)) {
                 String errorCode = result.getString(ERROR_CODE_KEY);
                 if (errorCode.equals(ERROR_CODE_EMAIL_USED)) {
                     throw new EmailUsedException();
@@ -188,26 +173,14 @@ public class IdentityServiceClient extends BaseServiceClient {
      */
     public void updateUserName(String userName)
             throws ConnectionFailureException, InternalServerException,
-            AccountNotExistException, AuthFailureException {
+            AccountNotExistException, AuthFailureException, InvalidRequestException {
         String url = UPDATE_USER_NAME;
         JSONObject object = new JSONObject();
         try {
             object.put("nickName", userName);
             JSONObject result = put(url, object, aaaHeaders);
-
-            if (result.has(ERROR_CODE_KEY)) {
-                if (result.has(ERROR_MESSAGE_KEY)) {
-                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
-                }
-
-                String errorCode = result.getString(ERROR_CODE_KEY);
-                if (errorCode.equals(ERROR_CODE_ACCOUNT_NOT_EXIST)) {
-                    throw new AccountNotExistException();
-                } else if (errorCode.equals(ERROR_AUTH_FAILURE) || errorCode.equals(ERROR_UNKNOWN_USER)) {
-                    throw new AuthFailureException();
-                }
-                throw new InternalServerException();
-            }
+            handleGeneralErrors(result, false);
+            handleAAAErrors(result, true);
         } catch (JSONException ex) {
             Log.e(TAG, "JSON format error");
             throw new InternalServerException();
@@ -222,22 +195,14 @@ public class IdentityServiceClient extends BaseServiceClient {
      * @throws InternalServerException
      */
     public String uploadHeaderIcon(String imagePath)
-            throws ConnectionFailureException, InternalServerException, AuthFailureException {
+            throws ConnectionFailureException, InternalServerException,
+            AuthFailureException, InvalidRequestException, AccountNotExistException {
         String url = UPDATE_HEADER_URL;
-        JSONObject result = uploadImage(url, imagePath, aaaHeaders);
+
         try {
-            if (result.has(ERROR_CODE_KEY)) {
-                if (result.has(ERROR_MESSAGE_KEY)) {
-                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
-                }
-
-                String errorCode = result.getString(ERROR_CODE_KEY);
-                if (errorCode.equals(ERROR_AUTH_FAILURE) || errorCode.equals(ERROR_UNKNOWN_USER)) {
-                    throw new AuthFailureException();
-                }
-
-                throw new InternalServerException();
-            }
+            JSONObject result = uploadImage(url, imagePath, aaaHeaders);
+            handleGeneralErrors(result, false);
+            handleAAAErrors(result, true);
 
             return result.getString("headerImageUrl");
         } catch (JSONException ex) {
@@ -256,7 +221,8 @@ public class IdentityServiceClient extends BaseServiceClient {
      */
     public void updateUserPassword(String oldPassword, String newPassword)
             throws ConnectionFailureException, InternalServerException,
-            AccountNotExistException, WrongPasswordException, AuthFailureException {
+            AccountNotExistException, WrongPasswordException,
+            AuthFailureException, InvalidRequestException {
         String url = UPDATE_USER_PASSWORD;
         JSONObject object = new JSONObject();
         try {
@@ -264,18 +230,12 @@ public class IdentityServiceClient extends BaseServiceClient {
             object.put("newPassword", newPassword);
             JSONObject result = put(url, object, aaaHeaders);
 
+            handleGeneralErrors(result, false);
+            handleAAAErrors(result, false);
             if (result.has(ERROR_CODE_KEY)) {
-                if (result.has(ERROR_MESSAGE_KEY)) {
-                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
-                }
-
                 String errorCode = result.getString(ERROR_CODE_KEY);
-                if (errorCode.equals(ERROR_CODE_ACCOUNT_NOT_EXIST)) {
-                    throw new AccountNotExistException();
-                } else if (errorCode.equals(ERROR_CODE_WRONG_PASSWORD)) {
+                if (errorCode.equals(ERROR_CODE_WRONG_PASSWORD)) {
                     throw new WrongPasswordException();
-                } else if (errorCode.equals(ERROR_AUTH_FAILURE) || errorCode.equals(ERROR_UNKNOWN_USER)) {
-                    throw new AuthFailureException();
                 }
                 throw new InternalServerException();
             }
@@ -295,25 +255,20 @@ public class IdentityServiceClient extends BaseServiceClient {
      */
     public void verifyEmail(String verifyCode)
             throws ConnectionFailureException, InternalServerException,
-            AccountNotExistException, WrongVerifyCodeException, AuthFailureException {
+            AccountNotExistException, WrongVerifyCodeException,
+            AuthFailureException, InvalidRequestException {
         String url = VERIFY_EMAIL_URL;
         JSONObject object = new JSONObject();
         try {
             object.put("verifyCode", verifyCode);
             JSONObject result = post(url, object);
 
+            handleGeneralErrors(result, false);
+            handleAAAErrors(result, false);
             if (result.has(ERROR_CODE_KEY)) {
-                if (result.has(ERROR_MESSAGE_KEY)) {
-                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
-                }
-
                 String errorCode = result.getString(ERROR_CODE_KEY);
-                if (errorCode.equals(ERROR_CODE_ACCOUNT_NOT_EXIST)) {
-                    throw new AccountNotExistException();
-                } else if (errorCode.equals(ERROR_CODE_WRONG_VERIFY_CODE)) {
+                if (errorCode.equals(ERROR_CODE_WRONG_VERIFY_CODE)) {
                     throw new WrongVerifyCodeException();
-                } else if (errorCode.equals(ERROR_AUTH_FAILURE) || errorCode.equals(ERROR_UNKNOWN_USER)) {
-                    throw new AuthFailureException();
                 }
                 throw new InternalServerException();
             }
@@ -331,19 +286,17 @@ public class IdentityServiceClient extends BaseServiceClient {
      * @throws AccountNotExistException
      */
     public void sendPasswordResetEmail(String email)
-            throws ConnectionFailureException, InternalServerException, AccountNotExistException {
+            throws ConnectionFailureException, InternalServerException,
+            AccountNotExistException, InvalidRequestException {
         JSONObject object = new JSONObject();
         try {
             object.put("email", email);
             JSONObject result = post(SEND_PASSWORD_RESET_EMAIL_URL, object);
 
+            handleGeneralErrors(result, false);
             if (result.has(ERROR_CODE_KEY)) {
-                if (result.has(ERROR_MESSAGE_KEY)) {
-                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
-                }
-
                 String errorCode = result.getString(ERROR_CODE_KEY);
-                if (errorCode.equals(ERROR_CODE_ACCOUNT_NOT_EXIST)) {
+                if (errorCode.equals(ERROR_ACCOUNT_NOT_EXIST)) {
                     throw new AccountNotExistException();
                 }
                 throw new InternalServerException();
@@ -365,7 +318,7 @@ public class IdentityServiceClient extends BaseServiceClient {
      * @throws WrongSecurityCodeException
      */
     public void resetPassword(String email, String securityCode, String password)
-            throws ConnectionFailureException, InternalServerException, AccountNotExistException, WrongSecurityCodeException {
+            throws ConnectionFailureException, InternalServerException, AccountNotExistException, WrongSecurityCodeException, InvalidRequestException {
         JSONObject object = new JSONObject();
         try {
             object.put("email", email);
@@ -373,14 +326,11 @@ public class IdentityServiceClient extends BaseServiceClient {
             object.put("newPassword", password);
 
             JSONObject result = post(PASSWORD_RESET_URL, object);
+            handleGeneralErrors(result, false);
 
             if (result.has(ERROR_CODE_KEY)) {
-                if (result.has(ERROR_MESSAGE_KEY)) {
-                    Log.e(TAG, result.getString(ERROR_MESSAGE_KEY));
-                }
-
                 String errorCode = result.getString(ERROR_CODE_KEY);
-                if (errorCode.equals(ERROR_CODE_ACCOUNT_NOT_EXIST)) {
+                if (errorCode.equals(ERROR_ACCOUNT_NOT_EXIST)) {
                     throw new AccountNotExistException();
                 } else if (errorCode.equals(ERROR_CODE_WRONG_SECURITY_CODE)) {
                     throw new WrongSecurityCodeException();

@@ -1,8 +1,10 @@
 package im.hch.sleeprecord.serviceclients.exceptions;
 
-public class TimeOverlapException extends Exception {
+import im.hch.sleeprecord.serviceclients.SleepServiceClient;
+
+public class TimeOverlapException extends BaseException {
 
     public TimeOverlapException() {
-        super("Sleep record overlaps with existing records.");
+        super(SleepServiceClient.ERROR_CODE_TIME_OVERLAP, "Sleep record overlaps with existing records.");
     }
 }

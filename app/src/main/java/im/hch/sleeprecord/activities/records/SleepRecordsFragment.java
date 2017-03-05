@@ -27,6 +27,7 @@ import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.BaseFragment;
 import im.hch.sleeprecord.activities.main.AddRecordDialogFragment;
 import im.hch.sleeprecord.models.SleepRecord;
+import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
 import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
@@ -152,7 +153,7 @@ public class SleepRecordsFragment extends BaseFragment implements AddRecordDialo
             } catch (InternalServerException e) {
                 errorMessage = internalServerError;
                 metricHelper.errorMetric(Metrics.GET_SLEEP_RECORDS_ERROR_METRIC, e);
-            } catch (AuthFailureException e) {
+            } catch (AuthFailureException | AccountNotExistException e) {
                 errorMessage = authError;
             }
 

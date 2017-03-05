@@ -1,8 +1,10 @@
 package im.hch.sleeprecord.serviceclients.exceptions;
 
-public class AccountNotExistException extends Exception {
+import im.hch.sleeprecord.serviceclients.BaseServiceClient;
+
+public class AccountNotExistException extends BaseException {
 
     public AccountNotExistException() {
-        super("Account does not exist.");
+        super(BaseServiceClient.ERROR_CONNECTION_FAILURE, "Account does not exist.");
     }
 }

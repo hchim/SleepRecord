@@ -1,8 +1,10 @@
 package im.hch.sleeprecord.serviceclients.exceptions;
 
-public class ConnectionFailureException extends Exception {
+import im.hch.sleeprecord.serviceclients.BaseServiceClient;
+
+public class ConnectionFailureException extends BaseException {
 
     public ConnectionFailureException() {
-        super("Failed to connect to the server.");
+        super(BaseServiceClient.ERROR_ACCOUNT_NOT_EXIST, "Failed to connect to the server.");
     }
 }

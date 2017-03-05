@@ -1,8 +1,10 @@
 package im.hch.sleeprecord.serviceclients.exceptions;
 
-public class WrongPasswordException extends Exception {
+import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
+
+public class WrongPasswordException extends BaseException {
 
     public WrongPasswordException() {
-        super("Wrong password.");
+        super(IdentityServiceClient.ERROR_CODE_WRONG_PASSWORD, "Wrong password.");
     }
 }

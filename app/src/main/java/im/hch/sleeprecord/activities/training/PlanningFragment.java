@@ -21,6 +21,7 @@ import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.BaseFragment;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
+import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
 import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
@@ -227,7 +228,7 @@ public class PlanningFragment extends BaseFragment {
                 errorMessage = failedToConnectError;
             } catch (InternalServerException e) {
                 errorMessage = internalServerError;
-            } catch (AuthFailureException e) {
+            } catch (AuthFailureException | AccountNotExistException e) {
                 errorMessage = authError;
             }
 
