@@ -10,5 +10,6 @@
         <attr name="PointColor" format="color" />
         <attr name="MarginBottomPercent" format="float" />
         <attr name="HeightPercent" format="float" />
+        <attr name="android:padding" />
     </declare-styleable>
 </resources>

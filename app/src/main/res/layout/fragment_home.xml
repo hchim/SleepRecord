@@ -83,6 +83,7 @@
                     android:id="@+id/sleepQualityTrend"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:padding="@dimen/quality_trend_view_padding"
                     app:ScaleLineColor="@color/primary_dark"
                     app:GridLineColor="@color/divider"
                     app:LabelColor="@color/accent"
