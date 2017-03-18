@@ -2,11 +2,9 @@ package im.hch.sleeprecord.activities.training;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
@@ -58,6 +56,8 @@ public class PlanningFragment extends BaseFragment {
     @BindView(R.id.timeLabel33) TextView timeLabel33;
     @BindView(R.id.timeLabel34) TextView timeLabel34;
 
+    @BindView(R.id.fab) FloatingActionButton floatingActionButton;
+
     @BindString(R.string.minute_short) String minuteShort;
     @BindString(R.string.error_failed_to_connect) String failedToConnectError;
     @BindString(R.string.error_internal_server) String internalServerError;
@@ -104,27 +104,13 @@ public class PlanningFragment extends BaseFragment {
             timeLabels[i].setText(seekBars[i].getProgress() + minuteShort);
         }
 
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attemptStartTraining();
+            }
+        });
         return view;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.sleep_training_planning, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_training_start) {
-            attemptStartTraining();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void setOnSeekBarChangeListener(SeekBar seekBar, final TextView timeLabel) {

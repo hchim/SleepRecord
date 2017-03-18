@@ -78,7 +78,7 @@
 
     <style name="titleText">
         <item name="android:textColor">@color/primary_text</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="subtitleText">
@@ -90,8 +90,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/primary_text</item>
-        <item name="android:textSize">20sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:textAllCaps">true</item>
     </style>
 
@@ -107,10 +106,11 @@
     <style name="planning_title_label">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingStart">@dimen/planning_item_title_label_padding_left</item>
         <item name="android:layout_weight">3</item>
     </style>
 
-    <style name="planning_seekbar" parent="@style/Widget.AppCompat.SeekBar.Discrete">
+    <style name="planning_seekbar" parent="@style/Widget.AppCompat.SeekBar">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">5</item>

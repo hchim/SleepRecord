@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/checkBoxView"
-            android:layout_marginLeft="@dimen/checklist_checkbox_margin_left"
+            android:layout_marginStart="@dimen/checklist_checkbox_margin_left"
             android:paddingStart="@dimen/checklist_checkbox_padding_left"
             android:paddingEnd="@dimen/checklist_checkbox_padding_right"
             android:paddingTop="@dimen/checklist_checkbox_padding_top"
