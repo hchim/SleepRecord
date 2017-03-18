@@ -48,4 +48,11 @@
             android:icon="@drawable/ic_logout_black_24p"
             android:title="@string/nav_logout" />
     </group>
+
+    <group
+        android:id="@+id/link_groups">
+        <item
+            android:id="@+id/nav_about"
+            android:title="@string/nav_about" />
+    </group>
 </menu>

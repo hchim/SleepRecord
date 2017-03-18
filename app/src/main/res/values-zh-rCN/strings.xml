@@ -21,7 +21,6 @@
     <!-- Others-->
     <string name="pref_title_suggestion">用户反馈</string>
     <string name="suggestion_thanks_message">感谢您的宝贵意见!</string>
-    <string name="pref_title_about">关于</string>
 
     <string name="navigation_drawer_open">打开导航栏</string>
     <string name="navigation_drawer_close">关闭导航栏</string>
@@ -149,4 +148,41 @@
 
     <!-- Admob IDs-->
     <string name="admob_id_main_activity">ca-app-pub-4044463930410370/2133723199</string>
+    <string name="alert_btn_OK">确定</string>
+    <string name="alert_btn_cancel">取消</string>
+    <string name="alert_message_reset_training_plan">确定重置睡眠训练计划吗？此操作会清除以前的睡眠训练信息。</string>
+    <string name="app_version">v1.0.0</string>
+    <string name="cried_out_times_label">哭泣时长</string>
+    <string name="day_x">\"第%s天\"</string>
+    <string name="default_count_time">00:00</string>
+    <string name="error_auth_failure">请登录.</string>
+    <string name="first_week">第一周</string>
+    <string name="following_week">后面几周</string>
+    <string name="menu_history">训练历史</string>
+    <string name="menu_next">下一个</string>
+    <string name="menu_report">训练报告</string>
+    <string name="menu_reset">重置</string>
+    <string name="menu_reset_plan">重置训练计划</string>
+    <string name="menu_start">开始</string>
+    <string name="minute_short">\"分\"</string>
+    <string name="nav_about">关于SleepAiden</string>
+    <string name="pref_title_appinfo">应用信息</string>
+    <string name="training_result_title">睡眠训练结果</string>
+    <string name="training_soothe_desc">现在进入房间安抚宝宝 (不要抱起来)。</string>
+    <string name="training_finish_desc">宝宝睡着了。</string>
+    <string name="training_crying_desc">宝宝开始哭了或者还在哭。</string>
+    <string name="training_begin_desc">把宝宝放进婴儿床里，然后离开房间。</string>
+    <string name="total_time_elapsed_label">完全花费时间</string>
+    <string name="soothe_time">安抚时间</string>
+    <string name="soothe_times_label">安抚次数</string>
+    <string name="time_elapsed">花费时间</string>
+    <string name="sleep_training_title">睡眠训练</string>
+    <string name="sleep_training_plan_title">睡眠训练计划</string>
+    <string name="sleep_training_checklist_title">开始睡眠训练清单</string>
+    <string name="second_week">第二周</string>
+    <string name="second_cried_out">第二次哭泣时长</string>
+    <string name="pref_version_title">SleepAiden版本</string>
+    <string name="pref_version_summary">版本：v1.0.0</string>
+    <string name="first_cried_out">第一次哭泣时长</string>
+    <string name="following_cried_out">后面的哭泣时长</string>
 </resources>

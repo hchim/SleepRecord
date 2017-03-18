@@ -30,15 +30,13 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/pref_title_others">
-        <PreferenceScreen
-            android:key="pref_about"
-            android:title="@string/pref_title_about" />
+        android:title="@string/pref_title_appinfo">
 
         <PreferenceScreen
             android:key="pref_version"
-            android:selectable="false"
-            android:layout="@layout/version_pref" />
+            android:title="@string/pref_version_title"
+            android:summary="@string/pref_version_summary"
+            android:selectable="false" />
     </PreferenceCategory>
 
 </PreferenceScreen>

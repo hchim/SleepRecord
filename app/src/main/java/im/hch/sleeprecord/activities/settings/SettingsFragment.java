@@ -19,7 +19,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     public static final String PREFERENCE_KEY_NICKNAME = "nickname_text";
     public static final String PREFERENCE_KEY_PASSWORD = "pref_password_settings";
     public static final String PREFERENCE_KEY_BABY_INFO = "pref_baby_info";
-    public static final String PREFERENCE_KEY_ABOUT = "pref_about";
     public static final String PREFERENCE_KEY_VERSION = "pref_version";
 
     private SharedPreferenceUtil sharedPreferenceUtil;
@@ -63,14 +62,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             public boolean onPreferenceClick(Preference preference) {
                 BabyInfo babyInfo = sharedPreferenceUtil.retrieveBabyInfo();
                 DialogUtils.showEditBabyInfoDialog(SettingsFragment.this.getFragmentManager(), babyInfo);
-                return true;
-            }
-        });
-
-        findPreference(PREFERENCE_KEY_ABOUT).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                //TODO show about
                 return true;
             }
         });
