@@ -78,7 +78,7 @@
 
     <style name="titleText">
         <item name="android:textColor">@color/primary_text</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">20sp</item>
     </style>
 
     <style name="subtitleText">

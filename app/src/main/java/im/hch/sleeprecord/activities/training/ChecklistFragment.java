@@ -1,16 +1,14 @@
 package im.hch.sleeprecord.activities.training;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import butterknife.BindArray;
@@ -24,10 +22,11 @@ public class ChecklistFragment extends BaseFragment {
 
     private ChecklistAdapter checklistAdapter;
     private LayoutInflater layoutInflater;
-    private MenuItem menuItem;
+    private LinearLayoutManager layoutManager;
     private int checkedNumber = 0;
 
-    @BindView(R.id.checklist) ListView checklistView;
+    @BindView(R.id.checklist) RecyclerView checklistView;
+    @BindView(R.id.fab) FloatingActionButton floatingActionButton;
 
     @BindString(R.string.sleep_training_checklist_title) String title;
     @BindArray(R.array.sleep_training_checklist) String[] checklist;
@@ -48,77 +47,52 @@ public class ChecklistFragment extends BaseFragment {
 
         mainActivity.setTitle(title);
 
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        checklistView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(mainActivity);
+        checklistView.setLayoutManager(layoutManager);
         checklistAdapter = new ChecklistAdapter();
         checklistView.setAdapter(checklistAdapter);
-
+        floatingActionButton.setVisibility(View.GONE);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainActivity.loadFragment(PlanningFragment.newInstance(), null);
+            }
+        });
         return view;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.sleep_training_checklist, menu);
-        menuItem = mainActivity.getToolbar().getMenu().getItem(0);
-        menuItem.setEnabled(false);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_training_next) {
-            mainActivity.loadFragment(PlanningFragment.newInstance(), null);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private class ChecklistAdapter extends BaseAdapter {
+    private class ChecklistAdapter extends RecyclerView.Adapter<ChecklistViewHolder> {
 
         @Override
-        public int getCount() {
+        public int getItemCount() {
             return checklist.length;
         }
 
         @Override
-        public Object getItem(int position) {
-            return checklist[position];
+        public ChecklistViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View convertView = layoutInflater.inflate(R.layout.list_item_checklist, parent, false);
+            ChecklistViewHolder viewHolder = new ChecklistViewHolder(convertView);
+            return viewHolder;
         }
 
         @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ChecklistViewHolder viewHolder;
-
-            if (convertView == null) {
-                convertView = layoutInflater.inflate(R.layout.list_item_checklist, parent, false);
-                viewHolder = new ChecklistViewHolder(convertView);
-                convertView.setTag(viewHolder);
-            } else {
-                viewHolder = (ChecklistViewHolder) convertView.getTag();
-            }
-
+        public void onBindViewHolder(ChecklistViewHolder viewHolder, int position) {
             viewHolder.update(checklist[position], checklistDesc[position]);
-            return convertView;
         }
     }
 
-    class ChecklistViewHolder {
+    class ChecklistViewHolder extends RecyclerView.ViewHolder {
         View itemView;
         @BindView(R.id.checkBoxView) CheckBox checkBox;
         @BindView(R.id.titleView) TextView titleView;
         @BindView(R.id.subtitleView) TextView subTitleView;
 
-        ChecklistViewHolder(View itemView) {
+        public ChecklistViewHolder(View itemView) {
+            super(itemView);
+
             this.itemView = itemView;
             ButterKnife.bind(this, itemView);
 
@@ -128,11 +102,11 @@ public class ChecklistFragment extends BaseFragment {
                     if (isChecked) {
                         checkedNumber++;
                         if (checkedNumber == checklist.length) {
-                            menuItem.setEnabled(true);
+                            floatingActionButton.setVisibility(View.VISIBLE);
                         }
                     } else {
                         checkedNumber--;
-                        menuItem.setEnabled(false);
+                        floatingActionButton.setVisibility(View.GONE);
                     }
                 }
             });

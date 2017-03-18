@@ -1,35 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:gravity="center"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="center"
+    android:layout_marginBottom="@dimen/card_margin"
+    card_view:cardCornerRadius="2dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/checkBoxView"
-        android:padding="@dimen/checkbox_padding" />
-
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
+        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="match_parent"
+        <CheckBox
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/titleView"
+            android:id="@+id/checkBoxView"
+            android:layout_marginLeft="@dimen/checklist_checkbox_margin_left"
+            android:paddingStart="@dimen/checklist_checkbox_padding_left"
+            android:paddingEnd="@dimen/checklist_checkbox_padding_right"
+            android:paddingTop="@dimen/checklist_checkbox_padding_top"
+            android:paddingBottom="@dimen/checklist_checkbox_padding_bottom" />
+
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_weight="1"
-            style="@style/titleText" />
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/subtitleView"
-            style="@style/subtitleText"
-            android:layout_weight="1" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/checklist_title_padding_left"
+                android:paddingEnd="@dimen/checklist_title_padding_right"
+                android:paddingTop="@dimen/checklist_title_padding_top"
+                android:paddingBottom="@dimen/checklist_title_padding_bottom"
+                android:text="Title of the card"
+                android:id="@+id/titleView"
+                style="@style/titleText" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/checklist_subtitle_padding_left"
+                android:paddingEnd="@dimen/checklist_subtitle_padding_right"
+                android:paddingTop="@dimen/checklist_subtitle_padding_top"
+                android:paddingBottom="@dimen/checklist_subtitle_padding_bottom"
+                android:text="The subtitle."
+                android:id="@+id/subtitleView"
+                style="@style/subtitleText" />
+        </LinearLayout>
+
     </LinearLayout>
-
-</LinearLayout>
+</android.support.v7.widget.CardView>
