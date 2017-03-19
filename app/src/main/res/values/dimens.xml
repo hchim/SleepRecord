@@ -19,12 +19,9 @@
     <dimen name="card_margin">10dp</dimen>
 
     <!-- Main Activity-->
-    <dimen name="widget_margin_bottom">10dp</dimen>
-    <dimen name="widget_title_margin_bottom">5dp</dimen>
+    <dimen name="widget_padding">10dp</dimen>
     <dimen name="quality_trend_point_width">8dp</dimen>
     <dimen name="label_text_size">12dp</dimen>
-    <dimen name="main_activity_ad_height">80dp</dimen>
-    <dimen name="quality_trend_view_padding">5dp</dimen>
     <!-- Sleep Record ListView -->
     <dimen name="sleep_record_list_divider_height">2px</dimen>
 
@@ -59,7 +56,6 @@
 
     <dimen name="planning_item_margin_top">10dp</dimen>
     <dimen name="planning_item_margin_bottom">5dp</dimen>
-    <dimen name="planning_item_title_label_padding_left">5dp</dimen>
 
     <dimen name="training_elapsed_time_label_padding_right">20dp</dimen>
     <dimen name="training_image_square">200dp</dimen>

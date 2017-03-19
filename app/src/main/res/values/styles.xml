@@ -27,16 +27,17 @@
     <style name="NavBabyName" parent="Base.TextAppearance.AppCompat.Subhead"></style>
 
     <!-- Main Activity Widget -->
-    <style name="MainActivityWidget">
+    <style name="Widget">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">@dimen/widget_margin_bottom</item>
+        <item name="android:padding">@dimen/widget_padding</item>
     </style>
 
     <style name="WidgetTitle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">@dimen/widget_title_margin_bottom</item>
+        <item name="android:paddingTop">@dimen/widget_padding</item>
+        <item name="android:paddingBottom">@dimen/widget_padding</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">true</item>
     </style>
@@ -44,7 +45,7 @@
     <style name="verifyEmailText">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">@dimen/widget_title_margin_bottom</item>
+        <item name="android:padding">@dimen/widget_padding</item>
         <item name="android:textAlignment">center</item>
         <item name="android:textColor">@color/accent</item>
         <item name="android:textSize">18sp</item>
@@ -80,14 +81,6 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="planning_title">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/primary_text</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:textAllCaps">true</item>
-    </style>
-
     <style name="planning_linearlayout_item">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -100,7 +93,6 @@
     <style name="planning_title_label">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingStart">@dimen/planning_item_title_label_padding_left</item>
         <item name="android:layout_weight">3</item>
     </style>
 

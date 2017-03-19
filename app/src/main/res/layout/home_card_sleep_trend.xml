@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="center"
+    android:layout_marginBottom="@dimen/card_margin"
+    card_view:cardCornerRadius="2dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/sleep_trend_widget"
+        android:orientation="vertical"
+        style="@style/Widget">
+
+        <TextView
+            android:text="@string/sleep_trend_widget_title"
+            style="@style/WidgetTitle"/>
+
+        <im.hch.sleeprecord.activities.home.SleepQualityTrendView
+            android:id="@+id/sleepQualityTrend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="1dp"
+            app:ScaleLineColor="@color/primary_dark"
+            app:GridLineColor="@color/divider"
+            app:LabelColor="@color/accent"
+            app:LabelTextSize="@dimen/label_text_size"
+            app:TrendLineColor="@color/accent"
+            app:PointWidth="@dimen/quality_trend_point_width"
+            app:PointColor="@color/secondary_text"
+            app:GridLineNumber="5"
+            app:MarginBottomPercent="0.08"
+            app:HeightPercent="0.55"/>
+    </LinearLayout>
+</android.support.v7.widget.CardView>

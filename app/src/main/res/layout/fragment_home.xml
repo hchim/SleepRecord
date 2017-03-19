@@ -2,7 +2,6 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,6 +14,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/progressBar"
         android:layout_alignParentTop="true"
+        android:padding="@dimen/widget_padding"
         android:visibility="gone"
         android:max="100" />
 
@@ -22,7 +22,7 @@
         android:id="@+id/verify_email_layout"
         android:orientation="vertical"
         android:visibility="gone"
-        style="@style/MainActivityWidget"
+        style="@style/Widget"
         android:layout_below="@id/progressBar">
 
         <TextView
@@ -44,58 +44,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <LinearLayout
-                android:id="@+id/sleep_records_widget"
-                android:orientation="vertical"
-                style="@style/MainActivityWidget">
-
-                <TextView
-                    android:text="@string/widget_title_sleep_records"
-                    style="@style/WidgetTitle"/>
-
-                <ListView
-                    android:id="@+id/list_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scrollbars="none"
-                    tools:ignore="NestedScrolling" />
-            </LinearLayout>
+            <include layout="@layout/home_card_sleep_records" />
 
             <LinearLayout
                 android:id="@+id/adWidget"
                 android:orientation="vertical"
                 android:visibility="gone"
-                style="@style/MainActivityWidget">
+                android:layout_marginBottom="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <!-- Ad view will be dynamically added.-->
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/sleep_trend_widget"
-                android:orientation="vertical"
-                style="@style/MainActivityWidget">
-
-                <TextView
-                    android:text="@string/sleep_trend_widget_title"
-                    style="@style/WidgetTitle"/>
-
-                <im.hch.sleeprecord.activities.home.SleepQualityTrendView
-                    android:id="@+id/sleepQualityTrend"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/quality_trend_view_padding"
-                    app:ScaleLineColor="@color/primary_dark"
-                    app:GridLineColor="@color/divider"
-                    app:LabelColor="@color/accent"
-                    app:LabelTextSize="@dimen/label_text_size"
-                    app:TrendLineColor="@color/accent"
-                    app:PointWidth="@dimen/quality_trend_point_width"
-                    app:PointColor="@color/secondary_text"
-                    app:GridLineNumber="5"
-                    app:MarginBottomPercent="0.08"
-                    app:HeightPercent="0.55"/>
-            </LinearLayout>
-
+            <include layout="@layout/home_card_sleep_trend" />
         </LinearLayout>
     </ScrollView>
 

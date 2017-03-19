@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="center"
+    android:layout_marginBottom="@dimen/card_margin"
+    card_view:cardCornerRadius="2dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/sleep_records_widget"
+        android:orientation="vertical"
+        style="@style/Widget">
+
+        <TextView
+            android:text="@string/widget_title_sleep_records"
+            style="@style/WidgetTitle"/>
+
+        <ListView
+            android:id="@+id/list_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            tools:ignore="NestedScrolling" />
+    </LinearLayout>
+</android.support.v7.widget.CardView>
