@@ -12,7 +12,7 @@ android {
         }
     }
     compileSdkVersion 24
-    buildToolsVersion "24.0.3"
+    buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "im.hch.sleeprecord"
         minSdkVersion 19
