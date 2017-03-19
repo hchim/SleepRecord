@@ -3,12 +3,10 @@ package im.hch.sleeprecord.activities.home;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -59,6 +57,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
     @BindView(R.id.verifyEmailTextView) TextView verifyEmailTextView;
     @BindView(R.id.sleepQualityTrend) SleepQualityTrendView sleepQualityTrendView;
     @BindView(R.id.adWidget) LinearLayout adWidgetView;
+    @BindView(R.id.fab) FloatingActionButton fab;
     NativeExpressAdView adView;
 
     @BindString(R.string.app_name) String title;
@@ -106,6 +105,12 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
         // Disallow the touch request for parent scroll on touch of child view
         sleepRecordListView.setClickable(false);
 
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogUtils.showAddRecordDialog(getFragmentManager(), HomeFragment.this);
+            }
+        });
         //setup adview
         adView = new NativeExpressAdView(mainActivity);
         adView.setAdUnitId(adId);
@@ -142,28 +147,6 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
             }
         });
         return view;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.home, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_new_sleep_record) {
-            DialogUtils.showAddRecordDialog(getFragmentManager(), this);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     /*
