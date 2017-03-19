@@ -153,7 +153,7 @@
     <string name="alert_message_reset_training_plan">确定重置睡眠训练计划吗？此操作会清除以前的睡眠训练信息。</string>
     <string name="app_version">v1.0.0</string>
     <string name="cried_out_times_label">哭泣时长</string>
-    <string name="day_x">\"第%s天\"</string>
+    <string name="day_x">第%s天</string>
     <string name="default_count_time">00:00</string>
     <string name="error_auth_failure">请登录.</string>
     <string name="first_week">第一周</string>
@@ -164,7 +164,7 @@
     <string name="menu_reset">重置</string>
     <string name="menu_reset_plan">重置训练计划</string>
     <string name="menu_start">开始</string>
-    <string name="minute_short">\"分\"</string>
+    <string name="minute_short">分</string>
     <string name="nav_about">关于SleepAiden</string>
     <string name="pref_title_appinfo">应用信息</string>
     <string name="training_result_title">睡眠训练结果</string>

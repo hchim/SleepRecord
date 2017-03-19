@@ -32,102 +32,80 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <LinearLayout
-                    style="@style/planning_linearlayout_item">
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        style="@style/planning_linearlayout_item">
 
-                    <TextView
-                        android:text="@string/first_cried_out"
-                        style="@style/planning_title_label"/>
+                        <TextView
+                            android:text="@string/first_cried_out"
+                            style="@style/planning_title_label"/>
 
-                    <SeekBar
-                        style="@style/planning_seekbar"
-                        android:max="15"
-                        android:progress="2"
-                        android:id="@+id/seekBar11" />
+                        <SeekBar
+                            style="@style/planning_seekbar"
+                            android:max="15"
+                            android:progress="2"
+                            android:id="@+id/seekBar11" />
 
-                    <TextView
-                        style="@style/planning_time_label"
-                        android:id="@+id/timeLabel11"/>
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
+                        <TextView
+                            style="@style/planning_time_label"
+                            android:id="@+id/timeLabel11"/>
+                    </LinearLayout>
 
-            <android.support.v7.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/card_margin"
-                card_view:cardCornerRadius="2dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    style="@style/planning_linearlayout_item">
+                    <LinearLayout
+                        style="@style/planning_linearlayout_item">
 
-                    <TextView
-                        android:text="@string/second_cried_out"
-                        style="@style/planning_title_label"/>
+                        <TextView
+                            android:text="@string/second_cried_out"
+                            style="@style/planning_title_label"/>
 
-                    <SeekBar
-                        style="@style/planning_seekbar"
-                        android:max="15"
-                        android:progress="4"
-                        android:id="@+id/seekBar12" />
+                        <SeekBar
+                            style="@style/planning_seekbar"
+                            android:max="15"
+                            android:progress="4"
+                            android:id="@+id/seekBar12" />
 
-                    <TextView
-                        style="@style/planning_time_label"
-                        android:id="@+id/timeLabel12"/>
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
+                        <TextView
+                            style="@style/planning_time_label"
+                            android:id="@+id/timeLabel12"/>
+                    </LinearLayout>
 
-            <android.support.v7.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/card_margin"
-                card_view:cardCornerRadius="2dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    style="@style/planning_linearlayout_item">
+                    <LinearLayout
+                        style="@style/planning_linearlayout_item">
 
-                    <TextView
-                        android:text="@string/following_cried_out"
-                        style="@style/planning_title_label"/>
+                        <TextView
+                            android:text="@string/following_cried_out"
+                            style="@style/planning_title_label"/>
 
-                    <SeekBar
-                        style="@style/planning_seekbar"
-                        android:max="15"
-                        android:progress="6"
-                        android:id="@+id/seekBar13" />
+                        <SeekBar
+                            style="@style/planning_seekbar"
+                            android:max="15"
+                            android:progress="6"
+                            android:id="@+id/seekBar13" />
 
-                    <TextView
-                        style="@style/planning_time_label"
-                        android:id="@+id/timeLabel13"/>
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
+                        <TextView
+                            style="@style/planning_time_label"
+                            android:id="@+id/timeLabel13"/>
+                    </LinearLayout>
 
-            <android.support.v7.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/card_margin"
-                card_view:cardCornerRadius="2dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    style="@style/planning_linearlayout_item">
+                    <LinearLayout
+                        style="@style/planning_linearlayout_item">
 
-                    <TextView
-                        android:text="@string/soothe_time"
-                        style="@style/planning_title_label"/>
+                        <TextView
+                            android:text="@string/soothe_time"
+                            style="@style/planning_title_label"/>
 
-                    <SeekBar
-                        style="@style/planning_seekbar"
-                        android:max="15"
-                        android:progress="2"
-                        android:id="@+id/seekBar14" />
+                        <SeekBar
+                            style="@style/planning_seekbar"
+                            android:max="15"
+                            android:progress="2"
+                            android:id="@+id/seekBar14" />
 
-                    <TextView
-                        style="@style/planning_time_label"
-                        android:id="@+id/timeLabel14"/>
+                        <TextView
+                            style="@style/planning_time_label"
+                            android:id="@+id/timeLabel14"/>
+                    </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
@@ -144,102 +122,80 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <LinearLayout
-                    style="@style/planning_linearlayout_item">
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        style="@style/planning_linearlayout_item">
 
-                    <TextView
-                        android:text="@string/first_cried_out"
-                        style="@style/planning_title_label"/>
+                        <TextView
+                            android:text="@string/first_cried_out"
+                            style="@style/planning_title_label"/>
 
-                    <SeekBar
-                        style="@style/planning_seekbar"
-                        android:max="15"
-                        android:progress="3"
-                        android:id="@+id/seekBar21" />
+                        <SeekBar
+                            style="@style/planning_seekbar"
+                            android:max="15"
+                            android:progress="3"
+                            android:id="@+id/seekBar21" />
 
-                    <TextView
-                        style="@style/planning_time_label"
-                        android:id="@+id/timeLabel21"/>
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
+                        <TextView
+                            style="@style/planning_time_label"
+                            android:id="@+id/timeLabel21"/>
+                    </LinearLayout>
 
-            <android.support.v7.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/card_margin"
-                card_view:cardCornerRadius="2dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    style="@style/planning_linearlayout_item">
+                    <LinearLayout
+                        style="@style/planning_linearlayout_item">
 
-                    <TextView
-                        android:text="@string/second_cried_out"
-                        style="@style/planning_title_label"/>
+                        <TextView
+                            android:text="@string/second_cried_out"
+                            style="@style/planning_title_label"/>
 
-                    <SeekBar
-                        style="@style/planning_seekbar"
-                        android:max="15"
-                        android:progress="6"
-                        android:id="@+id/seekBar22" />
+                        <SeekBar
+                            style="@style/planning_seekbar"
+                            android:max="15"
+                            android:progress="6"
+                            android:id="@+id/seekBar22" />
 
-                    <TextView
-                        style="@style/planning_time_label"
-                        android:id="@+id/timeLabel22"/>
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
+                        <TextView
+                            style="@style/planning_time_label"
+                            android:id="@+id/timeLabel22"/>
+                    </LinearLayout>
 
-            <android.support.v7.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/card_margin"
-                card_view:cardCornerRadius="2dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    style="@style/planning_linearlayout_item">
+                    <LinearLayout
+                        style="@style/planning_linearlayout_item">
 
-                    <TextView
-                        android:text="@string/following_cried_out"
-                        style="@style/planning_title_label"/>
+                        <TextView
+                            android:text="@string/following_cried_out"
+                            style="@style/planning_title_label"/>
 
-                    <SeekBar
-                        style="@style/planning_seekbar"
-                        android:max="15"
-                        android:progress="9"
-                        android:id="@+id/seekBar23" />
+                        <SeekBar
+                            style="@style/planning_seekbar"
+                            android:max="15"
+                            android:progress="9"
+                            android:id="@+id/seekBar23" />
 
-                    <TextView
-                        style="@style/planning_time_label"
-                        android:id="@+id/timeLabel23"/>
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
+                        <TextView
+                            style="@style/planning_time_label"
+                            android:id="@+id/timeLabel23"/>
+                    </LinearLayout>
 
-            <android.support.v7.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/card_margin"
-                card_view:cardCornerRadius="2dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    style="@style/planning_linearlayout_item">
+                    <LinearLayout
+                        style="@style/planning_linearlayout_item">
 
-                    <TextView
-                        android:text="@string/soothe_time"
-                        style="@style/planning_title_label"/>
+                        <TextView
+                            android:text="@string/soothe_time"
+                            style="@style/planning_title_label"/>
 
-                    <SeekBar
-                        style="@style/planning_seekbar"
-                        android:max="15"
-                        android:progress="2"
-                        android:id="@+id/seekBar24" />
+                        <SeekBar
+                            style="@style/planning_seekbar"
+                            android:max="15"
+                            android:progress="2"
+                            android:id="@+id/seekBar24" />
 
-                    <TextView
-                        style="@style/planning_time_label"
-                        android:id="@+id/timeLabel24"/>
+                        <TextView
+                            style="@style/planning_time_label"
+                            android:id="@+id/timeLabel24"/>
+                    </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
@@ -255,6 +211,10 @@
                 card_view:cardCornerRadius="2dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
                 <LinearLayout
                     style="@style/planning_linearlayout_item">
 
@@ -272,16 +232,7 @@
                         style="@style/planning_time_label"
                         android:id="@+id/timeLabel31"/>
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
 
-            <android.support.v7.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/card_margin"
-                card_view:cardCornerRadius="2dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
                 <LinearLayout
                     style="@style/planning_linearlayout_item">
 
@@ -299,16 +250,7 @@
                         style="@style/planning_time_label"
                         android:id="@+id/timeLabel32"/>
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
 
-            <android.support.v7.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/card_margin"
-                card_view:cardCornerRadius="2dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
                 <LinearLayout
                     style="@style/planning_linearlayout_item">
 
@@ -326,16 +268,7 @@
                         style="@style/planning_time_label"
                         android:id="@+id/timeLabel33"/>
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
 
-            <android.support.v7.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/card_margin"
-                card_view:cardCornerRadius="2dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
                 <LinearLayout
                     style="@style/planning_linearlayout_item">
 
@@ -352,6 +285,7 @@
                     <TextView
                         style="@style/planning_time_label"
                         android:id="@+id/timeLabel34"/>
+                </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
         </LinearLayout>

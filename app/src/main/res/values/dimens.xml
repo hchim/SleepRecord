@@ -60,8 +60,10 @@
     <dimen name="planning_item_margin_bottom">5dp</dimen>
     <dimen name="planning_item_title_label_padding_left">5dp</dimen>
 
-    <dimen name="day_x_textview_margin_bottom">10dp</dimen>
+    <dimen name="training_elapsed_time_label_padding_right">20dp</dimen>
     <dimen name="training_image_square">200dp</dimen>
+    <dimen name="training_infos_padding">10dp</dimen>
+    <dimen name="training_countdown_margin_top">10dp</dimen>
 
     <!-- Settings -->
 </resources>

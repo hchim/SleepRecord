@@ -10,30 +10,25 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
 
-    <TextView
-        android:text="@string/day_x"
-        android:textAlignment="center"
-        android:textColor="@color/accent"
-        android:textSize="24sp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/day_x_textview_margin_bottom"
-        android:id="@+id/dayXTextView" />
-
     <LinearLayout
+        android:padding="@dimen/training_infos_padding"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
             android:text="@string/time_elapsed"
-            android:layout_width="wrap_content"
+            android:layout_marginEnd="@dimen/training_elapsed_time_label_padding_right"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:textAlignment="textEnd" />
 
         <im.hch.sleeprecord.views.CountUpTextView
             android:text="@string/default_count_time"
-            android:layout_width="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/accent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/totalTimeTextView"
             android:layout_weight="1" />
@@ -55,51 +50,77 @@
             android:id="@+id/imageView"/>
     </RelativeLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/card_margin"
+        card_view:cardCornerRadius="2dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <TextView
-                android:text="@string/training_begin_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:padding="@dimen/training_infos_padding"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/stageInfoTextView"/>
+                android:layout_height="wrap_content">
 
-            <im.hch.sleeprecord.views.CountDownTextView
-                android:text="@string/default_count_time"
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:text="@string/training_begin_desc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/stageInfoTextView"/>
+
+                    <im.hch.sleeprecord.views.CountDownTextView
+                        android:text="@string/default_count_time"
+                        android:textSize="20sp"
+                        android:textColor="@color/accent"
+                        android:layout_marginTop="@dimen/training_countdown_margin_top"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/countDownTextView"/>
+                </LinearLayout>
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/stageCheckbox" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:padding="@dimen/training_infos_padding"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/countDownTextView"/>
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="@string/training_finish_desc"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/finishCheckbox" />
+            </LinearLayout>
         </LinearLayout>
-
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/stageCheckbox" />
-    </LinearLayout>
-
+    </android.support.v7.widget.CardView>
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:id="@+id/adWidget"
+        android:orientation="vertical"
+        android:visibility="gone"
+        style="@style/MainActivityWidget">
 
-        <TextView
-            android:text="@string/training_finish_desc"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/finishCheckbox" />
+        <!-- Ad view will be dynamically added.-->
     </LinearLayout>
-
 </LinearLayout>
