@@ -26,6 +26,7 @@ public class SleepRecordsAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private List<SleepRecord> mDataSource;
     private int[] qualityLevelColors;
+    private boolean showDivider = false;
 
     public SleepRecordsAdapter(Context context, List<SleepRecord> items) {
         mContext = context;
@@ -71,6 +72,10 @@ public class SleepRecordsAdapter extends BaseAdapter {
     public boolean isEnabled(int position) {
         //Override this method and return false to make the listview item unslectable.
         return false;
+    }
+
+    public void setShowDivider(boolean showDivider) {
+        this.showDivider = showDivider;
     }
 
     public void updateSleepRecords(List<SleepRecord> sleepRecords) {
@@ -126,6 +131,8 @@ public class SleepRecordsAdapter extends BaseAdapter {
         @BindView(R.id.monthTextView) TextView monthTextView;
         @BindView(R.id.dateTextView) TextView dateTextView;
         @BindView(R.id.sleepRecordView) SleepRecordView sleepRecordView;
+        @BindView(R.id.divider) View divider;
+
         @BindArray(R.array.month_short) String[] monthShort;
 
         SleepRecordViewHolder(View itemView) {
@@ -143,6 +150,12 @@ public class SleepRecordsAdapter extends BaseAdapter {
             sleepRecordView.setSleepQualityColor(color);
             //force to update sleep record view
             sleepRecordView.invalidate();
+
+            if (showDivider && sleepRecord.isSunday()) {
+                divider.setVisibility(View.VISIBLE);
+            } else {
+                divider.setVisibility(View.GONE);
+            }
         }
     }
 }

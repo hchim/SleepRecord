@@ -73,6 +73,7 @@ public class SleepRecordsFragment extends BaseFragment implements AddRecordDialo
         mainActivity.setTitle(title);
 
         sleepRecordsAdapter = new SleepRecordsAdapter(getActivity(), new ArrayList<SleepRecord>());
+        sleepRecordsAdapter.setShowDivider(true);
         listView.setAdapter(sleepRecordsAdapter);
         new LoadRemoteDataTask().execute(page);
 

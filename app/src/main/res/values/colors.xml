@@ -29,7 +29,7 @@
     <color name="primary">#009688</color>
     <color name="primary_dark">#00796B</color>
     <color name="primary_light">#B2DFDB</color>
-    <color name="accent">#FF4081</color>
+    <color name="accent">#ff4081</color>
 
     <color name="primary_text">#DD000000</color>
     <color name="secondary_text">#89000000</color>
@@ -38,7 +38,7 @@
     <color name="dark_secondary_text">#B2FFFFFF</color>
     <color name="dark_disabled_text">#7FFFFFFF</color>
 
-    <color name="divider">#1E000000</color>
+    <color name="divider">#1e000000</color>
     <color name="icons">#FFFFFF</color>
     <color name="inactive_icons">#7EFFFFFF</color>
 </resources>

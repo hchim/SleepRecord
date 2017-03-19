@@ -11,7 +11,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import im.hch.sleeprecord.serviceclients.BaseServiceClient;
 import im.hch.sleeprecord.utils.DateUtils;
 import lombok.Data;
 
@@ -81,5 +80,10 @@ public class SleepRecord {
         } catch (JSONException e) {
             return null;
         }
+    }
+
+    public boolean isSunday() {
+        int dayOfWeek = dateTime.get(Calendar.DAY_OF_WEEK);
+        return dayOfWeek == Calendar.SUNDAY;
     }
 }
