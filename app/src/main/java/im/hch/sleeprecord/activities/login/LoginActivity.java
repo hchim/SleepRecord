@@ -2,6 +2,7 @@ package im.hch.sleeprecord.activities.login;
 
 import android.app.LoaderManager.LoaderCallbacks;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -21,6 +22,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import java.util.List;
 
 import butterknife.BindString;
@@ -34,6 +42,7 @@ import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
 import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
+import im.hch.sleeprecord.serviceclients.exceptions.InvalidIDTokenException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongPasswordException;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
@@ -45,8 +54,11 @@ import im.hch.sleeprecord.utils.SessionManager;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>
+    , GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "LoginActivity";
+
+    private static final int GOOGLE_SIGN_IN_RESULT_CODE = 9001;
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -59,6 +71,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @BindView(R.id.email_sign_in_button) Button mEmailSigninButton;
     @BindView(R.id.forgetPswdTextView) TextView forgetPswdTextView;
     @BindView(R.id.registerAccountTextView) TextView registerAccountTextView;
+    @BindView(R.id.googleSigninBtn) Button googleSigninButton;
 
     @BindString(R.string.error_incorrect_password) String incorrectPasswordError;
     @BindString(R.string.error_field_required) String requiredFieldError;
@@ -66,6 +79,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @BindString(R.string.progress_message_sign_in) String signInProgressMessage;
     @BindString(R.string.error_failed_to_connect) String failedToConnectError;
     @BindString(R.string.error_internal_server) String internalServerError;
+    @BindString(R.string.sign_in_google_failed) String signinGoogleFailed;
 
     private SessionManager mSessionManager;
     private IdentityServiceClient identityServiceClient;
@@ -73,6 +87,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private ProgressDialog progressDialog;
     private UserProfile userProfile;
     private MetricHelper metricHelper;
+
+    private GoogleSignInOptions googleSignInOptions;
+    private GoogleApiClient googleApiClient;
+    private VerifyGoogleSignResultTask verifyGoogleSignResultTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +137,65 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 DialogUtils.showResetPasswordDialog(LoginActivity.this.getFragmentManager());
             }
         });
+
+        initGoogleSignIn();
+    }
+
+    private void initGoogleSignIn() {
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        String googleClientId = getString(R.string.default_web_client_id);
+        googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(googleClientId)
+                .requestEmail().build();
+        // Build a GoogleApiClient with access to the Google Sign-In API and the
+        // options specified by gso.
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
+                .build();
+
+        googleSigninButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+                startActivityForResult(signInIntent, GOOGLE_SIGN_IN_RESULT_CODE);
+            }
+        });
+    }
+
+    // When failed to signin with google
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == GOOGLE_SIGN_IN_RESULT_CODE) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleGoogleLogin(result);
+        }
+
+    }
+
+    /**
+     * Handle google login result.
+     * @param result
+     */
+    private void handleGoogleLogin(GoogleSignInResult result) {
+        if (result.isSuccess()) {
+            if (verifyGoogleSignResultTask != null) {
+                verifyGoogleSignResultTask = new VerifyGoogleSignResultTask(result.getSignInAccount());
+                verifyGoogleSignResultTask.execute();
+            }
+        } else {
+            Snackbar.make(mEmailSigninButton, signinGoogleFailed, Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+        }
     }
 
     private void populateAutoComplete() {
@@ -259,6 +336,59 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 ActivityUtils.navigateToMainActivity(LoginActivity.this);
             } else {
                 mEmailView.requestFocus();
+                Snackbar.make(mEmailSigninButton, errorMessage, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mAuthTask = null;
+            progressDialog.dismiss();
+        }
+    }
+
+    private class VerifyGoogleSignResultTask extends AsyncTask<Void, Void, Boolean> {
+        private GoogleSignInAccount account;
+        private String errorMessage;
+
+        public VerifyGoogleSignResultTask(GoogleSignInAccount acct) {
+            this.account = acct;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = DialogUtils.showProgressDialog(LoginActivity.this, signInProgressMessage);
+            progressDialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                UserProfile userProfile = identityServiceClient.verifyGoogleToken(
+                        account.getEmail(), account.getDisplayName(), account.getIdToken());
+                mSessionManager.createSession(userProfile);
+                return Boolean.TRUE;
+            } catch (InternalServerException e) {
+                errorMessage = internalServerError;
+                metricHelper.errorMetric(Metrics.GOOGLE_LOGIN_ERROR_METRIC, e);
+            } catch (ConnectionFailureException e) {
+                errorMessage = failedToConnectError;
+            } catch (InvalidIDTokenException e) {
+                errorMessage = signinGoogleFailed;
+            }
+            return Boolean.FALSE;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            verifyGoogleSignResultTask = null;
+            progressDialog.dismiss();
+
+            if (success) {
+                ActivityUtils.navigateToMainActivity(LoginActivity.this);
+            } else {
                 Snackbar.make(mEmailSigninButton, errorMessage, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }

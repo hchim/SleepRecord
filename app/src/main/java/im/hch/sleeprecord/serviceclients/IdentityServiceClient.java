@@ -14,7 +14,7 @@ import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.EmailUsedException;
 import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
-import im.hch.sleeprecord.serviceclients.exceptions.InvalidRequestException;
+import im.hch.sleeprecord.serviceclients.exceptions.InvalidIDTokenException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongPasswordException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongSecurityCodeException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongVerifyCodeException;
@@ -33,11 +33,13 @@ public class IdentityServiceClient extends BaseServiceClient {
     public static final String VERIFY_EMAIL_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/verify-email";
     public static final String SEND_PASSWORD_RESET_EMAIL_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "reset-email";
     public static final String PASSWORD_RESET_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "reset-pswd";
+    public static final String GOOGLE_VERIFY_TOKEN_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "google/verify-token";
 
     public static final String ERROR_CODE_EMAIL_USED = "EMAIL_USED";
     public static final String ERROR_CODE_WRONG_PASSWORD = "WRONG_PASSWORD";
     public static final String ERROR_CODE_WRONG_VERIFY_CODE = "WRONG_VERIFY_CODE";
     public static final String ERROR_CODE_WRONG_SECURITY_CODE = "WRONG_SECURITY_CODE";
+    public static final String ERROR_CODE_INVALID_ID_TOKEN = "INVALID_ID_TOKEN";
 
     private Map<String, String> aaaHeaders;
 
@@ -60,7 +62,7 @@ public class IdentityServiceClient extends BaseServiceClient {
      */
     public UserProfile getUser()
             throws AccountNotExistException, InternalServerException,
-            ConnectionFailureException, AuthFailureException, InvalidRequestException {
+            ConnectionFailureException, AuthFailureException {
         String url = USERS_URL;
 
         try {
@@ -89,7 +91,7 @@ public class IdentityServiceClient extends BaseServiceClient {
      * @return
      */
     public UserProfile login(String email, String password)
-            throws AccountNotExistException, WrongPasswordException, InternalServerException, ConnectionFailureException, InvalidRequestException {
+            throws AccountNotExistException, WrongPasswordException, InternalServerException, ConnectionFailureException {
         JSONObject object = new JSONObject();
 
         try {
@@ -132,7 +134,7 @@ public class IdentityServiceClient extends BaseServiceClient {
      * @throws InternalServerException
      */
     public UserProfile register(String email, String password, String nickName)
-            throws EmailUsedException, InternalServerException, ConnectionFailureException, InvalidRequestException {
+            throws EmailUsedException, InternalServerException, ConnectionFailureException {
         JSONObject object = new JSONObject();
 
         try {
@@ -173,7 +175,7 @@ public class IdentityServiceClient extends BaseServiceClient {
      */
     public void updateUserName(String userName)
             throws ConnectionFailureException, InternalServerException,
-            AccountNotExistException, AuthFailureException, InvalidRequestException {
+            AccountNotExistException, AuthFailureException {
         String url = UPDATE_USER_NAME;
         JSONObject object = new JSONObject();
         try {
@@ -196,7 +198,7 @@ public class IdentityServiceClient extends BaseServiceClient {
      */
     public String uploadHeaderIcon(String imagePath)
             throws ConnectionFailureException, InternalServerException,
-            AuthFailureException, InvalidRequestException, AccountNotExistException {
+            AuthFailureException, AccountNotExistException {
         String url = UPDATE_HEADER_URL;
 
         try {
@@ -222,7 +224,7 @@ public class IdentityServiceClient extends BaseServiceClient {
     public void updateUserPassword(String oldPassword, String newPassword)
             throws ConnectionFailureException, InternalServerException,
             AccountNotExistException, WrongPasswordException,
-            AuthFailureException, InvalidRequestException {
+            AuthFailureException {
         String url = UPDATE_USER_PASSWORD;
         JSONObject object = new JSONObject();
         try {
@@ -256,7 +258,7 @@ public class IdentityServiceClient extends BaseServiceClient {
     public void verifyEmail(String verifyCode)
             throws ConnectionFailureException, InternalServerException,
             AccountNotExistException, WrongVerifyCodeException,
-            AuthFailureException, InvalidRequestException {
+            AuthFailureException {
         String url = VERIFY_EMAIL_URL;
         JSONObject object = new JSONObject();
         try {
@@ -287,7 +289,7 @@ public class IdentityServiceClient extends BaseServiceClient {
      */
     public void sendPasswordResetEmail(String email)
             throws ConnectionFailureException, InternalServerException,
-            AccountNotExistException, InvalidRequestException {
+            AccountNotExistException {
         JSONObject object = new JSONObject();
         try {
             object.put("email", email);
@@ -318,7 +320,7 @@ public class IdentityServiceClient extends BaseServiceClient {
      * @throws WrongSecurityCodeException
      */
     public void resetPassword(String email, String securityCode, String password)
-            throws ConnectionFailureException, InternalServerException, AccountNotExistException, WrongSecurityCodeException, InvalidRequestException {
+            throws ConnectionFailureException, InternalServerException, AccountNotExistException, WrongSecurityCodeException {
         JSONObject object = new JSONObject();
         try {
             object.put("email", email);
@@ -341,5 +343,47 @@ public class IdentityServiceClient extends BaseServiceClient {
             Log.e(TAG, "JSON format error");
             throw new InternalServerException();
         }
+    }
+
+    /**
+     * verify the google id token.
+     * @param email
+     * @param userName
+     * @param idToken
+     * @throws InternalServerException
+     * @throws ConnectionFailureException
+     * @throws InvalidIDTokenException
+     */
+    public UserProfile verifyGoogleToken(String email, String userName, String idToken) throws InternalServerException, ConnectionFailureException, InvalidIDTokenException {
+        JSONObject object = new JSONObject();
+
+        try {
+            object.put("email", email);
+            object.put("userName", userName);
+            object.put("idToken", idToken);
+
+            JSONObject result = post(GOOGLE_VERIFY_TOKEN_URL, object);
+            handleGeneralErrors(result, false);
+
+            if (result.has(ERROR_CODE_KEY)) {
+                String errorCode = result.getString(ERROR_CODE_KEY);
+                if (errorCode.equals(ERROR_CODE_INVALID_ID_TOKEN)) {
+                    throw new InvalidIDTokenException("Invalid goodle id token.");
+                }
+                throw new InternalServerException();
+            }
+
+            UserProfile userProfile = new UserProfile();
+            userProfile.setUsername(userName);
+            userProfile.setEmail(email);
+            userProfile.setId(result.getString("userId"));
+            userProfile.setAccessToken(result.getString("accessToken"));
+
+            return userProfile;
+        } catch (JSONException e) {
+            Log.e(TAG, "JSON format error");
+            throw new InternalServerException();
+        }
+
     }
 }

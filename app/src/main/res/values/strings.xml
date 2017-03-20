@@ -37,7 +37,8 @@
     <string name="send_email_btn">Send Email</string>
     <string name="forget_password_title">Forgot Password</string>
     <string name="register_account_title">Sign Up with Email</string>
-
+    <string name="sign_in_google_failed">Failed to sign in with your google account.</string>
+    <string name="sign_in_with_thirdyparty">Or sign in with</string>
     <!-- Toolbar menu title -->
     <string name="menu_add_sleep_record">Add</string>
 
@@ -156,7 +157,6 @@
 
     <!-- Admob IDs-->
     <string name="admob_id_main_activity">ca-app-pub-4044463930410370/2133723199</string>
-
     <!-- Sleep Training-->
     <string name="sleep_training_checklist_title">Sleep Training Checklist</string>
     <string name="sleep_training_plan_title">Sleep Training Plan</string>

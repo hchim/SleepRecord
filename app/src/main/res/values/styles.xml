@@ -60,15 +60,13 @@
         <item name="android:layout_marginLeft">@dimen/sign_in_btn_margin</item>
         <item name="android:layout_marginRight">@dimen/sign_in_btn_margin</item>
         <item name="android:layout_marginTop">@dimen/form_item_margin_top</item>
-        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_weight">1</item>
     </style>
 
     <style name="login_text_link">
-        <item name="android:textColor">@color/primary_dark</item>
+        <item name="android:textColor">@color/secondary_text</item>
         <item name="android:layout_marginTop">@dimen/form_item_margin_top</item>
-        android:paddingTop="10dp"
     </style>
 
     <style name="titleText">

@@ -36,6 +36,9 @@
     <!-- Login Activity-->
     <dimen name="form_item_margin_top">18dp</dimen>
     <dimen name="sign_in_btn_margin">45dp</dimen>
+    <dimen name="thirdyparty_margin_top">40dp</dimen>
+    <dimen name="thirdparty_signin_btn_size">40dp</dimen>
+    <dimen name="thirdparty_signin_btn_margin">20dp</dimen>
 
     <!-- SleepTraining -->
     <dimen name="checklist_title_padding_left">5dp</dimen>

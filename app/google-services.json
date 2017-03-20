@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "650072071981",
-    "firebase_url": "https://sleepyaiden-fb863.firebaseio.com",
-    "project_id": "sleepyaiden-fb863",
-    "storage_bucket": "sleepyaiden-fb863.appspot.com"
+    "project_number": "894802459298",
+    "firebase_url": "https://sleepaiden-94457.firebaseio.com",
+    "project_id": "sleepaiden-94457",
+    "storage_bucket": "sleepaiden-94457.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:650072071981:android:049198ba527ce1d3",
+        "mobilesdk_app_id": "1:894802459298:android:049198ba527ce1d3",
         "android_client_info": {
           "package_name": "im.hch.sleeprecord"
         }
       },
       "oauth_client": [
         {
-          "client_id": "650072071981-l2jj7dl5vusk55k1uii7kj69ush9f9hd.apps.googleusercontent.com",
+          "client_id": "894802459298-3637204prl1d2vnce72bfjeptjivmg18.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBVNan8KiioYZZZ0ECP4iILHEjRj3z9f7w"
+          "current_key": "AIzaSyD4nTbg4ek62Reno5wR3BlC_AHbqcK15j0"
         }
       ],
       "services": {

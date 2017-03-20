@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -39,15 +40,11 @@
 
     </android.support.design.widget.TextInputLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <Button
+        android:id="@+id/email_sign_in_button"
+        style="@style/Sign_in_up_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/email_sign_in_button"
-            style="@style/Sign_in_up_button"
-            android:text="@string/action_sign_in_short"/>
-    </LinearLayout>
+        android:text="@string/action_sign_in_short" />
 
     <TextView
         android:text="@string/forget_password_title"
@@ -66,5 +63,43 @@
         android:id="@+id/registerAccountTextView"
         tools:ignore="RtlHardcoded"
         style="@style/login_text_link" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/secondary_text"
+        android:layout_marginTop="@dimen/thirdyparty_margin_top"
+        android:text="@string/sign_in_with_thirdyparty"
+        android:textAlignment="center" />
+
+    <RelativeLayout
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/googleSigninBtn"
+            android:layout_width="@dimen/thirdparty_signin_btn_size"
+            android:layout_height="@dimen/thirdparty_signin_btn_size"
+            android:layout_margin="@dimen/thirdparty_signin_btn_margin"
+            android:background="@drawable/google_icon" />
+
+        <Button
+            android:id="@+id/facebookSigninBtn"
+            android:layout_width="@dimen/thirdparty_signin_btn_size"
+            android:layout_height="@dimen/thirdparty_signin_btn_size"
+            android:layout_toEndOf="@id/googleSigninBtn"
+            android:layout_margin="@dimen/thirdparty_signin_btn_margin"
+            android:background="@drawable/facebook_icon" />
+
+        <Button
+            android:id="@+id/wechatSigninBtn"
+            android:layout_width="@dimen/thirdparty_signin_btn_size"
+            android:layout_height="@dimen/thirdparty_signin_btn_size"
+            android:layout_toEndOf="@id/facebookSigninBtn"
+            android:layout_margin="@dimen/thirdparty_signin_btn_margin"
+            android:background="@drawable/wechat_icon" />
+
+    </RelativeLayout>
 
 </LinearLayout>
