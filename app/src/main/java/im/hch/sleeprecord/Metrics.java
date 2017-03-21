@@ -27,4 +27,5 @@ public class Metrics {
     public static final String LOGIN_ERROR_METRIC = Constants.APP_NAME + ":IdentityService:login:Error";
     public static final String REGISTER_ERROR_METRIC = Constants.APP_NAME + ":IdentityService:register:Error";
     public static final String GOOGLE_LOGIN_ERROR_METRIC = Constants.APP_NAME + ":IdentityService:loginGoogle:Error";
+    public static final String FACEBOOK_LOGIN_ERROR_METRIC = Constants.APP_NAME + ":IdentityService:loginFacebook:Error";
 }

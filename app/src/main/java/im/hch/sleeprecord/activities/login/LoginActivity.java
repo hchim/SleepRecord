@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,6 +23,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -29,6 +38,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindString;
@@ -72,6 +85,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @BindView(R.id.forgetPswdTextView) TextView forgetPswdTextView;
     @BindView(R.id.registerAccountTextView) TextView registerAccountTextView;
     @BindView(R.id.googleSigninBtn) Button googleSigninButton;
+    @BindView(R.id.facebookSigninBtn) Button facebookSigninButton;
+    @BindView(R.id.wechatSigninBtn) Button wechatSigninButton;
 
     @BindString(R.string.error_incorrect_password) String incorrectPasswordError;
     @BindString(R.string.error_field_required) String requiredFieldError;
@@ -80,6 +95,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @BindString(R.string.error_failed_to_connect) String failedToConnectError;
     @BindString(R.string.error_internal_server) String internalServerError;
     @BindString(R.string.sign_in_google_failed) String signinGoogleFailed;
+    @BindString(R.string.sign_in_facebook_failed) String signinFacebookFailed;
 
     private SessionManager mSessionManager;
     private IdentityServiceClient identityServiceClient;
@@ -91,6 +107,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private GoogleSignInOptions googleSignInOptions;
     private GoogleApiClient googleApiClient;
     private VerifyGoogleSignResultTask verifyGoogleSignResultTask;
+
+    private CallbackManager fabCallbackManager;
+    private VerifyFacebookSignResultTask verifyFacebookSignResultTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +158,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
 
         initGoogleSignIn();
+        initFacebookSignIn();
     }
 
     private void initGoogleSignIn() {
@@ -170,6 +190,63 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     }
 
+    /**
+     * Init facebook signin.
+     */
+    private void initFacebookSignIn() {
+        facebookSigninButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoginManager.getInstance().logInWithReadPermissions(
+                        LoginActivity.this,
+                        Arrays.asList("user_photos", "email", "public_profile")
+                );
+            }
+        });
+
+        fabCallbackManager = CallbackManager.Factory.create();
+        LoginManager.getInstance().registerCallback(fabCallbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        final AccessToken accessToken = loginResult.getAccessToken();
+                        GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(JSONObject object, GraphResponse response) {
+                                try {
+                                    String name = object.getString("name");
+                                    String email = object.getString("email");
+                                    if (verifyFacebookSignResultTask == null) {
+                                        verifyFacebookSignResultTask = new VerifyFacebookSignResultTask(accessToken, email, name);
+                                        verifyFacebookSignResultTask.execute();
+                                    }
+                                } catch (JSONException e) {
+                                    Log.d(TAG, e.getMessage());
+                                }
+                            }
+                        });
+
+                        Bundle parameters = new Bundle();
+                        parameters.putString("fields", "name,email");
+                        request.setParameters(parameters);
+                        request.executeAsync();
+                    }
+
+                    @Override
+                    public void onCancel() {
+                    }
+
+                    @Override
+                    public void onError(FacebookException e) {
+                        Log.d(TAG, "Failed to login with facebook.", e);
+                        Snackbar.make(mEmailSigninButton, signinFacebookFailed, Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                        metricHelper.errorMetric(Metrics.FACEBOOK_LOGIN_ERROR_METRIC, e);
+                    }
+                }
+        );
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -179,6 +256,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleGoogleLogin(result);
         }
+
+        fabCallbackManager.onActivityResult(requestCode, resultCode, data);
 
     }
 
@@ -396,7 +475,64 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected void onCancelled() {
-            mAuthTask = null;
+            verifyGoogleSignResultTask = null;
+            progressDialog.dismiss();
+        }
+    }
+
+    private class VerifyFacebookSignResultTask extends AsyncTask<Void, Void, Boolean> {
+        private String email;
+        private String name;
+        private String errorMessage;
+        private AccessToken accessToken;
+
+        public VerifyFacebookSignResultTask(AccessToken accessToken, String email, String name) {
+            this.accessToken = accessToken;
+            this.email = email;
+            this.name = name;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = DialogUtils.showProgressDialog(LoginActivity.this, signInProgressMessage);
+            progressDialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                UserProfile userProfile = identityServiceClient.verifyFacebookToken(
+                        email, name, accessToken.getToken());
+                mSessionManager.createSession(userProfile);
+                return Boolean.TRUE;
+            } catch (InternalServerException e) {
+                errorMessage = internalServerError;
+                metricHelper.errorMetric(Metrics.FACEBOOK_LOGIN_ERROR_METRIC, e);
+            } catch (ConnectionFailureException e) {
+                errorMessage = failedToConnectError;
+            } catch (InvalidIDTokenException e) {
+                errorMessage = signinGoogleFailed;
+            }
+            return Boolean.FALSE;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            verifyFacebookSignResultTask = null;
+            progressDialog.dismiss();
+
+            if (success) {
+                ActivityUtils.navigateToMainActivity(LoginActivity.this);
+            } else {
+                Snackbar.make(mEmailSigninButton, errorMessage, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            verifyFacebookSignResultTask = null;
             progressDialog.dismiss();
         }
     }

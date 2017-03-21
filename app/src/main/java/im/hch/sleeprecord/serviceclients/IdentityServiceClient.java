@@ -34,6 +34,7 @@ public class IdentityServiceClient extends BaseServiceClient {
     public static final String SEND_PASSWORD_RESET_EMAIL_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "reset-email";
     public static final String PASSWORD_RESET_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "reset-pswd";
     public static final String GOOGLE_VERIFY_TOKEN_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "google/verify-token";
+    public static final String FACEBOOK_VERIFY_TOKEN_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "facebook/verify-token";
 
     public static final String ERROR_CODE_EMAIL_USED = "EMAIL_USED";
     public static final String ERROR_CODE_WRONG_PASSWORD = "WRONG_PASSWORD";
@@ -369,6 +370,49 @@ public class IdentityServiceClient extends BaseServiceClient {
                 String errorCode = result.getString(ERROR_CODE_KEY);
                 if (errorCode.equals(ERROR_CODE_INVALID_ID_TOKEN)) {
                     throw new InvalidIDTokenException("Invalid goodle id token.");
+                }
+                throw new InternalServerException();
+            }
+
+            UserProfile userProfile = new UserProfile();
+            userProfile.setUsername(userName);
+            userProfile.setEmail(email);
+            userProfile.setId(result.getString("userId"));
+            userProfile.setAccessToken(result.getString("accessToken"));
+
+            return userProfile;
+        } catch (JSONException e) {
+            Log.e(TAG, "JSON format error");
+            throw new InternalServerException();
+        }
+
+    }
+
+    /**
+     * Verify facebook access token.
+     * @param email
+     * @param userName
+     * @param accessToken
+     * @return
+     * @throws InternalServerException
+     * @throws ConnectionFailureException
+     * @throws InvalidIDTokenException
+     */
+    public UserProfile verifyFacebookToken(String email, String userName, String accessToken) throws InternalServerException, ConnectionFailureException, InvalidIDTokenException {
+        JSONObject object = new JSONObject();
+
+        try {
+            object.put("email", email);
+            object.put("userName", userName);
+            object.put("accessToken", accessToken);
+
+            JSONObject result = post(FACEBOOK_VERIFY_TOKEN_URL, object);
+            handleGeneralErrors(result, false);
+
+            if (result.has(ERROR_CODE_KEY)) {
+                String errorCode = result.getString(ERROR_CODE_KEY);
+                if (errorCode.equals(ERROR_CODE_INVALID_ID_TOKEN)) {
+                    throw new InvalidIDTokenException("Invalid facebook access token.");
                 }
                 throw new InternalServerException();
             }
