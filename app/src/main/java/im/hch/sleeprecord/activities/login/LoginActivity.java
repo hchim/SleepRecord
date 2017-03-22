@@ -2,7 +2,10 @@ package im.hch.sleeprecord.activities.login;
 
 import android.app.LoaderManager.LoaderCallbacks;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -10,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -37,6 +41,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.tencent.mm.sdk.modelbase.BaseResp;
+import com.tencent.mm.sdk.modelmsg.SendAuth;
+import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,6 +71,7 @@ import im.hch.sleeprecord.utils.FieldValidator;
 import im.hch.sleeprecord.utils.MetricHelper;
 import im.hch.sleeprecord.utils.PermissionUtils;
 import im.hch.sleeprecord.utils.SessionManager;
+import im.hch.sleeprecord.wxapi.WXEntryActivity;
 
 /**
  * A login screen that offers login via email/password.
@@ -96,6 +105,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @BindString(R.string.error_internal_server) String internalServerError;
     @BindString(R.string.sign_in_google_failed) String signinGoogleFailed;
     @BindString(R.string.sign_in_facebook_failed) String signinFacebookFailed;
+    @BindString(R.string.sign_in_wechat_failed) String signinWechatFailed;
+    @BindString(R.string.wechat_app_id) String wechatAppId;
 
     private SessionManager mSessionManager;
     private IdentityServiceClient identityServiceClient;
@@ -110,6 +121,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private CallbackManager fabCallbackManager;
     private VerifyFacebookSignResultTask verifyFacebookSignResultTask;
+
+    public static final String WECHAT_LOGIN_STATE = "wechat_sa_login";
+    private static final String WECHAT_USERINFO_SCOPE = "snsapi_userinfo";
+    private IWXAPI wechatAPI; // The interface for things that communicate with WeChat
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,8 +174,54 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         initGoogleSignIn();
         initFacebookSignIn();
+        initWechatSignIn();
     }
 
+    @Override
+    protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(wechatBroadcastReceiver);
+        super.onDestroy();
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////
+    // Login with Wechat
+    //////////////////////////////////////////////////////////////////////////////////
+
+    private void initWechatSignIn() {
+        wechatAPI = WXAPIFactory.createWXAPI(this, wechatAppId, true);
+        wechatAPI.registerApp(wechatAppId);
+
+        IntentFilter intentFilter = new IntentFilter(WXEntryActivity.WECHAT_LOGIN_RES_ACTION);
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(wechatBroadcastReceiver, intentFilter);
+
+        wechatSigninButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SendAuth.Req req = new SendAuth.Req();
+                req.scope = WECHAT_USERINFO_SCOPE;
+                req.state = WECHAT_LOGIN_STATE;
+                wechatAPI.sendReq(req);
+            }
+        });
+    }
+
+    private BroadcastReceiver wechatBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int errorCode = intent.getIntExtra(WXEntryActivity.EXTRA_ERR_CODE, BaseResp.ErrCode.ERR_USER_CANCEL);
+            if (errorCode == BaseResp.ErrCode.ERR_OK) {
+                String code = intent.getStringExtra(WXEntryActivity.EXTRA_CODE);
+
+            } else {
+                Snackbar.make(mEmailSigninButton, signinWechatFailed, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        }
+    };
+    //////////////////////////////////////////////////////////////////////////////////
+    // Login with google
+    //////////////////////////////////////////////////////////////////////////////////
     private void initGoogleSignIn() {
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -190,6 +251,92 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     }
 
+    /**
+     * Handle google login result.
+     * @param result
+     */
+    private void handleGoogleLogin(GoogleSignInResult result) {
+        if (result.isSuccess()) {
+            if (verifyGoogleSignResultTask != null) {
+                verifyGoogleSignResultTask = new VerifyGoogleSignResultTask(result.getSignInAccount());
+                verifyGoogleSignResultTask.execute();
+            }
+        } else {
+            Snackbar.make(mEmailSigninButton, signinGoogleFailed, Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+        }
+    }
+
+    private class VerifyGoogleSignResultTask extends AsyncTask<Void, Void, Boolean> {
+        private GoogleSignInAccount account;
+        private String errorMessage;
+
+        public VerifyGoogleSignResultTask(GoogleSignInAccount acct) {
+            this.account = acct;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = DialogUtils.showProgressDialog(LoginActivity.this, signInProgressMessage);
+            progressDialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                UserProfile userProfile = identityServiceClient.verifyGoogleToken(
+                        account.getEmail(), account.getDisplayName(), account.getIdToken());
+                mSessionManager.createSession(userProfile);
+                return Boolean.TRUE;
+            } catch (InternalServerException e) {
+                errorMessage = internalServerError;
+                metricHelper.errorMetric(Metrics.GOOGLE_LOGIN_ERROR_METRIC, e);
+            } catch (ConnectionFailureException e) {
+                errorMessage = failedToConnectError;
+            } catch (InvalidIDTokenException e) {
+                errorMessage = signinGoogleFailed;
+            }
+            return Boolean.FALSE;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            verifyGoogleSignResultTask = null;
+            progressDialog.dismiss();
+
+            if (success) {
+                ActivityUtils.navigateToMainActivity(LoginActivity.this);
+            } else {
+                Snackbar.make(mEmailSigninButton, errorMessage, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            verifyGoogleSignResultTask = null;
+            progressDialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == GOOGLE_SIGN_IN_RESULT_CODE) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleGoogleLogin(result);
+        }
+
+        fabCallbackManager.onActivityResult(requestCode, resultCode, data);
+
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////
+    // Login with Facebook
+    //////////////////////////////////////////////////////////////////////////////////
     /**
      * Init facebook signin.
      */
@@ -247,36 +394,66 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         );
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    private class VerifyFacebookSignResultTask extends AsyncTask<Void, Void, Boolean> {
+        private String email;
+        private String name;
+        private String errorMessage;
+        private AccessToken accessToken;
 
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == GOOGLE_SIGN_IN_RESULT_CODE) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleGoogleLogin(result);
+        public VerifyFacebookSignResultTask(AccessToken accessToken, String email, String name) {
+            this.accessToken = accessToken;
+            this.email = email;
+            this.name = name;
         }
 
-        fabCallbackManager.onActivityResult(requestCode, resultCode, data);
+        @Override
+        protected void onPreExecute() {
+            progressDialog = DialogUtils.showProgressDialog(LoginActivity.this, signInProgressMessage);
+            progressDialog.show();
+            super.onPreExecute();
+        }
 
-    }
-
-    /**
-     * Handle google login result.
-     * @param result
-     */
-    private void handleGoogleLogin(GoogleSignInResult result) {
-        if (result.isSuccess()) {
-            if (verifyGoogleSignResultTask != null) {
-                verifyGoogleSignResultTask = new VerifyGoogleSignResultTask(result.getSignInAccount());
-                verifyGoogleSignResultTask.execute();
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                UserProfile userProfile = identityServiceClient.verifyFacebookToken(
+                        email, name, accessToken.getToken());
+                mSessionManager.createSession(userProfile);
+                return Boolean.TRUE;
+            } catch (InternalServerException e) {
+                errorMessage = internalServerError;
+                metricHelper.errorMetric(Metrics.FACEBOOK_LOGIN_ERROR_METRIC, e);
+            } catch (ConnectionFailureException e) {
+                errorMessage = failedToConnectError;
+            } catch (InvalidIDTokenException e) {
+                errorMessage = signinGoogleFailed;
             }
-        } else {
-            Snackbar.make(mEmailSigninButton, signinGoogleFailed, Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+            return Boolean.FALSE;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            verifyFacebookSignResultTask = null;
+            progressDialog.dismiss();
+
+            if (success) {
+                ActivityUtils.navigateToMainActivity(LoginActivity.this);
+            } else {
+                Snackbar.make(mEmailSigninButton, errorMessage, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            verifyFacebookSignResultTask = null;
+            progressDialog.dismiss();
         }
     }
 
+    //////////////////////////////////////////////////////////////////////////////////
+    // Load email list
+    //////////////////////////////////////////////////////////////////////////////////
     private void populateAutoComplete() {
         if (!PermissionUtils.mayRequestContacts(this, mEmailView)) {
             return;
@@ -316,6 +493,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
     }
 
+    //////////////////////////////////////////////////////////////////////////////////
+    // Login with Email
+    //////////////////////////////////////////////////////////////////////////////////
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
@@ -423,116 +603,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected void onCancelled() {
             mAuthTask = null;
-            progressDialog.dismiss();
-        }
-    }
-
-    private class VerifyGoogleSignResultTask extends AsyncTask<Void, Void, Boolean> {
-        private GoogleSignInAccount account;
-        private String errorMessage;
-
-        public VerifyGoogleSignResultTask(GoogleSignInAccount acct) {
-            this.account = acct;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            progressDialog = DialogUtils.showProgressDialog(LoginActivity.this, signInProgressMessage);
-            progressDialog.show();
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            try {
-                UserProfile userProfile = identityServiceClient.verifyGoogleToken(
-                        account.getEmail(), account.getDisplayName(), account.getIdToken());
-                mSessionManager.createSession(userProfile);
-                return Boolean.TRUE;
-            } catch (InternalServerException e) {
-                errorMessage = internalServerError;
-                metricHelper.errorMetric(Metrics.GOOGLE_LOGIN_ERROR_METRIC, e);
-            } catch (ConnectionFailureException e) {
-                errorMessage = failedToConnectError;
-            } catch (InvalidIDTokenException e) {
-                errorMessage = signinGoogleFailed;
-            }
-            return Boolean.FALSE;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            verifyGoogleSignResultTask = null;
-            progressDialog.dismiss();
-
-            if (success) {
-                ActivityUtils.navigateToMainActivity(LoginActivity.this);
-            } else {
-                Snackbar.make(mEmailSigninButton, errorMessage, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            verifyGoogleSignResultTask = null;
-            progressDialog.dismiss();
-        }
-    }
-
-    private class VerifyFacebookSignResultTask extends AsyncTask<Void, Void, Boolean> {
-        private String email;
-        private String name;
-        private String errorMessage;
-        private AccessToken accessToken;
-
-        public VerifyFacebookSignResultTask(AccessToken accessToken, String email, String name) {
-            this.accessToken = accessToken;
-            this.email = email;
-            this.name = name;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            progressDialog = DialogUtils.showProgressDialog(LoginActivity.this, signInProgressMessage);
-            progressDialog.show();
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            try {
-                UserProfile userProfile = identityServiceClient.verifyFacebookToken(
-                        email, name, accessToken.getToken());
-                mSessionManager.createSession(userProfile);
-                return Boolean.TRUE;
-            } catch (InternalServerException e) {
-                errorMessage = internalServerError;
-                metricHelper.errorMetric(Metrics.FACEBOOK_LOGIN_ERROR_METRIC, e);
-            } catch (ConnectionFailureException e) {
-                errorMessage = failedToConnectError;
-            } catch (InvalidIDTokenException e) {
-                errorMessage = signinGoogleFailed;
-            }
-            return Boolean.FALSE;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            verifyFacebookSignResultTask = null;
-            progressDialog.dismiss();
-
-            if (success) {
-                ActivityUtils.navigateToMainActivity(LoginActivity.this);
-            } else {
-                Snackbar.make(mEmailSigninButton, errorMessage, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            verifyFacebookSignResultTask = null;
             progressDialog.dismiss();
         }
     }

@@ -187,4 +187,7 @@
     <string name="following_cried_out">后面的哭泣时长</string>
     <string name="sign_in_google_failed">用谷歌账号登录失败</string>
     <string name="sign_in_with_thirdyparty">用第三方账户登录</string>
+    <string name="wechat_app_id"></string>
+    <string name="sign_in_facebook_failed">使用Facebook账号登录失败</string>
+    <string name="sign_in_wechat_failed">使用微信登录失败</string>
 </resources>

@@ -55,6 +55,7 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    compile files('libs/libammsdk.jar')
 }
 
 apply plugin: 'com.google.gms.google-services'
