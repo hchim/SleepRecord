@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import im.hch.sleeprecord.models.AppConfig;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.SleepRecord;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
@@ -288,10 +289,22 @@ public class SharedPreferenceUtil {
         removeValue(SLEEP_TRAINING_PLAN);
     }
 
+    /**
+     * Remove user related preference data.
+     */
     public void removeAllData() {
         removeBabyInfo();
         removeUserProfile();
         removeSleepRecords();
         removeSleepTrainingPlan();
+    }
+
+    public void storeAppConfig(AppConfig appConfig) {
+
+    }
+
+    public AppConfig retrieveAppConfig() {
+        AppConfig appConfig = new AppConfig();
+        return appConfig;
     }
 }

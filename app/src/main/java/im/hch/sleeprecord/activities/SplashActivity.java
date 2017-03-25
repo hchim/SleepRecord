@@ -7,22 +7,30 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.ButterKnife;
+import im.hch.sleeprecord.serviceclients.AppInfoServiceClient;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.SessionManager;
+import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 
 /**
  * SplashActivity. Currently not used.
  */
 public class SplashActivity extends AppCompatActivity {
+    public static final String TAG = "SplashActivity";
+
     private static final int DELAY_MILLIS = 1000;
 
     private SessionManager sessionManager;
+    private AppInfoServiceClient appConfigServiceClient;
+    private SharedPreferenceUtil sharedPreferenceUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         sessionManager = new SessionManager(this);
+        sharedPreferenceUtil = new SharedPreferenceUtil(this);
+        appConfigServiceClient = new AppInfoServiceClient();
 
 //        SharedPreferenceUtil sharedPreferenceUtil = new SharedPreferenceUtil(this);
 //        String splashImage = sharedPreferenceUtil.getString(AppConfigUpdateService.SPLASH_IMAGE_Location, null);
@@ -44,9 +52,15 @@ public class SplashActivity extends AppCompatActivity {
         try {
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {
-
                 @Override
                 public void run() {
+//                    try {
+//                        AppConfig appConfig = appConfigServiceClient.retrieveAppConfig();
+//                        sharedPreferenceUtil.storeAppConfig(appConfig);
+//                    } catch (Exception e) {
+//                        Log.e(TAG, e.getMessage(), e);
+//                    }
+
                     if (!sessionManager.isLoggedIn()) {
                         ActivityUtils.navigateToLoginActivity(SplashActivity.this);
                     } else {

@@ -13,14 +13,19 @@ import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 public class AppInfoServiceClient extends BaseServiceClient {
 
     public static final String ADD_SUGGESTION_URL = EndPoints.APP_INFO_SERVICE_ENDPOINT + "/suggestions";
+    public static final String APP_CONFIG_URL = EndPoints.APP_INFO_SERVICE_ENDPOINT + "/confs/";
 
-    public AppConfig retrieveAppConfig(String packageName) {
-        //TODO implement
+    public AppConfig retrieveAppConfig() throws ConnectionFailureException, InternalServerException {
+        JSONObject object = Constants.getAppJSON();
 
-        AppConfig appConfig = new AppConfig();
-        appConfig.setSplashImageUrl("https://s-media-cache-ak0.pinimg.com/236x/ab/19/55/ab195529d317cd8d107ba3b87a4297eb.jpg");
-
-        return appConfig;
+        try {
+            JSONObject result = post(APP_CONFIG_URL, object);
+            handleGeneralErrors(result, true);
+            return new AppConfig(result);
+        } catch (JSONException e) {
+            Log.e(TAG, "JSON format error", e);
+            throw new InternalServerException();
+        }
     }
 
     /**
@@ -40,7 +45,7 @@ public class AppInfoServiceClient extends BaseServiceClient {
             JSONObject result = post(ADD_SUGGESTION_URL, object);
             handleGeneralErrors(result, true);
         } catch (JSONException ex) {
-            Log.e(TAG, "JSON format error");
+            Log.e(TAG, "JSON format error", ex);
             throw new InternalServerException();
         }
     }

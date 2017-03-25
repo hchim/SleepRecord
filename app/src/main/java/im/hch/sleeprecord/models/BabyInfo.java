@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class BabyInfo {
-    public static enum Gender {
+    public enum Gender {
         Unknown(0), Boy(1), Girl(2);
 
         int value;
