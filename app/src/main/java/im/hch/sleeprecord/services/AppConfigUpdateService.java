@@ -1,8 +1,8 @@
 package im.hch.sleeprecord.services;
 
 import android.app.IntentService;
-import android.content.Intent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -72,24 +72,28 @@ public class AppConfigUpdateService extends IntentService {
      * parameters.
      */
     private void handleActionUpdateImage() {
-        appConfig = appConfigServiceClient.retrieveAppConfig(getPackageName());
-        if (appConfig != null && appConfig.getSplashImageUrl() != null) {
-            String localSplashImageUrl = sharedPreferenceUtil.getString(SPLASH_IMAGE_URL, null);
+        try {
+            appConfig = appConfigServiceClient.retrieveAppConfig();
+            if (appConfig != null && appConfig.getSplashImageUrl() != null) {
+                String localSplashImageUrl = sharedPreferenceUtil.getString(SPLASH_IMAGE_URL, null);
 
-            if (localSplashImageUrl == null || !localSplashImageUrl.equals(appConfig.getSplashImageUrl())) {
-                Request request = new Request.Builder().url(appConfig.getSplashImageUrl()).build();
-                try {
-                    Response response = okHttpClient.newCall(request).execute();
-                    if (response.isSuccessful()) {
-                        Bitmap bitmap = BitmapFactory.decodeStream(response.body().byteStream());
-                        saveSplashImage(bitmap);
+                if (localSplashImageUrl == null || !localSplashImageUrl.equals(appConfig.getSplashImageUrl())) {
+                    Request request = new Request.Builder().url(appConfig.getSplashImageUrl()).build();
+                    try {
+                        Response response = okHttpClient.newCall(request).execute();
+                        if (response.isSuccessful()) {
+                            Bitmap bitmap = BitmapFactory.decodeStream(response.body().byteStream());
+                            saveSplashImage(bitmap);
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Failed to download splash image.", e);
                     }
-                } catch (Exception e) {
-                    Log.e(TAG, "Failed to download splash image.", e);
                 }
+            } else {
+                Log.w(TAG, "Failed to update app splash image.");
             }
-        } else {
-            Log.w(TAG, "Failed to update app splash image.");
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
         }
     }
 
