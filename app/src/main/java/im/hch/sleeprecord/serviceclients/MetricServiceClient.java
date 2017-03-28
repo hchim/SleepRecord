@@ -13,7 +13,12 @@ import im.hch.sleeprecord.utils.MetricHelper.MetricType;
 
 public class MetricServiceClient extends BaseServiceClient {
 
-    public static final String ADD_METRIC_URL = EndPoints.METRIC_SERVICE_ENDPOINT + "metrics";
+    public static final String ADD_METRIC_URL = EndPoints.METRIC_SERVICE_ENDPOINT + "/metrics";
+
+    @Override
+    protected String getPath(String url) {
+        return url.replace(EndPoints.METRIC_SERVICE_ENDPOINT, "");
+    }
 
     private void addMetric(String tag, MetricType type, int val, String message, String ip)
             throws ConnectionFailureException, InternalServerException {

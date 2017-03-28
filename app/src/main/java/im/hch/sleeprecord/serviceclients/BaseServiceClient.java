@@ -27,7 +27,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class BaseServiceClient {
+public abstract class BaseServiceClient {
     public static final String TAG = "BaseServiceClient";
 
     public static final String ERROR_MESSAGE_KEY = "message";
@@ -102,7 +102,7 @@ public class BaseServiceClient {
                 .delete();
         headers = addHeaders(builder, headers);
         //sign request
-        String signature = messageSigner.generateSignature("post", url, null, headers);
+        String signature = messageSigner.generateSignature("post", getPath(url), null, headers);
         if (signature == null) {
             Log.wtf(TAG, "Failed to sign message");
         }
@@ -137,7 +137,7 @@ public class BaseServiceClient {
                 .get();
         headers = addHeaders(builder, headers);
         //sign request
-        String signature = messageSigner.generateSignature("get", url, null, headers);
+        String signature = messageSigner.generateSignature("get", getPath(url), null, headers);
         if (signature == null) {
             Log.wtf(TAG, "Failed to sign message");
         }
@@ -163,7 +163,7 @@ public class BaseServiceClient {
                 .post(body);
         headers = addHeaders(builder, headers);
         //sign request
-        String signature = messageSigner.generateSignature("post", url, pair.second, headers);
+        String signature = messageSigner.generateSignature("post", getPath(url), pair.second, headers);
         if (signature == null) {
             Log.wtf(TAG, "Failed to sign message");
         }
@@ -202,7 +202,7 @@ public class BaseServiceClient {
                 .put(body);
         headers = addHeaders(builder, headers);
         //sign request
-        String signature = messageSigner.generateSignature("put", url, pair.second, headers);
+        String signature = messageSigner.generateSignature("put", getPath(url), pair.second, headers);
         if (signature == null) {
             Log.wtf(TAG, "Failed to sign message");
         }
@@ -244,7 +244,7 @@ public class BaseServiceClient {
                 .post(requestBody);
         headers = addHeaders(builder, headers);
         //sign request
-        String signature = messageSigner.generateSignature("post", url, null, headers);
+        String signature = messageSigner.generateSignature("post", getPath(url), null, headers);
         if (signature == null) {
             Log.wtf(TAG, "Failed to sign message");
         }
@@ -348,4 +348,11 @@ public class BaseServiceClient {
             }
         }
     }
+
+    /**
+     * Get the rewrite path of the url.
+     * @param url
+     * @return
+     */
+    protected abstract String getPath(String url);
 }

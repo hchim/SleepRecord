@@ -13,7 +13,12 @@ import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 public class AppInfoServiceClient extends BaseServiceClient {
 
     public static final String ADD_SUGGESTION_URL = EndPoints.APP_INFO_SERVICE_ENDPOINT + "/suggestions";
-    public static final String APP_CONFIG_URL = EndPoints.APP_INFO_SERVICE_ENDPOINT + "/confs/";
+    public static final String APP_CONFIG_URL = EndPoints.APP_INFO_SERVICE_ENDPOINT + "/confs";
+
+    @Override
+    protected String getPath(String url) {
+        return url.replace(EndPoints.APP_INFO_SERVICE_ENDPOINT, "");
+    }
 
     public AppConfig retrieveAppConfig() throws ConnectionFailureException, InternalServerException {
         JSONObject object = Constants.getAppJSON();

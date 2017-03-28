@@ -24,17 +24,17 @@ public class IdentityServiceClient extends BaseServiceClient {
 
     public static final String TAG = "IdentityServiceClient";
 
-    public static final String REGISTER_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "register";
-    public static final String LOGIN_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "login";
-    public static final String USERS_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/";
-    public static final String UPDATE_HEADER_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/update-header";
-    public static final String UPDATE_USER_NAME = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/update-name";
-    public static final String UPDATE_USER_PASSWORD = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/update-pswd";
-    public static final String VERIFY_EMAIL_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "users/verify-email";
-    public static final String SEND_PASSWORD_RESET_EMAIL_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "reset-email";
-    public static final String PASSWORD_RESET_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "reset-pswd";
-    public static final String GOOGLE_VERIFY_TOKEN_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "google/verify-token";
-    public static final String FACEBOOK_VERIFY_TOKEN_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "facebook/verify-token";
+    public static final String REGISTER_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "/register";
+    public static final String LOGIN_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "/login";
+    public static final String USERS_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "/users/";
+    public static final String UPDATE_HEADER_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "/users/update-header";
+    public static final String UPDATE_USER_NAME = EndPoints.IDENTITY_SERVICE_ENDPOINT + "/users/update-name";
+    public static final String UPDATE_USER_PASSWORD = EndPoints.IDENTITY_SERVICE_ENDPOINT + "/users/update-pswd";
+    public static final String VERIFY_EMAIL_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "/users/verify-email";
+    public static final String SEND_PASSWORD_RESET_EMAIL_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "/reset-email";
+    public static final String PASSWORD_RESET_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "/reset-pswd";
+    public static final String GOOGLE_VERIFY_TOKEN_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "/google/verify-token";
+    public static final String FACEBOOK_VERIFY_TOKEN_URL = EndPoints.IDENTITY_SERVICE_ENDPOINT + "/facebook/verify-token";
 
     public static final String ERROR_CODE_EMAIL_USED = "EMAIL_USED";
     public static final String ERROR_CODE_WRONG_PASSWORD = "WRONG_PASSWORD";
@@ -49,9 +49,13 @@ public class IdentityServiceClient extends BaseServiceClient {
         aaaHeaders = new HashMap<>();
     }
 
+    @Override
+    protected String getPath(String url) {
+        return url.replace(EndPoints.IDENTITY_SERVICE_ENDPOINT, "");
+    }
+
     public void setAccessToken(String accessToken) {
         aaaHeaders.put(BaseServiceClient.REQUEST_HEADER_ACCESS_TOKEN, accessToken);
-
     }
 
     /**

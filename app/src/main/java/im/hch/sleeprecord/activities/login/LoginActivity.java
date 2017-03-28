@@ -257,7 +257,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     private void handleGoogleLogin(GoogleSignInResult result) {
         if (result.isSuccess()) {
-            if (verifyGoogleSignResultTask != null) {
+            if (verifyGoogleSignResultTask == null) {
                 verifyGoogleSignResultTask = new VerifyGoogleSignResultTask(result.getSignInAccount());
                 verifyGoogleSignResultTask.execute();
             }

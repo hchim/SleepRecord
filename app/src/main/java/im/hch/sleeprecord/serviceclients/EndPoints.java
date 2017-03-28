@@ -1,13 +1,11 @@
 package im.hch.sleeprecord.serviceclients;
 
 public class EndPoints {
-    public static final String METRIC_SERVICE_ENDPOINT = "http://metricsservice.hch.im/";
-    public static final String APP_INFO_SERVICE_ENDPOINT = "http://appinfoservice.hch.im/";
-    public static final String SLEEP_RECORD_SERVICE_ENDPOINT = "http://sleepservice.hch.im/";
-    public static final String IDENTITY_SERVICE_ENDPOINT = "http://identityservice.hch.im/";
-
-//    public static final String METRIC_SERVICE_ENDPOINT = "http://192.168.0.3:3012/";
-//    public static final String APP_INFO_SERVICE_ENDPOINT = "http://192.168.0.3:3013/";
-//    public static final String SLEEP_RECORD_SERVICE_ENDPOINT = "http://192.168.0.3:3010/";
-//    public static final String IDENTITY_SERVICE_ENDPOINT = "http://192.168.0.3:3011/";
+    //Test endpoint
+//    public static final String BASE_ENDPOINT = "http://192.168.0.4:8081";
+    public static final String BASE_ENDPOINT = "https://api.sleepaiden.com";
+    public static final String METRIC_SERVICE_ENDPOINT = BASE_ENDPOINT + "/metric";
+    public static final String APP_INFO_SERVICE_ENDPOINT = BASE_ENDPOINT + "/appinfo";
+    public static final String SLEEP_RECORD_SERVICE_ENDPOINT = BASE_ENDPOINT + "/sleep";
+    public static final String IDENTITY_SERVICE_ENDPOINT = BASE_ENDPOINT + "/identity";
 }

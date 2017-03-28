@@ -30,12 +30,12 @@ import im.hch.sleeprecord.utils.SleepRecordUtils;
 public class SleepServiceClient extends BaseServiceClient {
     public static final String TAG = "SleepServiceClient";
 
-    public static final String BABYINFO_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "babyinfos/";
-    public static final String SLEEP_RECORDS_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "sleeprecs/";
-    public static final String SLEEP_TRAINING_PLAN_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "plan/";
-    public static final String TRAINING_RECORDS_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "trainrecs/";
+    public static final String BABYINFO_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "/babyinfos";
+    public static final String SLEEP_RECORDS_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "/sleeprecs";
+    public static final String SLEEP_TRAINING_PLAN_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "/plan";
+    public static final String TRAINING_RECORDS_URL = EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT + "/trainrecs";
 
-    public static final String RESET_SLEEP_TRAINING_PLAN_URL = SLEEP_TRAINING_PLAN_URL + "reset";
+    public static final String RESET_SLEEP_TRAINING_PLAN_URL = SLEEP_TRAINING_PLAN_URL + "/reset";
 
     public static final String ERROR_CODE_BABY_NOT_EXISTS = "BABY_NOT_EXISTS";
     public static final String ERROR_CODE_TIME_OVERLAP = "TIME_OVERLAP";
@@ -51,7 +51,11 @@ public class SleepServiceClient extends BaseServiceClient {
 
     public void setAccessToken(String accessToken) {
         aaaHeaders.put(BaseServiceClient.REQUEST_HEADER_ACCESS_TOKEN, accessToken);
+    }
 
+    @Override
+    protected String getPath(String url) {
+        return url.replace(EndPoints.SLEEP_RECORD_SERVICE_ENDPOINT, "");
     }
 
     /**
@@ -91,7 +95,7 @@ public class SleepServiceClient extends BaseServiceClient {
     public BabyInfo getBabyInfo()
             throws InternalServerException, ConnectionFailureException,
             BabyNotExistsException, AuthFailureException,
-            InvalidRequestException, AccountNotExistException {
+            AccountNotExistException {
         String url = BABYINFO_URL;
 
         try {
@@ -128,7 +132,7 @@ public class SleepServiceClient extends BaseServiceClient {
      */
     public void addSleepRecord(Date from, Date to)
             throws ConnectionFailureException, InternalServerException,
-            TimeOverlapException, AuthFailureException, InvalidRequestException, AccountNotExistException {
+            TimeOverlapException, AuthFailureException, AccountNotExistException {
         String url = SLEEP_RECORDS_URL;
         try {
             JSONObject object = new JSONObject();
@@ -162,7 +166,7 @@ public class SleepServiceClient extends BaseServiceClient {
      * @throws InternalServerException
      */
     public List<SleepRecord> getSleepRecords(Date from, Date to)
-            throws ConnectionFailureException, InternalServerException, AuthFailureException, InvalidRequestException, AccountNotExistException {
+            throws ConnectionFailureException, InternalServerException, AuthFailureException, AccountNotExistException {
         String url = String.format(SLEEP_RECORDS_URL + "%s/%s/%s",
                 DateUtils.dateToStr(from, QUERY_DATE_FORMAT),
                 DateUtils.dateToStr(to, QUERY_DATE_FORMAT),
@@ -202,7 +206,8 @@ public class SleepServiceClient extends BaseServiceClient {
      * @param plan
      */
     public void saveSleepTrainingPlan(SleepTrainingPlan plan)
-            throws ConnectionFailureException, InternalServerException, AuthFailureException, InvalidRequestException, AccountNotExistException {
+            throws ConnectionFailureException, InternalServerException, AuthFailureException,
+            AccountNotExistException {
         String url = SLEEP_TRAINING_PLAN_URL;
 
         try {
@@ -226,7 +231,7 @@ public class SleepServiceClient extends BaseServiceClient {
      */
     public SleepTrainingPlan getSleepTrainingPlan()
             throws ConnectionFailureException, InternalServerException,
-            TrainingPlanNotExistException, AuthFailureException, InvalidRequestException, AccountNotExistException {
+            TrainingPlanNotExistException, AuthFailureException, AccountNotExistException {
         String url = SLEEP_TRAINING_PLAN_URL;
         try {
             JSONObject result = get(url, aaaHeaders);
@@ -278,7 +283,7 @@ public class SleepServiceClient extends BaseServiceClient {
      */
     public void addTrainingRecord(String planId, long elapsedTime, int criedOutTimes, int sootheTimes)
             throws ConnectionFailureException, InternalServerException,
-            InvalidRequestException, AccountNotExistException,
+            AccountNotExistException,
             AuthFailureException, TrainingPlanNotExistException {
         String url = TRAINING_RECORDS_URL;
         try {
