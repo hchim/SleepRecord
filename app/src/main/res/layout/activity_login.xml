@@ -94,6 +94,7 @@
 
         <Button
             android:id="@+id/wechatSigninBtn"
+            android:visibility="gone"
             android:layout_width="@dimen/thirdparty_signin_btn_size"
             android:layout_height="@dimen/thirdparty_signin_btn_size"
             android:layout_toEndOf="@id/facebookSigninBtn"
