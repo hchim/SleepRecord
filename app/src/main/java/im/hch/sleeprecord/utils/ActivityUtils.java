@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 
 import im.hch.sleeprecord.activities.RegisterActivity;
+import im.hch.sleeprecord.activities.WebActivity;
 import im.hch.sleeprecord.activities.login.LoginActivity;
 import im.hch.sleeprecord.activities.main.MainActivity;
 
@@ -30,6 +31,12 @@ public class ActivityUtils {
 
     public static void navigateToLoginActivity(Activity currentActivity) {
         navigateTo(currentActivity, LoginActivity.class, true, null);
+    }
+
+    public static void navigateToWebActivity(Activity currentActivity, String url) {
+        Bundle bundle = new Bundle();
+        bundle.putString(WebActivity.URL_EXTRA, url);
+        navigateTo(currentActivity, WebActivity.class, false, bundle);
     }
 
     /**

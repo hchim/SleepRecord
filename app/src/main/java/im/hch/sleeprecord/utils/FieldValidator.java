@@ -27,7 +27,7 @@ public class FieldValidator {
      * @param password
      * @return
      */
-    public static boolean isPasswordValid(String password) {
+    public static boolean isPasswordValidStrict(String password) {
         if (password == null || TextUtils.isEmpty(password.trim())) {
             return false;
         }
@@ -35,5 +35,12 @@ public class FieldValidator {
         Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
         Matcher matcher = pattern.matcher(password);
         return matcher.matches();
+    }
+
+    public static boolean isPasswordValid(String password) {
+        if (password == null || TextUtils.isEmpty(password.trim())) {
+            return false;
+        }
+        return password.length() >= 6;
     }
 }

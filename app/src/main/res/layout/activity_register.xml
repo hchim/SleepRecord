@@ -16,6 +16,7 @@
 
         <AutoCompleteTextView
             android:id="@+id/username"
+            android:maxLength="20"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/prompt_username"
@@ -31,6 +32,7 @@
 
         <AutoCompleteTextView
             android:id="@+id/email"
+            android:maxLength="50"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/prompt_email"
@@ -46,6 +48,7 @@
 
         <EditText
             android:id="@+id/password"
+            android:maxLength="20"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/prompt_password"
@@ -61,6 +64,7 @@
 
         <EditText
             android:id="@+id/re_password"
+            android:maxLength="20"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/prompt_repead_password"
@@ -73,10 +77,21 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
         <Button
             android:id="@+id/email_register_button"
             style="@style/Sign_in_up_button"
             android:text="@string/action_register_short" />
+
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/agreeTextView"
+        android:paddingTop="@dimen/register_agree_tos_and_pp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/secondary_text"
+        android:textColorLink="@color/accent"
+        android:text="@string/register_agree_tos" />
+
 </LinearLayout>

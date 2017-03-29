@@ -37,6 +37,7 @@ import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.FieldValidator;
+import im.hch.sleeprecord.utils.LinkClickHandler;
 import im.hch.sleeprecord.utils.MetricHelper;
 import im.hch.sleeprecord.utils.PermissionUtils;
 import im.hch.sleeprecord.utils.SessionManager;
@@ -58,6 +59,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     @BindView(R.id.re_password) EditText mRepeatPasswordView;
     @BindView(R.id.username) EditText mUsernameView;
     @BindView(R.id.email_register_button) Button mEmailRegisterButton;
+    @BindView(R.id.agreeTextView) TextView mAgreeTextView;
 
     @BindString(R.string.error_incorrect_password) String incorrectPasswordError;
     @BindString(R.string.error_invalid_password) String invalidPassordError;
@@ -69,6 +71,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     @BindString(R.string.error_email_used) String emailUsedError;
     @BindString(R.string.error_failed_to_connect) String failedToConnectError;
     @BindString(R.string.error_internal_server) String internalServerError;
+    @BindString(R.string.register_agree_tos) String agreeTos;
 
     private SessionManager mSessionManager;
     private IdentityServiceClient identityServiceClient;
@@ -106,6 +109,10 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                 attemptRegister();
             }
         });
+        LinkClickHandler linkClickHandler = LinkClickHandler.getInstance();
+        // set activity to open link in app
+        linkClickHandler.setActivity(this);
+        mAgreeTextView.setMovementMethod(LinkClickHandler.getInstance());
     }
 
     private void populateAutoComplete() {

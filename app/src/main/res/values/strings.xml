@@ -132,6 +132,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="register_agree_tos">By creating an account, you are agreeing SleepAiden\'s <a href="https://sleepaiden.com/tos">Terms of Service</a> and <a href="https://sleepaiden.com/pp">Privacy Policy</a>.</string>
 
     <string name="error_failed_to_register">Failed to create the user account, please try again later.</string>
     <string name="error_email_used">This email was already used with another account.</string>
@@ -216,4 +217,5 @@
     <string name="total_time_elapsed_label">Total Elapsed Time</string>
     <string name="cried_out_times_label">Cried Out Times</string>
     <string name="soothe_times_label">Soothe Times</string>
+    <string name="title_activity_web">WebActivity</string>
 </resources>
