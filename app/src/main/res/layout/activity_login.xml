@@ -50,18 +50,18 @@
         android:text="@string/forget_password_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right"
+        android:gravity="end"
         android:id="@+id/forgetPswdTextView"
-        tools:ignore="RtlHardcoded"
+        android:textColor="@color/accent"
         style="@style/login_text_link"/>
 
     <TextView
         android:text="@string/register_account_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right"
+        android:gravity="end"
         android:id="@+id/registerAccountTextView"
-        tools:ignore="RtlHardcoded"
+        android:textColor="@color/accent"
         style="@style/login_text_link" />
 
     <TextView
