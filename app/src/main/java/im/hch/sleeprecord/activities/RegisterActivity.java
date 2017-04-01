@@ -71,7 +71,6 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     @BindString(R.string.error_email_used) String emailUsedError;
     @BindString(R.string.error_failed_to_connect) String failedToConnectError;
     @BindString(R.string.error_internal_server) String internalServerError;
-    @BindString(R.string.register_agree_tos) String agreeTos;
 
     private SessionManager mSessionManager;
     private IdentityServiceClient identityServiceClient;
@@ -109,8 +108,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                 attemptRegister();
             }
         });
-        LinkClickHandler linkClickHandler = LinkClickHandler.getInstance();
         // set activity to open link in app
+        LinkClickHandler linkClickHandler = LinkClickHandler.getInstance();
         linkClickHandler.setActivity(this);
         mAgreeTextView.setMovementMethod(LinkClickHandler.getInstance());
     }

@@ -114,7 +114,7 @@
     <string name="action_sign_in_short">登录</string>
     <string name="action_register_short">注册</string>
     <string name="error_invalid_email">邮箱格式错误</string>
-    <string name="error_invalid_password">密码格式错误</string>
+    <string name="error_invalid_password">密码长度小于六位</string>
     <string name="error_incorrect_password">账号不存在或密码错误</string>
     <string name="error_internal_server">出错了，请稍后再试.</string>
     <string name="error_unmatch_password">密码不匹配</string>
@@ -192,4 +192,5 @@
     <string name="sign_in_wechat_failed">使用微信登录失败</string>
     <string name="fb_login_protocol_scheme">fb1891279461107263</string>
     <string name="facebook_app_id">1891279461107263</string>
+    <string name="register_agree_tos">创建此账号表明你同意SleepAiden的<a href="https://sleepaiden.com/tos">服务条款</a>和<a href="https://sleepaiden.com/pp">隐私政策</a>。</string>
 </resources>

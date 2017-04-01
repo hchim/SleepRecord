@@ -123,7 +123,7 @@
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_register_short">Register</string>
     <string name="error_invalid_email">Invalid email address</string>
-    <string name="error_invalid_password">Invalid password</string>
+    <string name="error_invalid_password">Password length is less than 6.</string>
     <string name="error_incorrect_password">Account does not exist or wrong password</string>
     <string name="error_internal_server">Service unavailable. Please try again later.</string>
     <string name="error_unmatch_password">Password does not match</string>
@@ -217,5 +217,4 @@
     <string name="total_time_elapsed_label">Total Elapsed Time</string>
     <string name="cried_out_times_label">Cried Out Times</string>
     <string name="soothe_times_label">Soothe Times</string>
-    <string name="title_activity_web">WebActivity</string>
 </resources>
