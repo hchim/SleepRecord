@@ -193,4 +193,5 @@
     <string name="fb_login_protocol_scheme">fb1891279461107263</string>
     <string name="facebook_app_id">1891279461107263</string>
     <string name="register_agree_tos">创建此账号表明你同意SleepAiden的<a href="https://sleepaiden.com/tos">服务条款</a>和<a href="https://sleepaiden.com/pp">隐私政策</a>。</string>
+    <string name="link_about">https://sleepaiden.com/about</string>
 </resources>
