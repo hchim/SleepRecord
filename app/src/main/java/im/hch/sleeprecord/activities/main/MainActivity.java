@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements
     @BindString(R.string.age_days_plural) String AGE_DAYS_P;
     @BindString(R.string.permission_not_granted) String permissionNotGranted;
     @BindString(R.string.crop_image_menu_crop) String cropMenu;
+    @BindString(R.string.link_about) String aboutLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,6 +194,9 @@ public class MainActivity extends AppCompatActivity implements
                 sessionManager.clearSession();
                 sharedPreferenceUtil.removeAllData();
                 ActivityUtils.navigateToLoginActivity(this);
+                break;
+            case R.id.nav_about:
+                ActivityUtils.navigateToWebActivity(this, aboutLink);
                 break;
         }
 

@@ -133,6 +133,7 @@
         completions."
     </string>
     <string name="register_agree_tos">By creating an account, you are agreeing SleepAiden\'s <a href="https://sleepaiden.com/tos">Terms of Service</a> and <a href="https://sleepaiden.com/pp">Privacy Policy</a>.</string>
+    <string name="link_about">https://sleepaiden.com/about</string>
 
     <string name="error_failed_to_register">Failed to create the user account, please try again later.</string>
     <string name="error_email_used">This email was already used with another account.</string>
