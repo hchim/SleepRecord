@@ -25,6 +25,7 @@ public class MetricServiceClient extends BaseServiceClient {
         JSONObject object = Constants.getAppJSON();
         try {
             object.put("tag", tag);
+            object.put("type", type.toString());
             object.put("hostname", ip);
             switch (type) {
                 case MESSAGE:

@@ -167,7 +167,7 @@ public class SleepServiceClient extends BaseServiceClient {
      */
     public List<SleepRecord> getSleepRecords(Date from, Date to)
             throws ConnectionFailureException, InternalServerException, AuthFailureException, AccountNotExistException {
-        String url = String.format(SLEEP_RECORDS_URL + "%s/%s/%s",
+        String url = String.format(SLEEP_RECORDS_URL + "/%s/%s/%s",
                 DateUtils.dateToStr(from, QUERY_DATE_FORMAT),
                 DateUtils.dateToStr(to, QUERY_DATE_FORMAT),
                 DateUtils.getLocalTimezone(true));
