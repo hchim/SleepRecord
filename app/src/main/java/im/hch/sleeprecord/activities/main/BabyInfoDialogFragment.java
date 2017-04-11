@@ -170,7 +170,9 @@ public class BabyInfoDialogFragment extends DialogFragment {
         mBabyBirthdayView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogUtils.showDatePickerDialog(mBabyBirthdayView, new DatePickerDialog.OnDateSetListener() {
+                DialogUtils.showDatePickerDialog(
+                        mBabyBirthdayView, DateUtils.strToDate(babyBirthday),
+                        new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         final Calendar c = Calendar.getInstance();

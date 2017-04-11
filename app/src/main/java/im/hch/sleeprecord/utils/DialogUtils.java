@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.view.View;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import im.hch.sleeprecord.activities.login.ResetPasswordDialogFragment;
 import im.hch.sleeprecord.activities.main.AddRecordDialogFragment;
@@ -22,10 +23,16 @@ public class DialogUtils {
     /**
      * Show dateTime picker dialog.
      * @param v
+     * @param date
      * @param listener
      */
-    public static DatePickerDialog showDatePickerDialog(View v, DatePickerDialog.OnDateSetListener listener) {
+    public static DatePickerDialog showDatePickerDialog(
+            View v, Date date, DatePickerDialog.OnDateSetListener listener) {
         final Calendar c = Calendar.getInstance();
+        if (date != null) {
+            c.setTime(date);
+        }
+
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);

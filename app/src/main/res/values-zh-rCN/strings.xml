@@ -84,10 +84,10 @@
         <item>11月</item>
         <item>12月</item>
     </string-array>
-    <string name="age_years_singlular">年</string>
+    <string name="age_years_singlular">岁</string>
     <string name="age_months_singlular">月</string>
     <string name="age_days_singlular">天</string>
-    <string name="age_years_plural">年</string>
+    <string name="age_years_plural">岁</string>
     <string name="age_months_plural">月</string>
     <string name="age_days_plural">天</string>
 

@@ -303,12 +303,13 @@ public class MainActivity extends AppCompatActivity implements
             int days = DateUtils.daysBetween(birthday, today);
 
             if (years > 0) {
+                months = months - years * 12;
                 if (months == 0) {
                     str += String.format(" %d%s", years, years == 1 ? AGE_YEARS_S : AGE_YEARS_P);
                 } else {
                     str += String.format(" %d%s %d%s",
                             years, years == 1 ? AGE_YEARS_S : AGE_YEARS_P,
-                            (months - years * 12), months == 1 ? AGE_MONTHS_S : AGE_MONTHS_P);
+                            months, months == 1 ? AGE_MONTHS_S : AGE_MONTHS_P);
                 }
             } else if (months > 0) {
                 if (days == 0) {
