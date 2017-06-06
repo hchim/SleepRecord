@@ -194,4 +194,18 @@
     <string name="facebook_app_id">1891279461107263</string>
     <string name="register_agree_tos">创建此账号表明你同意SleepAiden的<a href="https://sleepaiden.com/tos">服务条款</a>和<a href="https://sleepaiden.com/pp">隐私政策</a>。</string>
     <string name="link_about">https://sleepaiden.com/about</string>
+
+    <string-array name="sleep_training_checklist">
+        <item>"宝宝已经至少四个月了。"</item>
+        <item>"宝宝没有健康问题。"</item>
+        <item>"宝宝已经形成了固定的睡前步骤。"</item>
+        <item>"宝宝有固定的睡眠时间。"</item>
+    </string-array>
+
+    <string-array name="sleep_training_checklist_description">
+        <item>"宝宝在四个月时已经开始形成｀睡－醒－睡｀的循环规律，并且戒掉了大部分的夜奶。这些都是宝宝可以开始睡眠训练的信号。"</item>
+        <item>"如果宝宝有任何的健康问题不适合睡眠训练，你应该先带宝宝看医生。解决健康问题后才能开始睡眠训练。"</item>
+        <item>"睡前步骤可以是睡前洗一个热水澡，睡前给宝宝读一本书，或者睡前听一首摇篮曲。"</item>
+        <item>"专家推荐宝宝在晚上7点到8点间睡觉，这样你的宝宝不会过度疲劳而反抗入睡。"</item>
+    </string-array>
 </resources>
