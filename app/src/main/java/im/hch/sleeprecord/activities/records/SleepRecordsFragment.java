@@ -24,7 +24,7 @@ import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.BaseFragment;
 import im.hch.sleeprecord.activities.main.AddRecordDialogFragment;
-import im.hch.sleeprecord.models.SleepRecord;
+import im.hch.sleeprecord.models.SleepRecordsPerDay;
 import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
 import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
@@ -71,7 +71,7 @@ public class SleepRecordsFragment extends BaseFragment implements AddRecordDialo
 
         mainActivity.setTitle(title);
 
-        sleepRecordsAdapter = new SleepRecordsAdapter(getActivity(), new ArrayList<SleepRecord>());
+        sleepRecordsAdapter = new SleepRecordsAdapter(getActivity(), new ArrayList<SleepRecordsPerDay>());
         sleepRecordsAdapter.setShowDivider(true);
         listView.setAdapter(sleepRecordsAdapter);
         new LoadRemoteDataTask().execute(page);
@@ -111,7 +111,7 @@ public class SleepRecordsFragment extends BaseFragment implements AddRecordDialo
 
     private class LoadRemoteDataTask extends AsyncTask<Integer, Void, Boolean> {
 
-        List<SleepRecord> sleepRecords;
+        List<SleepRecordsPerDay> sleepRecords;
         ProgressDialog progressDialog;
         String errorMessage;
 

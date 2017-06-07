@@ -16,7 +16,7 @@ import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.hch.sleeprecord.R;
-import im.hch.sleeprecord.models.SleepRecord;
+import im.hch.sleeprecord.models.SleepRecordsPerDay;
 import im.hch.sleeprecord.utils.DateUtils;
 import im.hch.sleeprecord.utils.SleepRecordUtils;
 
@@ -24,11 +24,11 @@ public class SleepRecordsAdapter extends BaseAdapter {
 
     private Context mContext;
     private LayoutInflater mInflater;
-    private List<SleepRecord> mDataSource;
+    private List<SleepRecordsPerDay> mDataSource;
     private int[] qualityLevelColors;
     private boolean showDivider = false;
 
-    public SleepRecordsAdapter(Context context, List<SleepRecord> items) {
+    public SleepRecordsAdapter(Context context, List<SleepRecordsPerDay> items) {
         mContext = context;
         mDataSource = items;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -62,7 +62,7 @@ public class SleepRecordsAdapter extends BaseAdapter {
             viewHolder = (SleepRecordViewHolder) convertView.getTag();
         }
 
-        SleepRecord sleepRecord = (SleepRecord) getItem(position);
+        SleepRecordsPerDay sleepRecord = (SleepRecordsPerDay) getItem(position);
         viewHolder.update(sleepRecord);
 
         return convertView;
@@ -78,14 +78,14 @@ public class SleepRecordsAdapter extends BaseAdapter {
         this.showDivider = showDivider;
     }
 
-    public void updateSleepRecords(List<SleepRecord> sleepRecords) {
+    public void updateSleepRecords(List<SleepRecordsPerDay> sleepRecords) {
         if (sleepRecords != null) {
             this.mDataSource = sleepRecords;
             notifyDataSetChanged();
         }
     }
 
-    public void addSleepRecords(List<SleepRecord> sleepRecords) {
+    public void addSleepRecords(List<SleepRecordsPerDay> sleepRecords) {
         if (sleepRecords != null) {
             this.mDataSource.addAll(sleepRecords);
             notifyDataSetChanged();
@@ -117,7 +117,7 @@ public class SleepRecordsAdapter extends BaseAdapter {
     }
 
     private void realAddSleepRecord(Calendar from, Calendar to) {
-        for (SleepRecord record : mDataSource) {
+        for (SleepRecordsPerDay record : mDataSource) {
             if (DateUtils.sameDay(from, record.getDateTime())) {
                 record.addSleepTime(new Pair<Date, Date>(from.getTime(), to.getTime()));
                 break;
@@ -140,7 +140,7 @@ public class SleepRecordsAdapter extends BaseAdapter {
             ButterKnife.bind(this, itemView);
         }
 
-        void update(SleepRecord sleepRecord) {
+        void update(SleepRecordsPerDay sleepRecord) {
             monthTextView.setText(monthShort[sleepRecord.getMonth()]);
             dateTextView.setText(String.valueOf(sleepRecord.getDate()));
             sleepRecordView.setSleepQuality(sleepRecord.getSleepQuality());

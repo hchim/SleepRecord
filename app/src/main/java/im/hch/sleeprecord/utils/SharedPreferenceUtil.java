@@ -15,7 +15,7 @@ import java.util.Set;
 
 import im.hch.sleeprecord.models.AppConfig;
 import im.hch.sleeprecord.models.BabyInfo;
-import im.hch.sleeprecord.models.SleepRecord;
+import im.hch.sleeprecord.models.SleepRecordsPerDay;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.models.UserProfile;
 
@@ -227,13 +227,13 @@ public class SharedPreferenceUtil {
 
     public static final String SLEEP_RECORDS = "SleepRecords";
 
-    public void storeSleepRecords(List<SleepRecord> records, String userId) {
+    public void storeSleepRecords(List<SleepRecordsPerDay> records, String userId) {
         if (records == null || userId == null) {
             return;
         }
 
         JSONArray jsonArray = new JSONArray();
-        for (SleepRecord record : records) {
+        for (SleepRecordsPerDay record : records) {
             jsonArray.put(record.toJson());
         }
 
@@ -248,9 +248,9 @@ public class SharedPreferenceUtil {
         removeValue(SLEEP_RECORDS);
     }
 
-    public List<SleepRecord> retrieveSleepRecords() {
+    public List<SleepRecordsPerDay> retrieveSleepRecords() {
         String json = getString(SLEEP_RECORDS, null);
-        List<SleepRecord> records = new ArrayList<>();
+        List<SleepRecordsPerDay> records = new ArrayList<>();
 
         if (json == null) {
             return records;
@@ -260,7 +260,7 @@ public class SharedPreferenceUtil {
             JSONObject object = new JSONObject(json);
             JSONArray array = object.getJSONArray("records");
             for (int i = 0; i < array.length(); i++) {
-                SleepRecord record = SleepRecord.create(array.getJSONObject(i));
+                SleepRecordsPerDay record = SleepRecordsPerDay.create(array.getJSONObject(i));
                 records.add(record);
             }
         } catch (JSONException e) {}

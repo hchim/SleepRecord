@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import im.hch.sleeprecord.models.BabyInfo;
-import im.hch.sleeprecord.models.SleepRecord;
+import im.hch.sleeprecord.models.SleepRecordsPerDay;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
 import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
@@ -165,7 +165,7 @@ public class SleepServiceClient extends BaseServiceClient {
      * @throws ConnectionFailureException
      * @throws InternalServerException
      */
-    public List<SleepRecord> getSleepRecords(Date from, Date to)
+    public List<SleepRecordsPerDay> getSleepRecords(Date from, Date to)
             throws ConnectionFailureException, InternalServerException, AuthFailureException, AccountNotExistException {
         String url = String.format(SLEEP_RECORDS_URL + "/%s/%s/%s",
                 DateUtils.dateToStr(from, QUERY_DATE_FORMAT),
@@ -179,10 +179,10 @@ public class SleepServiceClient extends BaseServiceClient {
             handleAAAErrors(result, true);
 
             JSONArray array = result.getJSONArray("records");
-            List<SleepRecord> list = new ArrayList<>();
+            List<SleepRecordsPerDay> list = new ArrayList<>();
 
             for (int i = 0; i < array.length(); i++) {
-                SleepRecord rec = SleepRecord.create(array.getJSONObject(i));
+                SleepRecordsPerDay rec = SleepRecordsPerDay.create(array.getJSONObject(i));
                 if (rec != null) {
                     list.add(rec);
                 }

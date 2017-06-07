@@ -5,7 +5,7 @@ android {
     signingConfigs {
         config {
             keyAlias 'sleeprecord'
-            storeFile file('/Users/huiche/Documents/workspace/SleepRecord/app/documents/KeyStore-debug.jks')
+            storeFile file('/Users/huiche/Documents/workspace/SleepRecordsPerDay/app/documents/KeyStore-debug.jks')
         }
     }
     compileSdkVersion 25

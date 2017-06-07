@@ -37,7 +37,7 @@ import im.hch.sleeprecord.activities.main.MainActivity;
 import im.hch.sleeprecord.activities.records.SleepRecordsAdapter;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.SleepQuality;
-import im.hch.sleeprecord.models.SleepRecord;
+import im.hch.sleeprecord.models.SleepRecordsPerDay;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
@@ -165,7 +165,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
      * Load sleep records from shared preference.
      */
     private void loadCachedSleepRecords() {
-        List<SleepRecord> records = sharedPreferenceUtil.retrieveSleepRecords();
+        List<SleepRecordsPerDay> records = sharedPreferenceUtil.retrieveSleepRecords();
         if (records == null) {
             records = new ArrayList<>();
         } else if (records.size() > 5) {
@@ -186,7 +186,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
      * Init sleep quality trend view.
      */
     private void loadCachedSleepQualityTrend() {
-        List<SleepRecord> records = sharedPreferenceUtil.retrieveSleepRecords();
+        List<SleepRecordsPerDay> records = sharedPreferenceUtil.retrieveSleepRecords();
         if (records == null) {
             records = new ArrayList<>();
         }
@@ -198,7 +198,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
         records = SleepRecordUtils.fillSleepRecords(records, from.getTime(), to.getTime());
 
         for (int i = records.size() - 1; i >= 0; i--) {
-            SleepRecord record = records.get(i);
+            SleepRecordsPerDay record = records.get(i);
             Log.d(MainActivity.TAG, "quality: " + record.getSleepQuality());
             sleepQualities.add(
                     new SleepQuality(record.getDateTime().getTime(), record.getSleepQuality()));
@@ -255,7 +255,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
 
         BabyInfo babyInfo;
         UserProfile userProfile;
-        List<SleepRecord> sleepRecords;
+        List<SleepRecordsPerDay> sleepRecords;
         SleepTrainingPlan sleepTrainingPlan;
         boolean reloadHeaderImage = false;
         boolean authFailure = false;
@@ -411,7 +411,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
     }
 
     private class LoadSleepRecordTask extends AsyncTask<Void, Integer, Boolean> {
-        List<SleepRecord> sleepRecords;
+        List<SleepRecordsPerDay> sleepRecords;
         boolean authFailure = false;
 
         @Override
