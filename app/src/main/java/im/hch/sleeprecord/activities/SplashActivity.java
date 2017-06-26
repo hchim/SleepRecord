@@ -7,6 +7,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.ButterKnife;
+import im.hch.sleeprecord.MyAppConfig;
 import im.hch.sleeprecord.serviceclients.AppInfoServiceClient;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.SessionManager;
@@ -30,7 +31,7 @@ public class SplashActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         sessionManager = new SessionManager(this);
         sharedPreferenceUtil = new SharedPreferenceUtil(this);
-        appConfigServiceClient = new AppInfoServiceClient();
+        appConfigServiceClient = new AppInfoServiceClient(MyAppConfig.getAppConfig());
 
 //        SharedPreferenceUtil sharedPreferenceUtil = new SharedPreferenceUtil(this);
 //        String splashImage = sharedPreferenceUtil.getString(AppConfigUpdateService.SPLASH_IMAGE_Location, null);

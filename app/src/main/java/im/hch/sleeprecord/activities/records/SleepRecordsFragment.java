@@ -10,7 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
+
+import com.sleepaiden.androidcommonutils.exceptions.AccountNotExistException;
+import com.sleepaiden.androidcommonutils.exceptions.AuthFailureException;
+import com.sleepaiden.androidcommonutils.exceptions.ConnectionFailureException;
+import com.sleepaiden.androidcommonutils.exceptions.InternalServerException;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,10 +31,6 @@ import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.BaseFragment;
 import im.hch.sleeprecord.activities.main.AddRecordDialogFragment;
 import im.hch.sleeprecord.models.SleepRecordsPerDay;
-import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
-import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
-import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
-import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 
@@ -92,6 +94,15 @@ public class SleepRecordsFragment extends BaseFragment implements AddRecordDialo
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
+        });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                DialogUtils.showSleepRecordsPerDay(getFragmentManager(),
+                        (SleepRecordsPerDay) sleepRecordsAdapter.getItem(position));
+                return true;
+            }
         });
 
         fab.setOnClickListener(new View.OnClickListener() {

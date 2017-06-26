@@ -10,7 +10,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/modules/messagesigner" />
+            <option value="$PROJECT_DIR$/modules/AndroidCommonUtils" />
+            <option value="$PROJECT_DIR$/modules/MessageSigner" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

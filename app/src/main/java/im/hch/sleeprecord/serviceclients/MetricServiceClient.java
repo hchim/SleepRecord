@@ -2,18 +2,24 @@ package im.hch.sleeprecord.serviceclients;
 
 import android.util.Log;
 
+import com.sleepaiden.androidcommonutils.config.AppConfig;
+import com.sleepaiden.androidcommonutils.exceptions.ConnectionFailureException;
+import com.sleepaiden.androidcommonutils.exceptions.InternalServerException;
+import com.sleepaiden.androidcommonutils.service.BaseServiceClient;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import im.hch.sleeprecord.Constants;
-import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
-import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.serviceclients.exceptions.InvalidRequestException;
 import im.hch.sleeprecord.utils.MetricHelper.MetricType;
 
 public class MetricServiceClient extends BaseServiceClient {
 
     public static final String ADD_METRIC_URL = EndPoints.METRIC_SERVICE_ENDPOINT + "/metrics";
+
+    public MetricServiceClient(AppConfig appConfig) {
+        super(appConfig);
+    }
 
     @Override
     protected String getPath(String url) {
@@ -22,7 +28,7 @@ public class MetricServiceClient extends BaseServiceClient {
 
     private void addMetric(String tag, MetricType type, int val, String message, String ip)
             throws ConnectionFailureException, InternalServerException {
-        JSONObject object = Constants.getAppJSON();
+        JSONObject object = appConfig.getAppJSON();
         try {
             object.put("tag", tag);
             object.put("type", type.toString());

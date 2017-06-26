@@ -9,7 +9,8 @@ import android.util.Log;
 
 import java.io.FileOutputStream;
 
-import im.hch.sleeprecord.models.AppConfig;
+import im.hch.sleeprecord.MyAppConfig;
+import im.hch.sleeprecord.models.ApplicationConfig;
 import im.hch.sleeprecord.serviceclients.AppInfoServiceClient;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
 import okhttp3.OkHttpClient;
@@ -34,12 +35,12 @@ public class AppConfigUpdateService extends IntentService {
 
     private AppInfoServiceClient appConfigServiceClient;
     private SharedPreferenceUtil sharedPreferenceUtil;
-    private AppConfig appConfig;
+    private ApplicationConfig appConfig;
     final OkHttpClient okHttpClient;
 
     public AppConfigUpdateService() {
         super("AppConfigUpdateService");
-        this.appConfigServiceClient = new AppInfoServiceClient();
+        this.appConfigServiceClient = new AppInfoServiceClient(MyAppConfig.getAppConfig());
         this.okHttpClient = new OkHttpClient();
     }
 

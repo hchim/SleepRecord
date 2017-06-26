@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/modules/AndroidCommonUtils/AndroidCommonUtils.iml" filepath="$PROJECT_DIR$/modules/AndroidCommonUtils/AndroidCommonUtils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/modules/MessageSigner/MessageSigner.iml" filepath="$PROJECT_DIR$/modules/MessageSigner/MessageSigner.iml" />
       <module fileurl="file://$PROJECT_DIR$/SleepRecord.iml" filepath="$PROJECT_DIR$/SleepRecord.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/modules/messagesigner/messagesigner.iml" filepath="$PROJECT_DIR$/modules/messagesigner/messagesigner.iml" />
     </modules>
   </component>
 </project>

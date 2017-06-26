@@ -2,13 +2,14 @@ package im.hch.sleeprecord.models;
 
 import android.util.Log;
 
+import com.sleepaiden.androidcommonutils.service.BaseServiceClient;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.Date;
 
-import im.hch.sleeprecord.serviceclients.BaseServiceClient;
 import im.hch.sleeprecord.utils.DateUtils;
 import lombok.Data;
 import lombok.Getter;

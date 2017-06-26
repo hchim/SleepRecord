@@ -21,19 +21,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.sleepaiden.androidcommonutils.exceptions.ConnectionFailureException;
+import com.sleepaiden.androidcommonutils.exceptions.InternalServerException;
+
 import java.util.List;
 
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.hch.sleeprecord.Metrics;
+import im.hch.sleeprecord.MyAppConfig;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.loader.EmailLoaderHelper;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
-import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.EmailUsedException;
-import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.FieldValidator;
@@ -85,7 +87,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         ButterKnife.bind(this);
 
         this.mSessionManager = new SessionManager(this);
-        this.identityServiceClient = new IdentityServiceClient();
+        this.identityServiceClient = new IdentityServiceClient(MyAppConfig.getAppConfig());
         this.emailLoaderHelper = new EmailLoaderHelper(this);
         this.metricHelper = new MetricHelper(this);
 

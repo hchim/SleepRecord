@@ -41,6 +41,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.sleepaiden.androidcommonutils.exceptions.AccountNotExistException;
+import com.sleepaiden.androidcommonutils.exceptions.ConnectionFailureException;
+import com.sleepaiden.androidcommonutils.exceptions.InternalServerException;
 import com.tencent.mm.sdk.modelbase.BaseResp;
 import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.openapi.IWXAPI;
@@ -56,13 +59,11 @@ import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.hch.sleeprecord.Metrics;
+import im.hch.sleeprecord.MyAppConfig;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.loader.EmailLoaderHelper;
 import im.hch.sleeprecord.models.UserProfile;
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
-import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
-import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
-import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.serviceclients.exceptions.InvalidIDTokenException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongPasswordException;
 import im.hch.sleeprecord.utils.ActivityUtils;
@@ -133,7 +134,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         ButterKnife.bind(this);
 
         mSessionManager = new SessionManager(this);
-        identityServiceClient = new IdentityServiceClient();
+        identityServiceClient = new IdentityServiceClient(MyAppConfig.getAppConfig());
         emailLoaderHelper = new EmailLoaderHelper(this);
         metricHelper = new MetricHelper(this);
 

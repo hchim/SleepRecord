@@ -18,6 +18,8 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.NativeExpressAdView;
+import com.sleepaiden.androidcommonutils.exceptions.AuthFailureException;
+import com.sleepaiden.androidcommonutils.exceptions.InternalServerException;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -40,8 +42,6 @@ import im.hch.sleeprecord.models.SleepQuality;
 import im.hch.sleeprecord.models.SleepRecordsPerDay;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.models.UserProfile;
-import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
-import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 import im.hch.sleeprecord.utils.ImageUtils;
@@ -166,10 +166,9 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
      */
     private void loadCachedSleepRecords() {
         List<SleepRecordsPerDay> records = sharedPreferenceUtil.retrieveSleepRecords();
-        if (records == null) {
-            records = new ArrayList<>();
-        } else if (records.size() > 5) {
-            records = records.subList(0, SHOW_SLEEP_RECORDS_NUM);
+        List<SleepRecordsPerDay> newRecords = new ArrayList<>();
+        if (records != null && records.size() > SHOW_SLEEP_RECORDS_NUM) {
+            newRecords = records.subList(0, SHOW_SLEEP_RECORDS_NUM);
         }
 
         Calendar to = Calendar.getInstance();
@@ -177,7 +176,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
         from.add(Calendar.DATE, SHOW_SLEEP_RECORDS_NUM * -1);
 
         sleepRecordsAdapter = new SleepRecordsAdapter(mainActivity,
-                SleepRecordUtils.fillSleepRecords(records, from.getTime(), to.getTime()));
+                SleepRecordUtils.fillSleepRecords(newRecords, from.getTime(), to.getTime()));
         sleepRecordListView.setAdapter(sleepRecordsAdapter);
         ViewUtils.setListViewHeightBasedOnChildren(sleepRecordListView);
     }
@@ -367,7 +366,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
                 case USER_INFO_UPDATED:
                     mainActivity.updateUserInfo(userProfile);
                     //show email verify widget
-                    if (!userProfile.isEmailVerified()) {
+                    if (userProfile != null && !userProfile.isEmailVerified()) {
                         verifyEmailView.setVisibility(View.VISIBLE);
                     }
 

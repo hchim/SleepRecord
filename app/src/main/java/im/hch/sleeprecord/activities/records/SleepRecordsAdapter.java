@@ -58,6 +58,8 @@ public class SleepRecordsAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.list_item_sleep_record, parent, false);
             viewHolder = new SleepRecordViewHolder(convertView);
             convertView.setTag(viewHolder);
+            //enable long click
+            convertView.setLongClickable(true);
         } else {
             viewHolder = (SleepRecordViewHolder) convertView.getTag();
         }

@@ -5,12 +5,12 @@ import org.json.JSONObject;
 import lombok.Data;
 
 @Data
-public class AppConfig {
+public class ApplicationConfig {
     private String splashImageUrl;
 
-    public AppConfig() {}
+    public ApplicationConfig() {}
 
-    public AppConfig(JSONObject jsonObject) {
+    public ApplicationConfig(JSONObject jsonObject) {
 
     }
 }

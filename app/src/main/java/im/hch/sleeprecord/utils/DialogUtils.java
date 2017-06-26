@@ -14,8 +14,10 @@ import im.hch.sleeprecord.activities.main.AddRecordDialogFragment;
 import im.hch.sleeprecord.activities.main.BabyInfoDialogFragment;
 import im.hch.sleeprecord.activities.home.VerifyEmailDialogFragment;
 import im.hch.sleeprecord.activities.main.SuggestionDialogFragment;
+import im.hch.sleeprecord.activities.records.PerDaySleepRecordsFragment;
 import im.hch.sleeprecord.activities.settings.UpdatePasswordDialogFragment;
 import im.hch.sleeprecord.models.BabyInfo;
+import im.hch.sleeprecord.models.SleepRecordsPerDay;
 
 public class DialogUtils {
     public static final String DIALOG_TAG = "dialog";
@@ -121,6 +123,19 @@ public class DialogUtils {
      */
     public static SuggestionDialogFragment showAddSuggestionDialog(FragmentManager fragmentManager) {
         SuggestionDialogFragment fragment = SuggestionDialogFragment.newInstance();
+        fragment.show(fragmentManager, DIALOG_TAG);
+        return fragment;
+    }
+
+    /**
+     * Show sleep records of the selected date.
+     * @param fragmentManager
+     * @param sleepRecordsPerDay
+     * @return
+     */
+    public static PerDaySleepRecordsFragment showSleepRecordsPerDay(
+            FragmentManager fragmentManager, SleepRecordsPerDay sleepRecordsPerDay) {
+        PerDaySleepRecordsFragment fragment = PerDaySleepRecordsFragment.newInstance(sleepRecordsPerDay);
         fragment.show(fragmentManager, DIALOG_TAG);
         return fragment;
     }

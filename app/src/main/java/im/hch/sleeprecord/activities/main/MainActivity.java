@@ -36,6 +36,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import im.hch.sleeprecord.Metrics;
+import im.hch.sleeprecord.MyAppConfig;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.home.HomeFragment;
 import im.hch.sleeprecord.activities.records.SleepRecordsFragment;
@@ -102,10 +103,10 @@ public class MainActivity extends AppCompatActivity implements
         sharedPreferenceUtil = new SharedPreferenceUtil(this);
 
         String accessToken = sessionManager.getAccessToken();
-        sleepServiceClient = new SleepServiceClient();
+        sleepServiceClient = new SleepServiceClient(MyAppConfig.getAppConfig());
         sleepServiceClient.setAccessToken(accessToken);
 
-        identityServiceClient = new IdentityServiceClient();
+        identityServiceClient = new IdentityServiceClient(MyAppConfig.getAppConfig());
         identityServiceClient.setAccessToken(accessToken);
         metricHelper = new MetricHelper(this);
 

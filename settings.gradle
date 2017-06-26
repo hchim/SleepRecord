@@ -1,2 +1,3 @@
-include ':app', ':messagesigner'
-project(':messagesigner').projectDir = new File('modules/messagesigner')
+include ':app', ':MessageSigner', ':AndroidCommonUtils'
+project(':MessageSigner').projectDir = new File('modules/MessageSigner')
+project(':AndroidCommonUtils').projectDir = new File('modules/AndroidCommonUtils')

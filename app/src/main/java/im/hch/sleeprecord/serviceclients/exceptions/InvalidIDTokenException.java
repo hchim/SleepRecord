@@ -1,5 +1,7 @@
 package im.hch.sleeprecord.serviceclients.exceptions;
 
+import com.sleepaiden.androidcommonutils.exceptions.BaseException;
+
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
 
 public class InvalidIDTokenException extends BaseException {

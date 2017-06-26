@@ -20,18 +20,20 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 
+import com.sleepaiden.androidcommonutils.exceptions.AuthFailureException;
+import com.sleepaiden.androidcommonutils.exceptions.ConnectionFailureException;
+import com.sleepaiden.androidcommonutils.exceptions.InternalServerException;
+
 import java.util.Calendar;
 
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.hch.sleeprecord.Metrics;
+import im.hch.sleeprecord.MyAppConfig;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
-import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
-import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
-import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DateUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
@@ -146,7 +148,7 @@ public class BabyInfoDialogFragment extends DialogFragment {
     private void init(Activity activity) {
         sessionManager = new SessionManager(activity);
         sharedPreferenceUtil = new SharedPreferenceUtil(activity);
-        sleepServiceClient = new SleepServiceClient();
+        sleepServiceClient = new SleepServiceClient(MyAppConfig.getAppConfig());
         sleepServiceClient.setAccessToken(sessionManager.getAccessToken());
         metricHelper = new MetricHelper(activity);
 

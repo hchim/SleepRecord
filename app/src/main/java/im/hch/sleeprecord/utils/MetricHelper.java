@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 
+import im.hch.sleeprecord.MyAppConfig;
 import im.hch.sleeprecord.serviceclients.MetricServiceClient;
 
 public class MetricHelper {
@@ -34,7 +35,7 @@ public class MetricHelper {
 
     public MetricHelper(Context context) {
         this.context = context;
-        metricServiceClient = new MetricServiceClient();
+        metricServiceClient = new MetricServiceClient(MyAppConfig.getAppConfig());
         metricMap = new HashMap<>();
     }
 

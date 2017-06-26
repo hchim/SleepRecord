@@ -17,15 +17,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.sleepaiden.androidcommonutils.exceptions.AccountNotExistException;
+import com.sleepaiden.androidcommonutils.exceptions.AuthFailureException;
+import com.sleepaiden.androidcommonutils.exceptions.ConnectionFailureException;
+import com.sleepaiden.androidcommonutils.exceptions.InternalServerException;
+
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import im.hch.sleeprecord.MyAppConfig;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.serviceclients.IdentityServiceClient;
-import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
-import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
-import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
-import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongPasswordException;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
@@ -102,7 +104,7 @@ public class UpdatePasswordDialogFragment extends DialogFragment {
         sessionManager = new SessionManager(activity);
         sharedPreferenceUtil = new SharedPreferenceUtil(activity);
 
-        identityServiceClient = new IdentityServiceClient();
+        identityServiceClient = new IdentityServiceClient(MyAppConfig.getAppConfig());
         identityServiceClient.setAccessToken(sessionManager.getAccessToken());
 
         repeatPasswordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {

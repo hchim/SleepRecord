@@ -3,6 +3,10 @@
     <string name="app_version">v1.0.0</string>
     <string name="title_activity_settings">Settings</string>
     <string name="widget_title_sleep_records">Recent Sleep Records</string>
+    <!-- General Strings-->
+    <string name="delete">Delete</string>
+    <string name="display_date_format">MMM d, yyyy</string>
+    <string name="display_datetime_format">MMM d HH:mm</string>
     <!-- Strings related to Settings -->
 
     <!-- User Settings -->

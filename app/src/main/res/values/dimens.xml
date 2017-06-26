@@ -33,6 +33,10 @@
     <dimen name="sleep_record_view_margin_left">5dp</dimen>
     <dimen name="sleep_record_list_view_height">40dp</dimen>
 
+    <!-- Per day sleep record lists-->
+    <dimen name="sleep_record_title_padding">5dp</dimen>
+    <dimen name="sleep_record_title_margin_right">10dp</dimen>
+    <dimen name="sleep_record_del_btn_padding">5dp</dimen>
     <!-- Login Activity-->
     <dimen name="form_item_margin_top">18dp</dimen>
     <dimen name="sign_in_btn_margin">45dp</dimen>

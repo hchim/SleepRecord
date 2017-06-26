@@ -10,19 +10,21 @@ import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.sleepaiden.androidcommonutils.exceptions.AccountNotExistException;
+import com.sleepaiden.androidcommonutils.exceptions.AuthFailureException;
+import com.sleepaiden.androidcommonutils.exceptions.ConnectionFailureException;
+import com.sleepaiden.androidcommonutils.exceptions.InternalServerException;
+
 import java.util.Date;
 
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import im.hch.sleeprecord.MyAppConfig;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.BaseFragment;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
 import im.hch.sleeprecord.serviceclients.SleepServiceClient;
-import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
-import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
-import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
-import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.SessionManager;
 import im.hch.sleeprecord.utils.SharedPreferenceUtil;
@@ -84,7 +86,7 @@ public class PlanningFragment extends BaseFragment {
         mainActivity.setTitle(title);
 
         sharedPreferenceUtil = new SharedPreferenceUtil(getActivity());
-        sleepServiceClient = new SleepServiceClient();
+        sleepServiceClient = new SleepServiceClient(MyAppConfig.getAppConfig());
         sessionManager = new SessionManager(getActivity());
         sleepServiceClient.setAccessToken(sessionManager.getAccessToken());
 

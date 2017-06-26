@@ -2,6 +2,13 @@ package im.hch.sleeprecord.serviceclients;
 
 import android.util.Log;
 
+import com.sleepaiden.androidcommonutils.config.AppConfig;
+import com.sleepaiden.androidcommonutils.exceptions.AccountNotExistException;
+import com.sleepaiden.androidcommonutils.exceptions.AuthFailureException;
+import com.sleepaiden.androidcommonutils.exceptions.ConnectionFailureException;
+import com.sleepaiden.androidcommonutils.exceptions.InternalServerException;
+import com.sleepaiden.androidcommonutils.service.BaseServiceClient;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,11 +23,7 @@ import java.util.Map;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.SleepRecordsPerDay;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
-import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
-import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.BabyNotExistsException;
-import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
-import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.serviceclients.exceptions.InvalidRequestException;
 import im.hch.sleeprecord.serviceclients.exceptions.TimeOverlapException;
 import im.hch.sleeprecord.serviceclients.exceptions.TrainingPlanNotExistException;
@@ -45,7 +48,8 @@ public class SleepServiceClient extends BaseServiceClient {
 
     private Map<String, String> aaaHeaders;
 
-    public SleepServiceClient() {
+    public SleepServiceClient(AppConfig appConfig) {
+        super(appConfig);
         aaaHeaders = new HashMap<>();
     }
 
@@ -149,6 +153,32 @@ public class SleepServiceClient extends BaseServiceClient {
                 if (errorCode.equals(ERROR_CODE_TIME_OVERLAP)) {
                     throw new TimeOverlapException();
                 }
+                throw new InternalServerException();
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "JSON format error");
+            throw new InternalServerException();
+        }
+    }
+
+    /**
+     * Delete a sleep record.
+     * @param recId
+     * @throws ConnectionFailureException
+     * @throws InternalServerException
+     * @throws AccountNotExistException
+     * @throws AuthFailureException
+     */
+    public void deleteSleepRecord(String recId)
+            throws ConnectionFailureException, InternalServerException,
+            AccountNotExistException, AuthFailureException {
+        String url = SLEEP_RECORDS_URL + "/" + recId;
+        try {
+            JSONObject result = delete(url, aaaHeaders);
+
+            handleGeneralErrors(result, false);
+            handleAAAErrors(result, false);
+            if (result.has(ERROR_CODE_KEY)) {
                 throw new InternalServerException();
             }
         } catch (JSONException e) {

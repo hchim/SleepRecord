@@ -21,6 +21,7 @@ import android.widget.TextView;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import im.hch.sleeprecord.MyAppConfig;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.serviceclients.AppInfoServiceClient;
 import im.hch.sleeprecord.utils.ActivityUtils;
@@ -86,7 +87,7 @@ public class SuggestionDialogFragment extends DialogFragment {
     }
 
     private void init(Activity activity) {
-        appInfoServiceClient = new AppInfoServiceClient();
+        appInfoServiceClient = new AppInfoServiceClient(MyAppConfig.getAppConfig());
         sessionManager = new SessionManager(activity);
 
         suggestionTextView.setOnEditorActionListener(new TextView.OnEditorActionListener() {

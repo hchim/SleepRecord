@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import im.hch.sleeprecord.models.AppConfig;
+import im.hch.sleeprecord.models.ApplicationConfig;
 import im.hch.sleeprecord.models.BabyInfo;
 import im.hch.sleeprecord.models.SleepRecordsPerDay;
 import im.hch.sleeprecord.models.SleepTrainingPlan;
@@ -261,7 +261,9 @@ public class SharedPreferenceUtil {
             JSONArray array = object.getJSONArray("records");
             for (int i = 0; i < array.length(); i++) {
                 SleepRecordsPerDay record = SleepRecordsPerDay.create(array.getJSONObject(i));
-                records.add(record);
+                if (record != null) {
+                    records.add(record);
+                }
             }
         } catch (JSONException e) {}
 
@@ -299,12 +301,12 @@ public class SharedPreferenceUtil {
         removeSleepTrainingPlan();
     }
 
-    public void storeAppConfig(AppConfig appConfig) {
+    public void storeAppConfig(ApplicationConfig appConfig) {
 
     }
 
-    public AppConfig retrieveAppConfig() {
-        AppConfig appConfig = new AppConfig();
+    public ApplicationConfig retrieveAppConfig() {
+        ApplicationConfig appConfig = new ApplicationConfig();
         return appConfig;
     }
 }

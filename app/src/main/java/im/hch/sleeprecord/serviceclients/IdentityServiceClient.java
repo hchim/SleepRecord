@@ -2,6 +2,13 @@ package im.hch.sleeprecord.serviceclients;
 
 import android.util.Log;
 
+import com.sleepaiden.androidcommonutils.config.AppConfig;
+import com.sleepaiden.androidcommonutils.exceptions.AccountNotExistException;
+import com.sleepaiden.androidcommonutils.exceptions.AuthFailureException;
+import com.sleepaiden.androidcommonutils.exceptions.ConnectionFailureException;
+import com.sleepaiden.androidcommonutils.exceptions.InternalServerException;
+import com.sleepaiden.androidcommonutils.service.BaseServiceClient;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,11 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import im.hch.sleeprecord.models.UserProfile;
-import im.hch.sleeprecord.serviceclients.exceptions.AccountNotExistException;
-import im.hch.sleeprecord.serviceclients.exceptions.AuthFailureException;
-import im.hch.sleeprecord.serviceclients.exceptions.ConnectionFailureException;
 import im.hch.sleeprecord.serviceclients.exceptions.EmailUsedException;
-import im.hch.sleeprecord.serviceclients.exceptions.InternalServerException;
 import im.hch.sleeprecord.serviceclients.exceptions.InvalidIDTokenException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongPasswordException;
 import im.hch.sleeprecord.serviceclients.exceptions.WrongSecurityCodeException;
@@ -44,8 +47,8 @@ public class IdentityServiceClient extends BaseServiceClient {
 
     private Map<String, String> aaaHeaders;
 
-    public IdentityServiceClient() {
-        super();
+    public IdentityServiceClient(AppConfig appConfig) {
+        super(appConfig);
         aaaHeaders = new HashMap<>();
     }
 

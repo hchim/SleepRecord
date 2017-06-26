@@ -1,6 +1,7 @@
 package im.hch.sleeprecord.serviceclients.exceptions;
 
-import im.hch.sleeprecord.serviceclients.BaseServiceClient;
+import com.sleepaiden.androidcommonutils.exceptions.InternalServerException;
+import com.sleepaiden.androidcommonutils.service.BaseServiceClient;
 
 public class InvalidRequestException extends InternalServerException {
 
