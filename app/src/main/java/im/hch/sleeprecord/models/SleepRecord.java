@@ -67,9 +67,9 @@ public class SleepRecord implements Parcelable {
 
         try {
             SleepRecord sleepRecord = new SleepRecord(
-                    obj.getString("recordId"),
-                    DateUtils.strToDate(obj.getString("sleepTime"), Constants.DATE_FORMAT),
-                    DateUtils.strToDate(obj.getString("wakeupTime"), Constants.DATE_FORMAT)
+                    obj.getString("_id"),
+                    DateUtils.strToDate(obj.getString("recSleepTime"), Constants.DATE_FORMAT),
+                    DateUtils.strToDate(obj.getString("recWakeupTime"), Constants.DATE_FORMAT)
             );
             return sleepRecord;
         } catch (Exception e) {

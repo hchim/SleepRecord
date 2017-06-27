@@ -40,6 +40,10 @@ public class ImageUtils {
     }
 
     public static String downloadImage(final Context context, final String downloadUrl) {
+        if (downloadUrl == null) {
+            return null;
+        }
+
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(downloadUrl).build();
         Response response = null;

@@ -198,7 +198,6 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
 
         for (int i = records.size() - 1; i >= 0; i--) {
             SleepRecordsPerDay record = records.get(i);
-            Log.d(MainActivity.TAG, "quality: " + record.getSleepQuality());
             sleepQualities.add(
                     new SleepQuality(record.getDateTime().getTime(), record.getSleepQuality()));
         }

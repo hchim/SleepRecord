@@ -60,10 +60,11 @@ public class DialogUtils {
      * @param fragmentManager
      * @return
      */
-    public static AddRecordDialogFragment showAddRecordDialog(FragmentManager fragmentManager,
-                                                              AddRecordDialogFragment.AddRecordDialogListener callback) {
+    public static AddRecordDialogFragment showAddRecordDialog(
+            FragmentManager fragmentManager,
+            AddRecordDialogFragment.AddRecordDialogListener listener) {
         AddRecordDialogFragment addRecordDialogFragment = AddRecordDialogFragment.newInstance();
-        addRecordDialogFragment.setMListener(callback);
+        addRecordDialogFragment.setMListener(listener);
         addRecordDialogFragment.show(fragmentManager, DIALOG_TAG);
         return addRecordDialogFragment;
     }
@@ -130,12 +131,16 @@ public class DialogUtils {
     /**
      * Show sleep records of the selected date.
      * @param fragmentManager
+     * @param listener
      * @param sleepRecordsPerDay
      * @return
      */
     public static PerDaySleepRecordsFragment showSleepRecordsPerDay(
-            FragmentManager fragmentManager, SleepRecordsPerDay sleepRecordsPerDay) {
+            FragmentManager fragmentManager,
+            PerDaySleepRecordsFragment.DeleteRecordDialogListener listener,
+            SleepRecordsPerDay sleepRecordsPerDay) {
         PerDaySleepRecordsFragment fragment = PerDaySleepRecordsFragment.newInstance(sleepRecordsPerDay);
+        fragment.setMListener(listener);
         fragment.show(fragmentManager, DIALOG_TAG);
         return fragment;
     }

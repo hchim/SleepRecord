@@ -147,7 +147,8 @@ public class PerDaySleepRecordsFragment extends DialogFragment {
         @Override
         protected void onPostExecute(Boolean result) {
             progressDialog.dismiss();
-
+            deleteSleepRecordTask = null;
+            
             if (result) {
                 if (mListener != null) {
                     mListener.onSleepRecordDeleted();

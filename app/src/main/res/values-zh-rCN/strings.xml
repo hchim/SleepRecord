@@ -4,8 +4,8 @@
     <string name="widget_title_sleep_records">最近的睡眠记录</string>
     <!-- General Strings-->
     <string name="delete">删除</string>
-    <string name="display_date_format">yyyy-mm-dd</string>
-    <string name="display_datetime_format">M月d日 HH:mm</string>
+    <string name="display_date_format">yyyy-MM-dd</string>
+    <string name="display_datetime_format">MM月dd日 HH:mm</string>
     <!-- Strings related to Settings -->
 
     <!-- User Settings -->

@@ -40,19 +40,16 @@ public class SleepRecordsPerDay {
                     object.getDouble("quality")
             );
 
-            JSONArray timesArray = object.getJSONArray("times");
-            for (int j = 0; j < timesArray.length(); j++) {
-                JSONObject timeObj = timesArray.getJSONObject(j);
-                record.addSleepTime(new Pair<Date, Date>(
-                        DateUtils.strToDate(timeObj.getString("fallAsleepTime"), Constants.DATE_FORMAT),
-                        DateUtils.strToDate(timeObj.getString("wakeupTime"), Constants.DATE_FORMAT)
-                ));
-            }
-
-            JSONArray recArray = object.getJSONArray("records");
-            for (int i = 0; i < recArray.length(); i++) {
-                JSONObject recObj = recArray.getJSONObject(i);
-                record.addSleepRecord(SleepRecord.create(recObj));
+            if (object.has("times")) {
+                JSONArray timesArray = object.getJSONArray("times");
+                for (int j = 0; j < timesArray.length(); j++) {
+                    JSONObject timeObj = timesArray.getJSONObject(j);
+                    record.addSleepTime(new Pair<Date, Date>(
+                            DateUtils.strToDate(timeObj.getString("fallAsleepTime"), Constants.DATE_FORMAT),
+                            DateUtils.strToDate(timeObj.getString("wakeupTime"), Constants.DATE_FORMAT)
+                    ));
+                    record.addSleepRecord(SleepRecord.create(timeObj));
+                }
             }
 
             return record;

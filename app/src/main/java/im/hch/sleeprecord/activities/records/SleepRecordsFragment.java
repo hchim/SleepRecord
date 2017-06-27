@@ -34,7 +34,9 @@ import im.hch.sleeprecord.models.SleepRecordsPerDay;
 import im.hch.sleeprecord.utils.ActivityUtils;
 import im.hch.sleeprecord.utils.DialogUtils;
 
-public class SleepRecordsFragment extends BaseFragment implements AddRecordDialogFragment.AddRecordDialogListener {
+public class SleepRecordsFragment extends BaseFragment implements
+        AddRecordDialogFragment.AddRecordDialogListener,
+        PerDaySleepRecordsFragment.DeleteRecordDialogListener {
     public static final String TAG = "SleepRecordsFragment";
     /**
      * The number of sleep records to show in the sleep records widget.
@@ -100,6 +102,7 @@ public class SleepRecordsFragment extends BaseFragment implements AddRecordDialo
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 DialogUtils.showSleepRecordsPerDay(getFragmentManager(),
+                        SleepRecordsFragment.this,
                         (SleepRecordsPerDay) sleepRecordsAdapter.getItem(position));
                 return true;
             }
@@ -117,6 +120,14 @@ public class SleepRecordsFragment extends BaseFragment implements AddRecordDialo
     @Override
     public void onSleepRecordSaved(Date from, Date to) {
         page = 0; // reset page to first page
+        sleepRecordsAdapter.clearSleepRecords();
+        new LoadRemoteDataTask().execute(page);
+    }
+
+    @Override
+    public void onSleepRecordDeleted() {
+        page = 0; // reset page to first page
+        sleepRecordsAdapter.clearSleepRecords();
         new LoadRemoteDataTask().execute(page);
     }
 

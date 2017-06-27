@@ -87,6 +87,11 @@ public class SleepRecordsAdapter extends BaseAdapter {
         }
     }
 
+    public void clearSleepRecords() {
+        this.mDataSource.clear();
+        notifyDataSetChanged();
+    }
+
     public void addSleepRecords(List<SleepRecordsPerDay> sleepRecords) {
         if (sleepRecords != null) {
             this.mDataSource.addAll(sleepRecords);
