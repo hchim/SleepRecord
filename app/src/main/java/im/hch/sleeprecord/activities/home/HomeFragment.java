@@ -257,7 +257,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
         SleepTrainingPlan sleepTrainingPlan;
         boolean reloadHeaderImage = false;
         boolean authFailure = false;
-
+        boolean loadBabyInfoHasException = false;
         public static final int BABY_INFO_UPDATED = 30;
         public static final int USER_INFO_UPDATED = 60;
         public static final int TRAINING_PLAN_UPDATED = 80;
@@ -275,10 +275,13 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
             try {
                 babyInfo = mainActivity.sleepServiceClient.getBabyInfo();
                 sharedPreferenceUtil.storeBabyInfo(babyInfo);
+                loadBabyInfoHasException = false;
             } catch (AuthFailureException e) {
                 authFailure = true;
+                loadBabyInfoHasException = true;
                 return false;
             } catch (Exception e) {
+                loadBabyInfoHasException = true;
                 Log.w(MainActivity.TAG, e);
                 if (e instanceof InternalServerException) {
                     metricHelper.errorMetric(Metrics.GET_BABY_INFO_ERROR_METRIC, e);
@@ -358,7 +361,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
             switch (values[0]) {
                 case BABY_INFO_UPDATED:
                     mainActivity.updateBabyInfo(babyInfo);
-                    if (babyInfo == null) {
+                    if (babyInfo == null && !loadBabyInfoHasException) {
                         DialogUtils.showEditBabyInfoDialog(getActivity().getFragmentManager(), babyInfo);
                     }
                     break;
