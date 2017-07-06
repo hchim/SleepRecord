@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +13,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.NativeExpressAdView;
 import com.sleepaiden.androidcommonutils.exceptions.AuthFailureException;
 import com.sleepaiden.androidcommonutils.exceptions.InternalServerException;
 import com.squareup.picasso.Picasso;
@@ -58,10 +53,8 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
     @BindView(R.id.sleepQualityTrend) SleepQualityTrendView sleepQualityTrendView;
     @BindView(R.id.adWidget) LinearLayout adWidgetView;
     @BindView(R.id.fab) FloatingActionButton fab;
-    NativeExpressAdView adView;
 
     @BindString(R.string.app_name) String title;
-    @BindString(R.string.admob_id_main_activity) String adId;
 
     private SleepRecordsAdapter sleepRecordsAdapter;
 
@@ -112,21 +105,7 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
             }
         });
         //setup adview
-        adView = new NativeExpressAdView(mainActivity);
-        adView.setAdUnitId(adId);
-        adWidgetView.addView(adView);
-        adView.setAdListener(new AdListener() {
-            @Override
-            public void onAdFailedToLoad(int i) {
-                metricHelper.increaseCounter(Metrics.HOME_FRAGMENT_AD_LOAD_FAILURE);
-            }
-
-            @Override
-            public void onAdLoaded() {
-                adWidgetView.setVisibility(View.VISIBLE);
-                metricHelper.increaseCounter(Metrics.HOME_FRAGMENT_AD_LOADED);
-            }
-        });
+        setupAdView(view, adWidgetView);
 
         loadCachedSleepRecords();
         loadCachedSleepQualityTrend();
@@ -134,18 +113,6 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
             loadRemoteData();
         }
 
-        view.post(new Runnable() {
-            @Override
-            public void run() {
-                DisplayMetrics metrics = getResources().getDisplayMetrics();
-                float density = ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-                int adMarginDP = (int) (getResources().getDimension(R.dimen.activity_horizontal_margin) * 2 / density);
-                int adWidthDP = (int) (view.getWidth() / density) - adMarginDP;
-                int adHeightDP = (int) (adWidthDP / 4.0); // the width and height of the native ad defines 4.0
-                adView.setAdSize(new AdSize(adWidthDP, adHeightDP));
-                loadAd();
-            }
-        });
         return view;
     }
 
@@ -203,14 +170,6 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
         }
 
         sleepQualityTrendView.setSleepQualities(sleepQualities);
-    }
-
-    /**
-     * Load AD.
-     */
-    private void loadAd() {
-        AdRequest.Builder builder = new AdRequest.Builder();
-        adView.loadAd(builder.build());
     }
 
     /**

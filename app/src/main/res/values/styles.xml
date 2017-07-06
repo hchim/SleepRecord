@@ -106,4 +106,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
     </style>
+
+    <style name="grid_image">
+        <item name="android:layout_margin">@dimen/grid_view_horizontal_space</item>
+    </style>
 </resources>

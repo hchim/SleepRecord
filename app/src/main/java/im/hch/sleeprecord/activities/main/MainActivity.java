@@ -4,12 +4,16 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -24,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.sleepaiden.androidcommonutils.media.AudioService;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -39,6 +44,7 @@ import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.MyAppConfig;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.home.HomeFragment;
+import im.hch.sleeprecord.activities.noise.WhiteNoiseFragment;
 import im.hch.sleeprecord.activities.records.SleepRecordsFragment;
 import im.hch.sleeprecord.activities.settings.SettingsFragment;
 import im.hch.sleeprecord.activities.training.ChecklistFragment;
@@ -60,7 +66,7 @@ import lombok.Setter;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
-        BabyInfoDialogFragment.BabyInfoDialogFragmentListener {
+        BabyInfoDialogFragment.BabyInfoDialogFragmentListener, ServiceConnection {
     public static final String TAG = "MainActivity";
 
     public static final int CROP_WIN_SIZE = 1024;
@@ -69,6 +75,8 @@ public class MainActivity extends AppCompatActivity implements
     public SharedPreferenceUtil sharedPreferenceUtil;
     public SleepServiceClient sleepServiceClient;
     public IdentityServiceClient identityServiceClient;
+    public AudioService audioService;
+
     @Getter
     private HeaderViewHolder headerViewHolder;
     private Uri mCropImageUri;
@@ -141,6 +149,15 @@ public class MainActivity extends AppCompatActivity implements
         });
 
         loadFragment(HomeFragment.newInstance(), null);
+
+        Intent intent= new Intent(this, AudioService.class);
+        bindService(intent, this, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        unbindService(this);
+        super.onDestroy();
     }
 
     @Override
@@ -153,6 +170,19 @@ public class MainActivity extends AppCompatActivity implements
     protected void onPause() {
         metricHelper.stopTimeMetric(Metrics.MAIN_ACTIVITY_USAGE_TIME_METRIC);
         super.onPause();
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder binder) {
+        AudioService.LocalBinder localBinder = (AudioService.LocalBinder) binder;
+        audioService = localBinder.getService();
+        Log.d(TAG, "Audio service connected.");
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        audioService = null;
+        Log.d(TAG, "Audio service disconnected.");
     }
 
     @Override
@@ -182,6 +212,9 @@ public class MainActivity extends AppCompatActivity implements
                 } else {
                     loadFragment(SleepTrainingFragment.newInstance(), null);
                 }
+                break;
+            case R.id.nav_white_noise:
+                loadFragment(WhiteNoiseFragment.newInstance(), null);
                 break;
 //            case R.id.nav_share:
 //                break;

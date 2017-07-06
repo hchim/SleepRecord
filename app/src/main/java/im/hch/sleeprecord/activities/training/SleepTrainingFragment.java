@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.design.widget.Snackbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,10 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.NativeExpressAdView;
 import com.sleepaiden.androidcommonutils.exceptions.AccountNotExistException;
 import com.sleepaiden.androidcommonutils.exceptions.AuthFailureException;
 import com.sleepaiden.androidcommonutils.exceptions.ConnectionFailureException;
@@ -59,7 +55,6 @@ public class SleepTrainingFragment extends BaseFragment {
     @BindString(R.string.error_internal_server) String internalServerError;
     @BindString(R.string.progress_message_reset) String progressMessageReset;
     @BindString(R.string.error_auth_failure) String authError;
-    @BindString(R.string.admob_id_main_activity) String adId;
 
     @BindView(R.id.totalTimeTextView) CountUpTextView countUpTextView;
     @BindView(R.id.imageView) ImageView imageView;
@@ -77,7 +72,6 @@ public class SleepTrainingFragment extends BaseFragment {
     private Vibrator vibrator;
     private ResetTrainingPlanTask resetTrainingPlanTask;
     private ProgressDialog progressDialog;
-    private NativeExpressAdView adView;
 
     public static SleepTrainingFragment newInstance() {
         SleepTrainingFragment fragment = new SleepTrainingFragment();
@@ -133,34 +127,7 @@ public class SleepTrainingFragment extends BaseFragment {
         });
 
         //setup adview
-        adView = new NativeExpressAdView(mainActivity);
-        adView.setAdUnitId(adId);
-        adWidgetView.addView(adView);
-        adView.setAdListener(new AdListener() {
-            @Override
-            public void onAdFailedToLoad(int i) {
-                metricHelper.increaseCounter(Metrics.HOME_FRAGMENT_AD_LOAD_FAILURE);
-            }
-
-            @Override
-            public void onAdLoaded() {
-                adWidgetView.setVisibility(View.VISIBLE);
-                metricHelper.increaseCounter(Metrics.HOME_FRAGMENT_AD_LOADED);
-            }
-        });
-
-        view.post(new Runnable() {
-            @Override
-            public void run() {
-                DisplayMetrics metrics = getResources().getDisplayMetrics();
-                float density = ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-                int adMarginDP = (int) (getResources().getDimension(R.dimen.activity_horizontal_margin) * 2 / density);
-                int adWidthDP = (int) (view.getWidth() / density) - adMarginDP;
-                int adHeightDP = (int) (adWidthDP / 4.0); // the width and height of the native ad defines 4.0
-                adView.setAdSize(new AdSize(adWidthDP, adHeightDP));
-                loadAd();
-            }
-        });
+        setupAdView(view, adWidgetView);
 
         return view;
     }

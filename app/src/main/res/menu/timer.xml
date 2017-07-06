@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="@string/timer_15m" android:id="@+id/timer_15m"/>
+    <item android:title="@string/timer_30m" android:id="@+id/timer_30m"/>
+    <item android:title="@string/timer_1h" android:id="@+id/timer_1h"/>
+    <item android:title="@string/timer_2h" android:id="@+id/timer_2h"/>
+    <item android:title="@string/timer_4h" android:id="@+id/timer_4h"/>
+    <item android:title="@string/timer_6h" android:id="@+id/timer_6h"/>
+    <item android:title="@string/timer_8h" android:id="@+id/timer_8h"/>
+    <item android:title="@string/timer_10h" android:id="@+id/timer_10h"/>
+</menu>

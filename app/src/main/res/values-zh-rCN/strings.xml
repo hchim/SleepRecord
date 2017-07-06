@@ -212,4 +212,12 @@
         <item>"睡前步骤可以是睡前洗一个热水澡，睡前给宝宝读一本书，或者睡前听一首摇篮曲。"</item>
         <item>"专家推荐宝宝在晚上7点到8点间睡觉，这样你的宝宝不会过度疲劳而反抗入睡。"</item>
     </string-array>
+    <string name="timer_10h">10小时</string>
+    <string name="timer_1h">1小时</string>
+    <string name="timer_2h">2分钟</string>
+    <string name="timer_30m">30分钟</string>
+    <string name="timer_4h">4小时</string>
+    <string name="timer_6h">6小时</string>
+    <string name="timer_8h">8小时</string>
+    <string name="nav_white_noise">白噪音</string>
 </resources>
