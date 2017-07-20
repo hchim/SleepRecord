@@ -41,4 +41,5 @@
     <color name="divider">#1e000000</color>
     <color name="icons">#FFFFFF</color>
     <color name="inactive_icons">#7EFFFFFF</color>
+    <color name="view_background">#FFFFFF</color>
 </resources>

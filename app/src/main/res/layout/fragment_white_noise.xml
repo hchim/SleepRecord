@@ -2,13 +2,12 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/content_home"
+    android:background="@color/divider"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin" >
+    android:layout_height="match_parent">
 
     <LinearLayout
+        android:background="@color/view_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -38,6 +37,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/block_margin"
             android:layout_weight="1"
             android:layout_height="0dp">
 
@@ -59,6 +59,7 @@
         </LinearLayout>
 
         <RelativeLayout
+            android:background="@color/view_background"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <ImageButton
@@ -66,20 +67,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
+                android:background="@color/view_background"
                 app:srcCompat="@drawable/ic_play_48dp" />
             <ImageButton
                 android:id="@+id/timerButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@color/view_background"
+                android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true"
-                app:srcCompat="@drawable/ic_timer_48dp" />
+                app:srcCompat="@drawable/ic_timer_24dp" />
         </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/adWidget"
             android:orientation="vertical"
             android:visibility="gone"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="@dimen/block_margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

@@ -82,8 +82,7 @@ public class BaseFragment extends Fragment {
             public void run() {
                 DisplayMetrics metrics = getResources().getDisplayMetrics();
                 float density = ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-                int adMarginDP = (int) (getResources().getDimension(R.dimen.activity_horizontal_margin) * 2 / density);
-                int adWidthDP = (int) (root.getWidth() / density) - adMarginDP;
+                int adWidthDP = (int) (root.getWidth() / density);
                 int adHeightDP = (int) (adWidthDP / 4.0); // the width and height of the native ad defines 4.0
                 adView.setAdSize(new AdSize(adWidthDP, adHeightDP));
                 loadAd();
