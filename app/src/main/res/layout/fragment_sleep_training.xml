@@ -4,14 +4,11 @@
     android:id="@+id/content_sleep_training"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
+    android:orientation="vertical">
 
     <LinearLayout
         android:padding="@dimen/training_infos_padding"
+        android:background="@color/view_background"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -36,84 +33,81 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:background="@color/view_background"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
         <ImageView
-            android:layout_width="@dimen/training_image_square"
-            android:layout_height="@dimen/training_image_square"
-            app:srcCompat="@mipmap/put_baby_to_crib"
+            android:id="@+id/imageView"
+            android:padding="@dimen/training_image_margin"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:contentDescription="@string/training_begin_desc"
-            android:id="@+id/imageView"/>
+            android:scaleType="fitXY"
+            app:srcCompat="@mipmap/put_baby_to_crib" />
     </RelativeLayout>
 
-    <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:layout_gravity="center"
+    <LinearLayout
+        android:orientation="vertical"
+        android:background="@color/view_background"
         android:layout_marginBottom="@dimen/card_margin"
-        card_view:cardCornerRadius="2dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
-            android:orientation="vertical"
+            android:padding="@dimen/training_infos_padding"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <LinearLayout
-                android:padding="@dimen/training_infos_padding"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:text="@string/training_begin_desc"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/stageInfoTextView"/>
-
-                    <im.hch.sleeprecord.views.CountDownTextView
-                        android:text="@string/default_count_time"
-                        android:textSize="20sp"
-                        android:textColor="@color/accent"
-                        android:layout_marginTop="@dimen/training_countdown_margin_top"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/countDownTextView"/>
-                </LinearLayout>
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/stageCheckbox" />
-            </LinearLayout>
 
             <LinearLayout
-                android:padding="@dimen/training_infos_padding"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
 
                 <TextView
-                    android:text="@string/training_finish_desc"
-                    android:layout_width="0dp"
+                    android:text="@string/training_begin_desc"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:id="@+id/stageInfoTextView"/>
 
-                <CheckBox
-                    android:layout_width="wrap_content"
+                <im.hch.sleeprecord.views.CountDownTextView
+                    android:text="@string/default_count_time"
+                    android:textSize="20sp"
+                    android:textColor="@color/accent"
+                    android:layout_marginTop="@dimen/training_countdown_margin_top"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/finishCheckbox" />
+                    android:id="@+id/countDownTextView"/>
             </LinearLayout>
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/stageCheckbox" />
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+
+        <LinearLayout
+            android:padding="@dimen/training_infos_padding"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="@string/training_finish_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/finishCheckbox" />
+        </LinearLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/adWidget"

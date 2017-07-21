@@ -36,7 +36,6 @@
     <style name="WidgetTitle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingTop">@dimen/widget_padding</item>
         <item name="android:paddingBottom">@dimen/widget_padding</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">true</item>
@@ -107,6 +106,7 @@
     </style>
 
     <style name="grid_image">
+        <item name="android:background">@color/view_background</item>
         <item name="android:layout_margin">@dimen/grid_view_horizontal_space</item>
     </style>
 </resources>

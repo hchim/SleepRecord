@@ -107,13 +107,13 @@
     <string name="prompt_baby_birthday">宝宝生日</string>
 
     <!-- Progress dialog messages -->
-    <string name="progress_message_sign_in">登录ing ...</string>
-    <string name="progress_message_register">注册ing ...</string>
-    <string name="progress_message_save">保存ing ...</string>
-    <string name="progress_message_load">加载ing ...</string>
-    <string name="progress_message_verify">验证ing ...</string>
-    <string name="progress_message_send">发送ing ...</string>
-    <string name="progress_message_reset">重设ing ...</string>
+    <string name="progress_message_sign_in">登录中 ...</string>
+    <string name="progress_message_register">注册中 ...</string>
+    <string name="progress_message_save">保存中 ...</string>
+    <string name="progress_message_load">加载中 ...</string>
+    <string name="progress_message_verify">验证中 ...</string>
+    <string name="progress_message_send">发送中 ...</string>
+    <string name="progress_message_reset">重设中 ...</string>
 
     <string name="action_sign_in_short">登录</string>
     <string name="action_register_short">注册</string>
@@ -220,4 +220,5 @@
     <string name="timer_6h">6小时</string>
     <string name="timer_8h">8小时</string>
     <string name="nav_white_noise">白噪音</string>
+    <string name="timer_15m">15分钟</string>
 </resources>

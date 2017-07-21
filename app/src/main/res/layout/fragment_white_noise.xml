@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/divider"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
         android:background="@color/view_background"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <LinearLayout
@@ -58,37 +59,37 @@
                 app:srcCompat="@drawable/womb" />
         </LinearLayout>
 
-        <RelativeLayout
-            android:background="@color/view_background"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ImageButton
-                android:id="@+id/playButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:background="@color/view_background"
-                app:srcCompat="@drawable/ic_play_48dp" />
-            <ImageButton
-                android:id="@+id/timerButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/view_background"
-                android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true"
-                app:srcCompat="@drawable/ic_timer_24dp" />
-        </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/adWidget"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:layout_marginTop="@dimen/block_margin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <!-- Ad view will be dynamically added.-->
-        </LinearLayout>
     </LinearLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+    <RelativeLayout
+        android:background="@color/view_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageButton
+            android:id="@+id/playButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@color/view_background"
+            app:srcCompat="@drawable/ic_play_48dp" />
+        <ImageButton
+            android:id="@+id/timerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/view_background"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            app:srcCompat="@drawable/ic_timer_24dp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/adWidget"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/block_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Ad view will be dynamically added.-->
+    </LinearLayout>
+</LinearLayout>
