@@ -19,7 +19,6 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindString;
@@ -28,7 +27,6 @@ import butterknife.ButterKnife;
 import im.hch.sleeprecord.Metrics;
 import im.hch.sleeprecord.R;
 import im.hch.sleeprecord.activities.BaseFragment;
-import im.hch.sleeprecord.activities.main.AddRecordDialogFragment;
 import im.hch.sleeprecord.activities.main.MainActivity;
 import im.hch.sleeprecord.activities.records.SleepRecordsAdapter;
 import im.hch.sleeprecord.models.BabyInfo;
@@ -42,8 +40,8 @@ import im.hch.sleeprecord.utils.ImageUtils;
 import im.hch.sleeprecord.utils.SleepRecordUtils;
 import im.hch.sleeprecord.utils.ViewUtils;
 
-public class HomeFragment extends BaseFragment implements AddRecordDialogFragment.AddRecordDialogListener,
-        VerifyEmailDialogFragment.OnEmailVerifiedListener{
+public class HomeFragment extends BaseFragment
+        implements VerifyEmailDialogFragment.OnEmailVerifiedListener {
 
     @BindView(R.id.list_view) ListView sleepRecordListView;
     @BindView(R.id.progressBar) ProgressBar progressBar;
@@ -180,11 +178,6 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
     * Listener callback methods
     ***********************************************************
     */
-
-    @Override
-    public void onSleepRecordSaved(Date from, Date to) {
-        new LoadSleepRecordTask().execute();
-    }
 
     @Override
     public void onEmailVerified() {
@@ -359,50 +352,6 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
         @Override
         protected void onPreExecute() {
             metricHelper.startTimeMetric(Metrics.MAIN_ACTIVITY_LOADING_TIME_METRIC);
-        }
-    }
-
-    private class LoadSleepRecordTask extends AsyncTask<Void, Integer, Boolean> {
-        List<SleepRecordsPerDay> sleepRecords;
-        boolean authFailure = false;
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            String userId = sessionManager.getUserId();
-            if (userId == null) {
-                Log.wtf(MainActivity.TAG, "User id is null.");
-                return false;
-            }
-
-            //update sleep records
-            Calendar to = Calendar.getInstance();
-            Calendar from = Calendar.getInstance();
-            from.add(Calendar.DATE, TREND_SHOW_SLEEP_RECORDS_NUM * -1);
-
-            try {
-                sleepRecords = mainActivity.sleepServiceClient.getSleepRecords(from.getTime(), to.getTime());
-                sharedPreferenceUtil.storeSleepRecords(sleepRecords, userId);
-            } catch (AuthFailureException e) {
-                authFailure = true;
-                return false;
-            } catch (Exception e) {
-                Log.w(MainActivity.TAG, e);
-                if (e instanceof InternalServerException) {
-                    metricHelper.errorMetric(Metrics.GET_SLEEP_RECORDS_ERROR_METRIC, e);
-                }
-            }
-
-            return Boolean.TRUE;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            if (aBoolean) {
-                HomeFragment.this.loadCachedSleepRecords();
-                HomeFragment.this.loadCachedSleepQualityTrend();
-            } else if (authFailure) {
-                ActivityUtils.navigateToLoginActivity(mainActivity);
-            }
         }
     }
 }
