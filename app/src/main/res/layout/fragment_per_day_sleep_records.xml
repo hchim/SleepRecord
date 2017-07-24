@@ -6,8 +6,7 @@
     android:paddingBottom="@dimen/fragment_bottom_margin"
     android:paddingLeft="@dimen/fragment_horizontal_margin"
     android:paddingRight="@dimen/fragment_horizontal_margin"
-    android:paddingTop="@dimen/fragment_top_margin"
-    tools:context="im.hch.sleeprecord.activities.main.BabyInfoDialogFragment">
+    android:paddingTop="@dimen/fragment_top_margin">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/sleepRecordsView"
