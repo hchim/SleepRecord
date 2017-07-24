@@ -3,7 +3,6 @@ package im.hch.sleeprecord.activities.home;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,7 +51,6 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
     @BindView(R.id.verifyEmailTextView) TextView verifyEmailTextView;
     @BindView(R.id.sleepQualityTrend) SleepQualityTrendView sleepQualityTrendView;
     @BindView(R.id.adWidget) LinearLayout adWidgetView;
-    @BindView(R.id.fab) FloatingActionButton fab;
 
     @BindString(R.string.app_name) String title;
 
@@ -98,12 +96,6 @@ public class HomeFragment extends BaseFragment implements AddRecordDialogFragmen
         // Disallow the touch request for parent scroll on touch of child view
         sleepRecordListView.setClickable(false);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogUtils.showAddRecordDialog(getFragmentManager(), HomeFragment.this);
-            }
-        });
         //setup adview
         setupAdView(view, adWidgetView);
 
