@@ -40,6 +40,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.sleepaiden.androidcommonutils.exceptions.AccountNotExistException;
 import com.sleepaiden.androidcommonutils.exceptions.ConnectionFailureException;
@@ -224,6 +225,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     // Login with google
     //////////////////////////////////////////////////////////////////////////////////
     private void initGoogleSignIn() {
+        GoogleApiAvailability api = GoogleApiAvailability.getInstance();
+        int code = api.isGooglePlayServicesAvailable(this);
+        if (code != ConnectionResult.SUCCESS) {
+            googleSigninButton.setVisibility(View.GONE);
+            return;
+        }
+
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         String googleClientId = getString(R.string.default_web_client_id);
