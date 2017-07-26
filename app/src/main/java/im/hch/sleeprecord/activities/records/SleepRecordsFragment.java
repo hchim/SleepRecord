@@ -153,6 +153,9 @@ public class SleepRecordsFragment extends BaseFragment implements
 
             try {
                 sleepRecords = mainActivity.sleepServiceClient.getSleepRecords(from.getTime(), to.getTime());
+                if (page == 0) {
+                    sharedPreferenceUtil.storeSleepRecords(sleepRecords, sessionManager.getUserId());
+                }
                 return true;
             } catch (ConnectionFailureException e) {
                 errorMessage = failedToConnectError;
